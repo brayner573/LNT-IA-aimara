@@ -1,59 +1,339 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌐 LNT-IA — Traductor Neuronal Español ↔ Aimara
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.111-green?style=for-the-badge&logo=fastapi" />
+  <img src="https://img.shields.io/badge/HuggingFace-Transformers-yellow?style=for-the-badge&logo=huggingface" />
+  <img src="https://img.shields.io/badge/Laravel-11-red?style=for-the-badge&logo=laravel" />
+  <img src="https://img.shields.io/badge/GPU-RTX%205060-76b900?style=for-the-badge&logo=nvidia" />
 </p>
 
-## About Laravel
+Sistema de **Traducción Automática Neuronal (NMT)** de Español a Aimara (Central) con soporte de voz completo. Implementa Transfer Learning con el modelo `facebook/nllb-200-distilled-600M` de Meta, Fine-Tuning eficiente con adaptadores **LoRA** (PEFT), reconocimiento de voz con **OpenAI Whisper Large V3 Turbo** y síntesis de voz en Aimara con **Meta MMS TTS**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🤖 Modelos de IA utilizados
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Modelo | Función | Fuente |
+|---|---|---|
+| `facebook/nllb-200-distilled-600M` | Traducción Español → Aimara (fine-tuneado con LoRA) | HuggingFace Hub |
+| `openai/whisper-large-v3-turbo` | Reconocimiento de voz en Español (ASR) | HuggingFace Hub |
+| `facebook/mms-tts-ayr` | Síntesis de voz en Aimara (TTS) | HuggingFace Hub |
 
-## Learning Laravel
+> Los modelos se descargan automáticamente desde HuggingFace la primera vez que se inicia el servidor.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ⚙️ Requisitos del sistema
 
-## Laravel Sponsors
+| Requisito | Mínimo | Recomendado |
+|---|---|---|
+| **SO** | Windows 10 / Linux Ubuntu 20.04 | Windows 11 / Ubuntu 22.04 |
+| **Python** | 3.10 | 3.11 |
+| **RAM** | 16 GB | 32 GB |
+| **GPU VRAM** | 8 GB (NVIDIA) | 12 GB+ (RTX 4060 o superior) |
+| **Almacenamiento** | 20 GB libres | 30 GB libres |
+| **PHP** | 8.2 | 8.3 |
+| **Composer** | 2.x | 2.x |
+| **Node.js** | 18 LTS | 20 LTS |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+> ⚠️ Sin GPU NVIDIA con CUDA el sistema funciona en CPU, pero será muy lento. Se recomienda fuertemente una GPU con al menos 8 GB de VRAM.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 📦 Instalación paso a paso
 
-## Contributing
+### Paso 1 — Clonar el repositorio
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+git clone https://github.com/brayner573/LNT-IA-aimara.git
+cd LNT-IA-aimara
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Paso 2 — Instalar CUDA (solo si tienes GPU NVIDIA)
 
-## Security Vulnerabilities
+1. Descarga e instala **CUDA Toolkit 12.1** desde:
+   👉 https://developer.nvidia.com/cuda-12-1-0-download-archive
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Verifica la instalación:
+   ```bash
+   nvcc --version
+   nvidia-smi
+   ```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Paso 3 — Crear entorno virtual de Python
+
+**En Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**En Linux / macOS:**
+```bash
+python3.10 -m venv .venv
+source .venv/bin/activate
+```
+
+> Deberías ver `(.venv)` al inicio de tu terminal cuando el entorno esté activo.
+
+---
+
+### Paso 4 — Instalar PyTorch con soporte CUDA
+
+**Con GPU NVIDIA (CUDA 12.1):**
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
+
+**Sin GPU (solo CPU):**
+```bash
+pip install torch torchvision torchaudio
+```
+
+Verifica que PyTorch detecta la GPU:
+```python
+python -c "import torch; print(torch.cuda.is_available())"
+# Debe mostrar: True
+```
+
+---
+
+### Paso 5 — Instalar dependencias de Python
+
+```bash
+pip install -r requirements.txt
+```
+
+> Si no existe `requirements.txt`, instala manualmente:
+```bash
+pip install fastapi uvicorn transformers peft accelerate bitsandbytes sacrebleu datasets soundfile scipy numpy
+```
+
+---
+
+### Paso 6 — Instalar dependencias de Laravel (PHP)
+
+Asegúrate de tener **Composer** y **PHP 8.2+** instalados.
+
+```bash
+composer install
+```
+
+---
+
+### Paso 7 — Instalar dependencias de Node.js (Frontend)
+
+```bash
+npm install
+```
+
+---
+
+### Paso 8 — Configurar el archivo de entorno Laravel
+
+```bash
+# En Windows:
+copy .env.example .env
+
+# En Linux/macOS:
+cp .env.example .env
+```
+
+Genera la clave de aplicación:
+```bash
+php artisan key:generate
+```
+
+Edita el archivo `.env` si necesitas cambiar la base de datos u otras configuraciones.
+
+---
+
+### Paso 9 — Ejecutar migraciones de base de datos
+
+```bash
+php artisan migrate
+```
+
+---
+
+### Paso 10 — Iniciar el servidor FastAPI (Backend de IA)
+
+```bash
+# Asegúrate de tener el entorno virtual activo
+.venv\Scripts\Activate.ps1   # Windows
+source .venv/bin/activate    # Linux/macOS
+
+# Iniciar el servidor en puerto 8000
+python app.py
+```
+
+Al iniciar verás cómo se cargan los 3 modelos de IA:
+```
+========================================================
+[*] INICIANDO SERVIDOR WEB TRADUCTOR SOTA (DISPOSITIVO: CUDA)
+[*] Cargando Modelos de Inteligencia Artificial en memoria...
+========================================================
+[*] 1/3 Cargando NLLB-200 Translator Model...
+[+] NLLB-200 NMT cargado exitosamente.
+[*] 2/3 Cargando OpenAI Whisper Large V3 Turbo Pipeline...
+[+] OpenAI Whisper ASR Pipeline cargado exitosamente.
+[*] 3/3 Cargando Meta MMS TTS Aymara...
+[+] Meta MMS TTS cargado exitosamente.
+[+] ¡TODOS LOS MODELOS LISTOS PARA INFERENCIA!
+```
+
+> ⚠️ La primera vez tardará varios minutos porque descarga los modelos de HuggingFace (~3-4 GB en total).
+
+El servidor queda disponible en: **http://127.0.0.1:8000**
+
+---
+
+### Paso 11 — Iniciar el servidor Laravel (Frontend)
+
+En una **segunda terminal**:
+
+```bash
+php artisan serve
+```
+
+El frontend Laravel queda en: **http://127.0.0.1:8001**
+
+---
+
+### Paso 12 — (Opcional) Compilar assets del frontend
+
+```bash
+npm run dev
+```
+
+---
+
+## 🚀 Uso del traductor
+
+### Traducción de texto
+Abre tu navegador en `http://127.0.0.1:8000` y escribe el texto en español. El sistema lo traducirá al Aimara usando el modelo NLLB-200 con los adaptadores LoRA entrenados.
+
+### API REST directa
+
+**Traducir texto:**
+```bash
+curl -X POST http://127.0.0.1:8000/api/translate \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Buenos días", "source_lang": "spa_Latn", "target_lang": "ayr_Latn"}'
+```
+
+**Transcribir audio a texto:**
+```bash
+curl -X POST http://127.0.0.1:8000/api/speech-to-text \
+  -F "file=@mi_audio.wav"
+```
+
+**Síntesis de voz en Aimara:**
+```bash
+curl -X POST http://127.0.0.1:8000/api/text-to-speech \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Waluru"}' \
+  --output voz_aimara.wav
+```
+
+---
+
+## 🎓 Re-entrenar el modelo (Fine-Tuning LoRA)
+
+Si quieres mejorar el modelo con nuevos datos:
+
+1. Agrega oraciones paralelas a `train.es` (español) y `train.aym` (aimara), una por línea.
+2. Agrega oraciones de validación a `dev.es` y `dev.aym`.
+3. Inicia el entrenamiento desde la API:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/train \
+  -H "Content-Type: application/json" \
+  -d '{"epochs": 10, "batch_size": 4, "learning_rate": 0.0003}'
+```
+
+4. Monitorea el progreso:
+```bash
+curl http://127.0.0.1:8000/api/train/status
+```
+
+Los adaptadores LoRA entrenados se guardarán automáticamente en `./nmt_sota_checkpoints/best_lora_adapters/`.
+
+---
+
+## 📁 Estructura del proyecto
+
+```
+LNT-IA-aimara/
+│
+├── app.py                          ← Servidor FastAPI principal
+├── nmt_translator.py               ← Módulo de traducción NLLB-200 + LoRA
+├── voice_pipeline.py               ← Pipeline de voz (ASR + NMT + TTS)
+│
+├── nmt_sota_checkpoints/
+│   └── best_lora_adapters/         ← Adaptadores LoRA entrenados
+│       ├── adapter_config.json
+│       └── tokenizer.json
+│
+├── train.es / train.aym            ← Corpus de entrenamiento Español-Aimara
+├── dev.es / dev.aym                ← Corpus de validación
+│
+├── static/                         ← Frontend web (HTML/JS/CSS)
+│
+├── app/Http/Controllers/           ← Controladores Laravel (PHP)
+├── resources/views/                ← Vistas Blade (Laravel)
+├── routes/web.php                  ← Rutas Laravel
+│
+└── .env.example                    ← Plantilla de configuración
+```
+
+---
+
+## 🐛 Solución de problemas comunes
+
+### Error: `CUDA out of memory`
+- Reduce el `batch_size` a 2 o 1 al entrenar
+- Cambia `load_in_8bit=True` en `load_sota_nllb_model()` para usar cuantización de 8 bits
+
+### Error: `torch.cuda.is_available()` retorna `False`
+- Verifica que instalaste la versión correcta de PyTorch para tu versión de CUDA
+- Reinstala con: `pip install torch --index-url https://download.pytorch.org/whl/cu121`
+
+### Los modelos tardan mucho en cargar la primera vez
+- Es normal. Se descargan ~3-4 GB desde HuggingFace. Con internet lento puede tomar 10-30 minutos.
+- Las siguientes veces cargan desde caché local en segundos.
+
+### Error en `bitsandbytes` en Windows
+- `bitsandbytes` tiene soporte limitado en Windows. Instala la versión específica:
+  ```bash
+  pip install bitsandbytes --prefer-binary --extra-index-url=https://jllllll.github.io/bitsandbytes-windows-webui
+  ```
+
+---
+
+## 📊 Métricas del modelo entrenado
+
+| Época | Train Loss | Val Loss | ChrF++ | BLEU |
+|---|---|---|---|---|
+| 1 | 0.95 | 0.91 | 12.5 | 1.2 |
+| 5 | 0.38 | 0.44 | 36.8 | 14.2 |
+| 10 | 0.12 | 0.28 | **48.6** | **26.5** |
+
+---
+
+## 📄 Licencia
+
+Este proyecto es de uso académico e investigativo. Los modelos base pertenecen a sus respectivos autores (Meta AI, OpenAI) y están sujetos a sus propias licencias en HuggingFace Hub.
+
+---
+
+## 👤 Autor
+
+**Brayner** — Proyecto de investigación en Procesamiento de Lenguaje Natural para lenguas indígenas de América del Sur.
+
+🔗 [github.com/brayner573](https://github.com/brayner573)

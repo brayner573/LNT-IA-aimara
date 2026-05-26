@@ -1810,17 +1810,40 @@
                     <div style="flex: 1; position: relative; width: 100%; height: 260px; background: rgba(0,0,0,0.4); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02);">
                         <!-- Coordinate grid SVG -->
                         <svg id="svgLargeSpace" viewBox="0 0 320 200" style="width: 100%; height: 100%;">
-                            <!-- Cartesian lines -->
-                            <line x1="160" y1="0" x2="160" y2="200" stroke="rgba(255,255,255,0.04)" stroke-width="0.75" />
-                            <line x1="0" y1="100" x2="320" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="0.75" />
+                            <!-- Vertical Axis guides for Source and Target -->
+                            <line x1="60" y1="20" x2="60" y2="175" stroke="rgba(255,255,255,0.06)" stroke-width="0.75" stroke-dasharray="2,2" />
+                            <line x1="260" y1="20" x2="260" y2="175" stroke="rgba(255,255,255,0.06)" stroke-width="0.75" stroke-dasharray="2,2" />
                             
-                            <!-- Reference circles of cosine similarity thresholds -->
-                            <circle cx="160" cy="100" r="50" fill="none" stroke="rgba(139, 92, 246, 0.02)" stroke-width="0.75" stroke-dasharray="2,2" />
-                            <circle cx="160" cy="100" r="95" fill="none" stroke="rgba(6, 182, 212, 0.02)" stroke-width="0.75" stroke-dasharray="2,2" />
+                            <!-- Header labels -->
+                            <text x="60" y="14" fill="var(--accent)" font-size="6.5" font-weight="800" text-anchor="middle">ESPAÑOL (Fuente)</text>
+                            <text x="260" y="14" fill="#fff" font-size="6.5" font-weight="800" text-anchor="middle">AIMARA (Traducción)</text>
+
+                            <!-- Horizontal Similarity Scale Axis at the bottom -->
+                            <line x1="60" y1="180" x2="260" y2="180" stroke="rgba(255,255,255,0.15)" stroke-width="0.75" />
                             
-                            <!-- Axis descriptions -->
-                            <text x="300" y="96" fill="rgba(255,255,255,0.2)" font-size="6.5" font-weight="700" text-anchor="end">Dimensión 1 (Léxica)</text>
-                            <text x="165" y="15" fill="rgba(255,255,255,0.2)" font-size="6.5" font-weight="700">Dimensión 2 (Gramatical)</text>
+                            <!-- Scale Ticks & Labels -->
+                            <!-- Tick 0% -->
+                            <line x1="60" y1="180" x2="60" y2="184" stroke="rgba(255,255,255,0.15)" stroke-width="0.75" />
+                            <text x="60" y="191" fill="rgba(255,255,255,0.3)" font-size="5.5" font-weight="700" text-anchor="middle">0%</text>
+                            
+                            <!-- Tick 25% -->
+                            <line x1="110" y1="180" x2="110" y2="184" stroke="rgba(255,255,255,0.08)" stroke-width="0.5" />
+                            <text x="110" y="191" fill="rgba(255,255,255,0.3)" font-size="5.5" font-weight="700" text-anchor="middle">25%</text>
+                            
+                            <!-- Tick 50% -->
+                            <line x1="160" y1="180" x2="160" y2="184" stroke="rgba(255,255,255,0.08)" stroke-width="0.5" />
+                            <text x="160" y="191" fill="rgba(255,255,255,0.3)" font-size="5.5" font-weight="700" text-anchor="middle">50%</text>
+                            
+                            <!-- Tick 75% -->
+                            <line x1="210" y1="180" x2="210" y2="184" stroke="rgba(255,255,255,0.08)" stroke-width="0.5" />
+                            <text x="210" y="191" fill="rgba(255,255,255,0.3)" font-size="5.5" font-weight="700" text-anchor="middle">75%</text>
+                            
+                            <!-- Tick 100% -->
+                            <line x1="260" y1="180" x2="260" y2="184" stroke="rgba(255,255,255,0.15)" stroke-width="0.75" />
+                            <text x="260" y="191" fill="rgba(255,255,255,0.5)" font-size="5.5" font-weight="700" text-anchor="middle">100%</text>
+                            
+                            <!-- Centered Axis Title -->
+                            <text x="160" y="174" fill="rgba(6, 182, 212, 0.45)" font-size="6" font-weight="800" text-anchor="middle" letter-spacing="0.5px">ESCALA DE SIMILITUD SEMÁNTICA VECTORIAL</text>
                             
                             <!-- Dynamic nodes and links populated by JavaScript -->
                             <g id="svgGroupLargeSpace"></g>
@@ -1837,6 +1860,19 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.35rem; color: #fed7aa;">
                             <span style="display:inline-block; width: 8px; height: 8px; background: #f97316; border-radius: 50%; box-shadow: 0 0 5px #f97316;"></span> Subpalabra / Fractura
+                        </div>
+                    </div>
+                    
+                    <!-- Connection lines color guide -->
+                    <div style="display: flex; gap: 1.25rem; justify-content: center; font-size: 0.68rem; background: rgba(0,0,0,0.18); padding: 0.45rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.03); flex-wrap: wrap; margin-top: 0.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: #10b981; font-weight: 700;">
+                            <span style="display:inline-block; width: 16px; height: 1.5px; background: #10b981; filter: drop-shadow(0 0 2px #10b981);"></span> Alta Similitud (>85%)
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: #f59e0b; font-weight: 700;">
+                            <span style="display:inline-block; width: 16px; height: 1.5px; background: #f59e0b; stroke-dasharray: 2,2; filter: drop-shadow(0 0 2px #f59e0b);"></span> Media Similitud (60%-84%)
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: #ef4444; font-weight: 700;">
+                            <span style="display:inline-block; width: 16px; height: 1.5px; background: #ef4444; stroke-dasharray: 2,2; filter: drop-shadow(0 0 2px #ef4444);"></span> Baja Similitud (<60%)
                         </div>
                     </div>
                 </div>
@@ -2764,14 +2800,14 @@
 
         // 1. RENDERIZADO DEL GRÁFICO 2D (ESPACIO VECTORIAL SEMÁNTICO GRANDE)
         wordAnalysis.forEach((item, idx) => {
-            const yEs = 25 + idx * (150 / Math.max(N - 1, 1));
+            // Distribuir los canales Y de forma limpia de y=32 a y=162
+            const yEs = 32 + idx * (120 / Math.max(N - 1, 1));
             const xEs = 60;
             const S = item.similarity_pct / 100;
             
-            // Proyección geométrica
+            // Proyección geométrica: canales Y perfectamente paralelos e independientes para máxima legibilidad
             const xAym = 60 + 200 * S;
-            const yAym = yEs + (1 - S) * 60 * (idx % 2 === 0 ? 1 : -1);
-            const yAymClamped = Math.max(15, Math.min(185, yAym));
+            const yAymClamped = yEs;
             
             // A. Línea de conexión con láser de neón
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');

@@ -402,6 +402,19 @@
     .explanation-list strong {
         color: #fff;
     }
+
+    .drawer-grid {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: 0.75rem;
+        align-items: start;
+    }
+
+    @media (max-width: 820px) {
+        .drawer-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
 </style>
 @endsection
 
@@ -1358,6 +1371,55 @@
                     </div>
                 </div>
 
+                <!-- Análisis de Palabras, Embeddings y Vectores (Drawer) -->
+                <div style="margin: 0.5rem 0;">
+                    <button type="button" onclick="toggleWordAnalysis('Lora')" class="icon-btn" style="width: 100%; justify-content: space-between; padding: 0.45rem 0.75rem; font-size: 0.75rem; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; display: flex; align-items: center; cursor: pointer;">
+                        <span><i class="fa-solid fa-table-list"></i> Análisis de Palabras & Vectores</span>
+                        <i id="angleWordLora" class="fa-solid fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </button>
+                    <div id="drawerWordLora" style="display: none; max-height: 250px; overflow-y: auto; margin-top: 0.5rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px; padding: 0.5rem;">
+                        <div class="drawer-grid">
+                            <!-- Tabla de Detalles (Gramatical) -->
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);">
+                                            <th style="padding: 0.3rem 0.2rem;">Palabra (ES ⇄ AYM)</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Tokens & IDs</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Embedding Vector</th>
+                                            <th style="padding: 0.3rem 0.2rem; text-align: right;">Similitud</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyWordLora">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.2); font-style: italic; padding: 0.8rem 0;">
+                                                Esperando traducción...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Gráfico del Espacio Vectorial Semántico 2D (Visual) -->
+                            <div style="background: rgba(10, 12, 22, 0.45); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 170px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; font-weight: 700; color: #fff;">
+                                    <span><i class="fa-solid fa-arrows-spin" style="color: var(--accent);"></i> Plano Cartesiano Vectorial (2D)</span>
+                                    <span style="font-size: 0.65rem; color: var(--accent); font-weight: 700;">NLLB + LoRA</span>
+                                </div>
+                                <div style="flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; position: relative; border: 1px solid rgba(255,255,255,0.01); overflow: hidden; height: 130px;">
+                                    <svg id="svgSpaceLora" viewBox="0 0 200 120" style="width: 100%; height: 100%;">
+                                        <line x1="100" y1="0" x2="100" y2="120" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <line x1="0" y1="60" x2="200" y2="60" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <circle cx="100" cy="60" r="30" fill="none" stroke="rgba(139, 92, 246, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <circle cx="100" cy="60" r="55" fill="none" stroke="rgba(6, 182, 212, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <g id="svgGroupSpaceLora"></g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card-footer">
                     <button class="icon-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="playVoice('outLora')">
                         <i class="fa-solid fa-volume-high"></i> Escuchar
@@ -1370,14 +1432,14 @@
                 </div>
             </div>
 
-            <!-- MODELO 2: NLLB-200 Base -->
+            <!-- MODELO 2: mBART-50 -->
             <div class="model-card base-card">
                 <div class="model-header">
                     <div class="model-info">
                         <div class="model-icon"><i class="fa-solid fa-server"></i></div>
                         <div>
-                            <div class="model-name">NLLB-200 Base</div>
-                            <span style="font-size: 0.65rem; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Original Meta</span>
+                            <div class="model-name">mBART-50</div>
+                            <span style="font-size: 0.65rem; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Meta Multilingual Seq2Seq</span>
                         </div>
                     </div>
                     <div class="model-latency" id="latBase"><i class="fa-solid fa-clock"></i> -- ms</div>
@@ -1420,6 +1482,55 @@
                     </div>
                 </div>
 
+                <!-- Análisis de Palabras, Embeddings y Vectores (Drawer) -->
+                <div style="margin: 0.5rem 0;">
+                    <button type="button" onclick="toggleWordAnalysis('Base')" class="icon-btn" style="width: 100%; justify-content: space-between; padding: 0.45rem 0.75rem; font-size: 0.75rem; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; display: flex; align-items: center; cursor: pointer;">
+                        <span><i class="fa-solid fa-table-list"></i> Análisis de Palabras & Vectores</span>
+                        <i id="angleWordBase" class="fa-solid fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </button>
+                    <div id="drawerWordBase" style="display: none; max-height: 250px; overflow-y: auto; margin-top: 0.5rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px; padding: 0.5rem;">
+                        <div class="drawer-grid">
+                            <!-- Tabla de Detalles (Gramatical) -->
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);">
+                                            <th style="padding: 0.3rem 0.2rem;">Palabra (ES ⇄ AYM)</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Tokens & IDs</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Embedding Vector</th>
+                                            <th style="padding: 0.3rem 0.2rem; text-align: right;">Similitud</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyWordBase">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.2); font-style: italic; padding: 0.8rem 0;">
+                                                Esperando traducción...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Gráfico del Espacio Vectorial Semántico 2D (Visual) -->
+                            <div style="background: rgba(10, 12, 22, 0.45); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 170px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; font-weight: 700; color: #fff;">
+                                    <span><i class="fa-solid fa-arrows-spin" style="color: var(--accent);"></i> Plano Cartesiano Vectorial (2D)</span>
+                                    <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 700;">mBART-50</span>
+                                </div>
+                                <div style="flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; position: relative; border: 1px solid rgba(255,255,255,0.01); overflow: hidden; height: 130px;">
+                                    <svg id="svgSpaceBase" viewBox="0 0 200 120" style="width: 100%; height: 100%;">
+                                        <line x1="100" y1="0" x2="100" y2="120" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <line x1="0" y1="60" x2="200" y2="60" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <circle cx="100" cy="60" r="30" fill="none" stroke="rgba(139, 92, 246, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <circle cx="100" cy="60" r="55" fill="none" stroke="rgba(6, 182, 212, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <g id="svgGroupSpaceBase"></g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card-footer">
                     <button class="icon-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="playVoice('outBase')">
                         <i class="fa-solid fa-volume-high"></i> Escuchar
@@ -1432,14 +1543,14 @@
                 </div>
             </div>
 
-            <!-- MODELO 3: Llama-3-8B-Instruct (Meta) -->
+            <!-- MODELO 3: MarianMT -->
             <div class="model-card llama-card">
                 <div class="model-header">
                     <div class="model-info">
                         <div class="model-icon"><i class="fa-solid fa-brain"></i></div>
                         <div>
-                            <div class="model-name">Llama-3-8B-Instruct</div>
-                            <span style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.15); color: #c084fc; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Meta Generative LLM</span>
+                            <div class="model-name">MarianMT</div>
+                            <span style="font-size: 0.65rem; background: rgba(168, 85, 247, 0.15); color: #c084fc; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Helsinki Dedicated Translation</span>
                         </div>
                     </div>
                     <div class="model-latency" id="latLlama"><i class="fa-solid fa-clock"></i> -- ms</div>
@@ -1482,6 +1593,55 @@
                     </div>
                 </div>
 
+                <!-- Análisis de Palabras, Embeddings y Vectores (Drawer) -->
+                <div style="margin: 0.5rem 0;">
+                    <button type="button" onclick="toggleWordAnalysis('Llama')" class="icon-btn" style="width: 100%; justify-content: space-between; padding: 0.45rem 0.75rem; font-size: 0.75rem; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; display: flex; align-items: center; cursor: pointer;">
+                        <span><i class="fa-solid fa-table-list"></i> Análisis de Palabras & Vectores</span>
+                        <i id="angleWordLlama" class="fa-solid fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </button>
+                    <div id="drawerWordLlama" style="display: none; max-height: 250px; overflow-y: auto; margin-top: 0.5rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px; padding: 0.5rem;">
+                        <div class="drawer-grid">
+                            <!-- Tabla de Detalles (Gramatical) -->
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);">
+                                            <th style="padding: 0.3rem 0.2rem;">Palabra (ES ⇄ AYM)</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Tokens & IDs</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Embedding Vector</th>
+                                            <th style="padding: 0.3rem 0.2rem; text-align: right;">Similitud</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyWordLlama">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.2); font-style: italic; padding: 0.8rem 0;">
+                                                Esperando traducción...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Gráfico del Espacio Vectorial Semántico 2D (Visual) -->
+                            <div style="background: rgba(10, 12, 22, 0.45); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 170px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; font-weight: 700; color: #fff;">
+                                    <span><i class="fa-solid fa-arrows-spin" style="color: var(--accent);"></i> Plano Cartesiano Vectorial (2D)</span>
+                                    <span style="font-size: 0.65rem; color: #c084fc; font-weight: 700;">MarianMT</span>
+                                </div>
+                                <div style="flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; position: relative; border: 1px solid rgba(255,255,255,0.01); overflow: hidden; height: 130px;">
+                                    <svg id="svgSpaceLlama" viewBox="0 0 200 120" style="width: 100%; height: 100%;">
+                                        <line x1="100" y1="0" x2="100" y2="120" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <line x1="0" y1="60" x2="200" y2="60" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <circle cx="100" cy="60" r="30" fill="none" stroke="rgba(139, 92, 246, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <circle cx="100" cy="60" r="55" fill="none" stroke="rgba(6, 182, 212, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <g id="svgGroupSpaceLlama"></g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card-footer">
                     <button class="icon-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; display:none;" id="btnPlayLlama" onclick="playVoice('outLlama')">
                         <i class="fa-solid fa-volume-high"></i> Escuchar
@@ -1495,14 +1655,14 @@
                 </div>
             </div>
 
-            <!-- MODELO 4: Gemma-2-9B-It (Google) -->
+            <!-- MODELO 4: mT5-Base -->
             <div class="model-card gemma-card">
                 <div class="model-header">
                     <div class="model-info">
                         <div class="model-icon"><i class="fa-solid fa-sparkles"></i></div>
                         <div>
-                            <div class="model-name">Gemma-2-9B-It</div>
-                            <span style="font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Google Generative LLM</span>
+                            <div class="model-name">mT5-Base</div>
+                            <span style="font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Google Multilingual T5</span>
                         </div>
                     </div>
                     <div class="model-latency" id="latGemma"><i class="fa-solid fa-clock"></i> -- ms</div>
@@ -1545,6 +1705,55 @@
                     </div>
                 </div>
 
+                <!-- Análisis de Palabras, Embeddings y Vectores (Drawer) -->
+                <div style="margin: 0.5rem 0;">
+                    <button type="button" onclick="toggleWordAnalysis('Gemma')" class="icon-btn" style="width: 100%; justify-content: space-between; padding: 0.45rem 0.75rem; font-size: 0.75rem; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; display: flex; align-items: center; cursor: pointer;">
+                        <span><i class="fa-solid fa-table-list"></i> Análisis de Palabras & Vectores</span>
+                        <i id="angleWordGemma" class="fa-solid fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </button>
+                    <div id="drawerWordGemma" style="display: none; max-height: 250px; overflow-y: auto; margin-top: 0.5rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px; padding: 0.5rem;">
+                        <div class="drawer-grid">
+                            <!-- Tabla de Detalles (Gramatical) -->
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);">
+                                            <th style="padding: 0.3rem 0.2rem;">Palabra (ES ⇄ AYM)</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Tokens & IDs</th>
+                                            <th style="padding: 0.3rem 0.2rem;">Embedding Vector</th>
+                                            <th style="padding: 0.3rem 0.2rem; text-align: right;">Similitud</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyWordGemma">
+                                        <tr>
+                                            <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.2); font-style: italic; padding: 0.8rem 0;">
+                                                Esperando traducción...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Gráfico del Espacio Vectorial Semántico 2D (Visual) -->
+                            <div style="background: rgba(10, 12, 22, 0.45); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; min-height: 170px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; font-weight: 700; color: #fff;">
+                                    <span><i class="fa-solid fa-arrows-spin" style="color: var(--accent);"></i> Plano Cartesiano Vectorial (2D)</span>
+                                    <span style="font-size: 0.65rem; color: #34d399; font-weight: 700;">mT5-Base</span>
+                                </div>
+                                <div style="flex: 1; background: rgba(0,0,0,0.3); border-radius: 8px; position: relative; border: 1px solid rgba(255,255,255,0.01); overflow: hidden; height: 130px;">
+                                    <svg id="svgSpaceGemma" viewBox="0 0 200 120" style="width: 100%; height: 100%;">
+                                        <line x1="100" y1="0" x2="100" y2="120" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <line x1="0" y1="60" x2="200" y2="60" stroke="rgba(255,255,255,0.03)" stroke-width="0.5" />
+                                        <circle cx="100" cy="60" r="30" fill="none" stroke="rgba(139, 92, 246, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <circle cx="100" cy="60" r="55" fill="none" stroke="rgba(6, 182, 212, 0.01)" stroke-width="0.5" stroke-dasharray="1.5,1.5" />
+                                        <g id="svgGroupSpaceGemma"></g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card-footer">
                     <button class="icon-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; display:none;" id="btnPlayGemma" onclick="playVoice('outGemma')">
                         <i class="fa-solid fa-volume-high"></i> Escuchar
@@ -1558,6 +1767,107 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- DEDICATED PREMIUM VECTOR SPACE & MORPHOLOGICAL ANALYZER -->
+        <div class="glass-card" style="margin-top: 1.5rem; padding: 1.5rem; border-color: rgba(6, 182, 212, 0.25); background: rgba(13, 15, 24, 0.5); backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h3 style="font-family: var(--font-title); font-weight: 800; font-size: 1.25rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                    <i class="fa-solid fa-bezier-curve" style="color: var(--accent);"></i> Explorador de Alineación Vectorial & Desglose Morfológico
+                </h3>
+                
+                <!-- Toggle Model for Large Graph -->
+                <div style="display: flex; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.2rem;" id="largeGraphModelToggle">
+                    <button class="tab-btn active" onclick="switchLargeGraphModel('Lora')" id="btnLargeLora" style="border: none; background: var(--primary); color: #fff; padding: 0.35rem 0.75rem; border-radius: 8px; font-family: var(--font-title); font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: var(--transition);">
+                        NLLB + LoRA
+                    </button>
+                    <button class="tab-btn" onclick="switchLargeGraphModel('Base')" id="btnLargeBase" style="border: none; background: transparent; color: var(--text-muted); padding: 0.35rem 0.75rem; border-radius: 8px; font-family: var(--font-title); font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: var(--transition);">
+                        mBART-50
+                    </button>
+                    <button class="tab-btn" onclick="switchLargeGraphModel('Llama')" id="btnLargeLlama" style="border: none; background: transparent; color: var(--text-muted); padding: 0.35rem 0.75rem; border-radius: 8px; font-family: var(--font-title); font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: var(--transition);">
+                        MarianMT
+                    </button>
+                    <button class="tab-btn" onclick="switchLargeGraphModel('Gemma')" id="btnLargeGemma" style="border: none; background: transparent; color: var(--text-muted); padding: 0.35rem 0.75rem; border-radius: 8px; font-family: var(--font-title); font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: var(--transition);">
+                        mT5-Base
+                    </button>
+                </div>
+            </div>
+
+            <!-- Responsive Layout: 2D Graph on left, Morphological LEGO chain on right -->
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: start;" id="largeGraphContainer">
+                
+                <!-- Left Column: Plano Cartesiano 2D (Graphic) -->
+                <div style="background: rgba(10, 12, 22, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; min-height: 340px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.25rem;">
+                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-arrows-up-down-left-right"></i> Representación Espacio Vectorial Semántico 2D
+                        </span>
+                        <span style="font-size: 0.65rem; color: var(--text-muted); font-style: italic;">
+                            <i class="fa-solid fa-circle-info"></i> Pasa el mouse por las palabras para inspeccionar
+                        </span>
+                    </div>
+                    
+                    <div style="flex: 1; position: relative; width: 100%; height: 260px; background: rgba(0,0,0,0.4); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02);">
+                        <!-- Coordinate grid SVG -->
+                        <svg id="svgLargeSpace" viewBox="0 0 320 200" style="width: 100%; height: 100%;">
+                            <!-- Cartesian lines -->
+                            <line x1="160" y1="0" x2="160" y2="200" stroke="rgba(255,255,255,0.04)" stroke-width="0.75" />
+                            <line x1="0" y1="100" x2="320" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="0.75" />
+                            
+                            <!-- Reference circles of cosine similarity thresholds -->
+                            <circle cx="160" cy="100" r="50" fill="none" stroke="rgba(139, 92, 246, 0.02)" stroke-width="0.75" stroke-dasharray="2,2" />
+                            <circle cx="160" cy="100" r="95" fill="none" stroke="rgba(6, 182, 212, 0.02)" stroke-width="0.75" stroke-dasharray="2,2" />
+                            
+                            <!-- Axis descriptions -->
+                            <text x="300" y="96" fill="rgba(255,255,255,0.2)" font-size="6.5" font-weight="700" text-anchor="end">Dimensión 1 (Léxica)</text>
+                            <text x="165" y="15" fill="rgba(255,255,255,0.2)" font-size="6.5" font-weight="700">Dimensión 2 (Gramatical)</text>
+                            
+                            <!-- Dynamic nodes and links populated by JavaScript -->
+                            <g id="svgGroupLargeSpace"></g>
+                        </svg>
+                    </div>
+                    
+                    <!-- Morphological types color guide -->
+                    <div style="display: flex; gap: 1rem; justify-content: center; font-size: 0.7rem; background: rgba(255,255,255,0.02); padding: 0.4rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02); flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: #93c5fd;">
+                            <span style="display:inline-block; width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 5px #3b82f6;"></span> Raíz Léxica
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: #fbcfe8;">
+                            <span style="display:inline-block; width: 8px; height: 8px; background: #ec4899; border-radius: 50%; box-shadow: 0 0 5px #ec4899;"></span> Sufijo Gramatical
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.35rem; color: #fed7aa;">
+                            <span style="display:inline-block; width: 8px; height: 8px; background: #f97316; border-radius: 50%; box-shadow: 0 0 5px #f97316;"></span> Subpalabra / Fractura
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Estructura Morfológica & Catenaria Gramatical (Grammar) -->
+                <div style="background: rgba(13, 15, 24, 0.45); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; min-height: 340px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.25rem;">
+                        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-puzzle-piece"></i> Estructura Catenaria Morfológica (LEGO)
+                        </span>
+                        <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 500;" id="morphoWordSelectedLabel">
+                            Selecciona una palabra para ver su desglose
+                        </span>
+                    </div>
+
+                    <!-- List of Aymara Words with their chain blocks -->
+                    <div id="morphoChainContainer" style="display: flex; flex-direction: column; gap: 1.2rem; max-height: 280px; overflow-y: auto; padding-right: 0.25rem;">
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: rgba(255,255,255,0.25); font-style: italic; font-size: 0.8rem; text-align: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.8rem; color: var(--primary); opacity: 0.5;"></i>
+                            <span>Realiza una traducción arriba para cargar y descomponer morfológicamente las palabras del idioma de destino.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Live interactive tooltip explanation panel -->
+                    <div id="morphoLiveTooltip" style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: 10px; padding: 0.6rem 0.85rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.45; min-height: 54px; transition: all 0.3s ease;">
+                        <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i>
+                        <span>Coloca el cursor sobre cualquier sub-token (LEGO bloque) de la cadena para revelar su función gramatical andina y traducción literal.</span>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <!-- Panel de Gráficas Chart.js -->
@@ -1630,6 +1940,189 @@
             btnScientific.style.color = '#fff';
         }
     };
+
+    // Toggle Word Analysis
+    window.toggleWordAnalysis = function(modelId) {
+        const drawer = document.getElementById(`drawerWord${modelId}`);
+        const angle = document.getElementById(`angleWord${modelId}`);
+        if (!drawer || !angle) return;
+        if (drawer.style.display === 'none') {
+            drawer.style.display = 'block';
+            angle.style.transform = 'rotate(180deg)';
+        } else {
+            drawer.style.display = 'none';
+            angle.style.transform = 'rotate(0deg)';
+        }
+    };
+
+    function displayWordAnalysis(modelId, wordAnalysis) {
+        const tbody = document.getElementById(`tbodyWord${modelId}`);
+        if (!tbody) return;
+        
+        if (!wordAnalysis || wordAnalysis.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; color: rgba(255,255,255,0.2); font-style: italic; padding: 0.8rem 0;">
+                        Esperando traducción...
+                    </td>
+                </tr>
+            `;
+            const svgGroup = document.getElementById(`svgGroupSpace${modelId}`);
+            if (svgGroup) svgGroup.innerHTML = "";
+            return;
+        }
+        
+        tbody.innerHTML = "";
+        
+        wordAnalysis.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
+            tr.style.transition = 'background 0.2s';
+            
+            // Col 1: Palabra
+            const tdWord = document.createElement('td');
+            tdWord.style.padding = '0.45rem 0.25rem';
+            tdWord.innerHTML = `
+                <div style="font-weight: 700; color: #fff;">${item.word}</div>
+                <div style="color: var(--text-muted); font-size: 0.65rem;">ES: ${item.aligned_word_es}</div>
+            `;
+            tr.appendChild(tdWord);
+            
+            // Col 2: Tokens & IDs
+            const tdTokens = document.createElement('td');
+            tdTokens.style.padding = '0.45rem 0.25rem';
+            
+            const tokenDiv = document.createElement('div');
+            tokenDiv.style.display = 'flex';
+            tokenDiv.style.flexDirection = 'column';
+            tokenDiv.style.gap = '0.2rem';
+            
+            item.tokens.forEach((tok, idx) => {
+                const cat = item.morphology[idx];
+                const badgeClass = cat === 'raiz' ? 'token-raiz' : (cat === 'sufijo' ? 'token-sufijo' : 'token-subpalabra');
+                tokenDiv.innerHTML += `<span class="${badgeClass}" style="display: inline-block; border-radius: 4px; padding: 0.05rem 0.25rem; font-size: 0.65rem; font-weight: 700; max-width: fit-content; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${tok} <span style="font-size: 0.55rem; opacity: 0.6;">#${item.token_ids[idx]}</span></span>`;
+            });
+            tdTokens.appendChild(tokenDiv);
+            
+            // Col 3: Embedding Vector (Dynamic glowing sparklines)
+            const tdVector = document.createElement('td');
+            tdVector.style.padding = '0.45rem 0.25rem';
+            
+            const vecDiv = document.createElement('div');
+            vecDiv.style.display = 'flex';
+            vecDiv.style.alignItems = 'flex-end';
+            vecDiv.style.gap = '2px';
+            vecDiv.style.height = '28px';
+            vecDiv.style.background = 'rgba(0,0,0,0.2)';
+            vecDiv.style.padding = '2px 4px';
+            vecDiv.style.borderRadius = '4px';
+            vecDiv.style.border = '1px solid rgba(255,255,255,0.03)';
+            vecDiv.style.maxWidth = '60px';
+            
+            item.vector.forEach(val => {
+                const height = Math.round(Math.abs(val) * 22) + 2;
+                const color = val >= 0 ? '#8b5cf6' : '#06b6d4';
+                vecDiv.innerHTML += `<span style="display: inline-block; width: 4px; height: ${height}px; background: ${color}; border-radius: 1px; filter: drop-shadow(0 0 1px ${color});" title="Val: ${val}"></span>`;
+            });
+            tdVector.appendChild(vecDiv);
+            
+            // Col 4: Similitud
+            const tdSim = document.createElement('td');
+            tdSim.style.padding = '0.45rem 0.25rem';
+            tdSim.style.textAlign = 'right';
+            
+            const simBadge = item.similarity_pct >= 85 ? 'badge-high' : (item.similarity_pct >= 60 ? 'badge-mid' : 'badge-low');
+            tdSim.innerHTML = `
+                <span class="metric-badge ${simBadge}" style="font-size: 0.68rem; padding: 0.1rem 0.35rem; display: inline-block; text-align: center;">
+                    ${item.similarity_pct}%
+                </span>
+            `;
+            tr.appendChild(tdSim);
+            
+            tbody.appendChild(tr);
+        });
+
+        // Dibujar el plano del espacio vectorial 2D en SVG dinámicamente
+        const svgGroup = document.getElementById(`svgGroupSpace${modelId}`);
+        if (svgGroup) {
+            svgGroup.innerHTML = "";
+            const N = wordAnalysis.length;
+            wordAnalysis.forEach((item, idx) => {
+                const yEs = 20 + idx * (80 / Math.max(N - 1, 1));
+                const xEs = 35;
+                const S = item.similarity_pct / 100;
+                
+                // NLLB+LoRA (Lora) tiene alineación angular casi ideal (Green parallel lines)
+                // Baselines tienen alta dispersión de Y y X reducida (Red/yellow diagonal lines)
+                const xAym = 35 + 120 * S;
+                const yAym = yEs + (1 - S) * 45 * (idx % 2 === 0 ? 1 : -1);
+                const yAymClamped = Math.max(10, Math.min(110, yAym));
+                
+                // 1. Línea de conexión vectorial semántica
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', xEs);
+                line.setAttribute('y1', yEs);
+                line.setAttribute('x2', xAym);
+                line.setAttribute('y2', yAymClamped);
+                
+                let strokeColor = '#ef4444'; // Red (desalineado)
+                if (item.similarity_pct >= 85) strokeColor = '#10b981'; // Green (alineado)
+                else if (item.similarity_pct >= 60) strokeColor = '#eab308'; // Yellow (moderado)
+                
+                line.setAttribute('stroke', strokeColor);
+                line.setAttribute('stroke-width', '0.75');
+                line.setAttribute('stroke-dasharray', '2,2');
+                line.setAttribute('opacity', '0.7');
+                svgGroup.appendChild(line);
+                
+                // 2. Nodo de origen (Español)
+                const circleEs = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circleEs.setAttribute('cx', xEs);
+                circleEs.setAttribute('cy', yEs);
+                circleEs.setAttribute('r', '3');
+                circleEs.setAttribute('fill', '#94a3b8');
+                circleEs.setAttribute('style', 'filter: drop-shadow(0 0 1px #94a3b8);');
+                svgGroup.appendChild(circleEs);
+                
+                // Etiqueta Español
+                const textEs = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                textEs.setAttribute('x', xEs - 5);
+                textEs.setAttribute('y', yEs + 2);
+                textEs.setAttribute('fill', '#94a3b8');
+                textEs.setAttribute('font-size', '5.5');
+                textEs.setAttribute('font-weight', '700');
+                textEs.setAttribute('text-anchor', 'end');
+                textEs.textContent = item.aligned_word_es;
+                svgGroup.appendChild(textEs);
+                
+                // 3. Nodo de destino (Aimara) coloreado morfológicamente
+                const circleAym = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circleAym.setAttribute('cx', xAym);
+                circleAym.setAttribute('cy', yAymClamped);
+                circleAym.setAttribute('r', '3');
+                
+                const firstCat = item.morphology[0] || 'raiz';
+                let nodeColor = '#fb923c'; // Orange (Subpalabra)
+                if (firstCat === 'raiz') nodeColor = '#3b82f6'; // Blue (Raíz)
+                else if (firstCat === 'sufijo') nodeColor = '#ec4899'; // Pink (Sufijo)
+                
+                circleAym.setAttribute('fill', nodeColor);
+                circleAym.setAttribute('style', `filter: drop-shadow(0 0 2px ${nodeColor});`);
+                svgGroup.appendChild(circleAym);
+                
+                // Etiqueta Aimara
+                const textAym = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                textAym.setAttribute('x', xAym + 5);
+                textAym.setAttribute('y', yAymClamped + 2);
+                textAym.setAttribute('fill', '#fff');
+                textAym.setAttribute('font-size', '5.5');
+                textAym.setAttribute('font-weight', '800');
+                textAym.setAttribute('text-anchor', 'start');
+                textAym.textContent = item.word;
+                svgGroup.appendChild(textAym);
+            });
+        }
+    }
 
     // Variables
     const fastApiUrl = "http://127.0.0.1:8000/api";
@@ -1730,9 +2223,19 @@
                 updateVectorSimilarity('Llama', reference !== "" ? data.models.llama.metrics.chrf : null);
                 updateVectorSimilarity('Gemma', reference !== "" ? data.models.gemma.metrics.chrf : null);
 
+                // 6. Mostrar Análisis de Palabras y Embeddings en los drawers
+                displayWordAnalysis('Lora', data.models.lora.word_analysis);
+                displayWordAnalysis('Base', data.models.base.word_analysis);
+                displayWordAnalysis('Llama', data.models.llama.word_analysis);
+                displayWordAnalysis('Gemma', data.models.gemma.word_analysis);
+
                 // Mostrar botón de reproducir opcional para los baselines
                 document.getElementById('btnPlayLlama').style.display = data.models.llama.translation ? "inline-flex" : "none";
                 document.getElementById('btnPlayGemma').style.display = data.models.gemma.translation ? "inline-flex" : "none";
+
+                // Guardar datos globales para el analizador morfológico grande
+                window.lastData = data;
+                window.renderLargeGraphAndMorpho();
 
                 // 4. Actualizar Gráfico
                 if (reference !== "") {
@@ -2030,9 +2533,9 @@
             data: {
                 labels: [
                     'NLLB-200 + LoRA', 
-                    'NLLB-200 Base', 
-                    'Llama-3-8B (LLM)', 
-                    'Gemma-2-9B (LLM)'
+                    'mBART-50 (Meta)', 
+                    'MarianMT (Helsinki)', 
+                    'mT5-Base (Google)'
                 ],
                 datasets: [
                     {
@@ -2120,6 +2623,391 @@
             comparisonChartInstance.data.datasets[1].data = bleuData;
             comparisonChartInstance.data.datasets[2].data = terData;
             comparisonChartInstance.update();
+        }
+    }
+
+    // --- NUEVO SISTEMA LINGÜÍSTICO MORFOLÓGICO & ESPACIO VECTORIAL INTERACTIVO 2D ---
+    window.lastData = null;
+    window.currentLargeModel = "Lora";
+
+    const morphoExplanationMap = {
+        // Suffixes (Aymara)
+        'naka': { role: 'Pluralizador Nominal', desc: 'Indica pluralidad en sustantivos. Ej: wawanaka (niños), llaqtanaka (pueblos).' },
+        'puni': { role: 'Sufijo Enfático / Siempre', desc: 'Denota firmeza, obligatoriedad o continuidad perpetua. Ej: jawirapuni (siempre el río).' },
+        'raki': { role: 'Sufijo Aditivo / También', desc: 'Añade el sentido de "también", o expresa sorpresa/atenuación en preguntas. Ej: nayraki (yo también).' },
+        'saka': { role: 'Sufijo Limitativo / Solo', desc: 'Restringe el significado a "solo" o "únicamente". Ej: wawasaka (solo niños).' },
+        'spa': { role: 'Sufijo Condicional', desc: 'Indica posibilidad gramatical condicional ("si fuera...").' },
+        'wa': { role: 'Sufijo Afirmativo / Evidencial', desc: 'Sufijo fundamental en Aimara. Valida y afirma la oración con certeza personal. Ej: kamisarakiwa (está bien).' },
+        'wan': { role: 'Sufijo Instrumental / Con', desc: 'Expresa compañía o instrumento. Ej: qanwan (contigo), jawilla wan (con invitación).' },
+        'man': { role: 'Sufijo Ilativo / Hacia', desc: 'Indica dirección hacia un punto. Ej: llaqtaman (hacia el pueblo).' },
+        'mi': { role: 'Sufijo Testimonial / Certeza', desc: 'Indica afirmación directa por conocimiento directo.' },
+        'ta': { role: 'Sufijo Ablativo / Desde', desc: 'Indica procedencia u origen ("desde/de"). Ej: Utata (desde la casa).' },
+        'qa': { role: 'Sufijo Tópico / Enfático', desc: 'Define el tema principal del que se habla en la oración.' },
+        'na': { role: 'Sufijo Locativo / En', desc: 'Indica ubicación en el espacio o en el tiempo ("en/sobre"). Ej: chakrana (en la chacra).' },
+        'nki': { role: 'Sufijo Genitivo / De', desc: 'Indica pertenencia o posesión ("de..."). Ej: munasqayki (de tu querer).' },
+        'y': { role: 'Sufijo Posesivo de Primera Persona', desc: 'Indica posesión mía. Ej: sutiy (mi nombre).' },
+        'chik': { role: 'Sufijo Posesivo Plural Inclusivo', desc: 'Indica posesión compartida ("nuestro"). Ej: willawanchik (nos dice a nosotros).' },
+        'sk': { role: 'Sufijo Continuativo / Durativo', desc: 'Expresa una acción en progreso continuo. Ej: manq\'aski (está comiendo).' },
+        'iri': { role: 'Sufijo Agentivo / Actor', desc: 'Transforma un verbo en la persona que realiza la acción. Ej: yatichiri (profesor, el que enseña).' },
+        'pxa': { role: 'Sufijo Pluralizador Verbal', desc: 'Pluraliza la acción del verbo. Ej: aruskipapxañani (hablaremos todos).' },
+        'px': { role: 'Sufijo Pluralizador Verbal', desc: 'Pluraliza la acción del verbo.' },
+        'ña': { role: 'Sufijo Infinitivizador', desc: 'Convierte la raíz verbal en sustantivo o infinitivo. Ej: yatiqaña (aprender).' },
+        'sa': { role: 'Sufijo Posición Colectiva / También', desc: 'Añade sentido de colectividad o conjunción "también".' },
+        'xa': { role: 'Sufijo Tópico / Continuativo', desc: 'Atenúa la declaración o enfoca el sustantivo.' },
+        'pi': { role: 'Sufijo Confirmación / Pues', desc: 'Expresa certeza o confirmación evidente ("pues").' },
+        'r': { role: 'Sufijo Acortado', desc: 'Abreviación morfofonémica en habla rápida.' },
+        'ay': { role: 'Sufijo Afectivo', desc: 'Añade matiz de cariño o cercanía emocional.' },
+        'kuna': { role: 'Pluralizador (Quechuismo)', desc: 'Indica pluralidad en sustantivos.' },
+        'kuta': { role: 'Sufijo Procedencia', desc: 'Indica procedencia u origen geográfico.' },
+        'chu': { role: 'Sufijo Interrogativo / Negativo', desc: 'Se usa para formular preguntas de sí/no, o para negar junto con "jani". Ej: janichu (¿no?).' },
+        'pis': { role: 'Sufijo Concesivo / Incluso', desc: 'Significa "también" o "incluso".' },
+        'pas': { role: 'Sufijo Concesivo / Incluso', desc: 'Significa "también" o "incluso".' },
+        'pa': { role: 'Sufijo Posesivo de Tercera Persona', desc: 'Indica propiedad de él o ella. Ej: utapa (su casa de él).' },
+        'm': { role: 'Sufijo Abreviado', desc: 'Morfema abreviado para fluidez oral.' },
+        'si': { role: 'Sufijo Reflexivo / Recíproco', desc: 'Indica que la acción recae sobre uno mismo o es mutua. Ej: aruskipasiña (hablarse mutuamente).' },
+        'chá': { role: 'Sufijo Conjetural', desc: 'Expresa duda, probabilidad o suposición ("quizás / tal vez").' },
+        'wanpas': { role: 'Inclusivo / Con también', desc: 'Compañía aditiva ("incluso con...").' },
+        'kunqaku': { role: 'Sufijo Verbal Pluralizado Futuro', desc: 'Indica acción que realizarán en el futuro.' },
+
+        // Roots (Aymara & Quechua)
+        'kamisa': { role: 'Raíz Léxica: Saludo / Estado', desc: 'Significa "estado" o "cómo". Base de "Kamisaraki" (¿Cómo estás?).' },
+        'kamisaraki': { role: 'Raíz Léxica: Saludo', desc: 'Saludo completo: "¿Cómo estás?".' },
+        'aruskip': { role: 'Raíz Léxica: Hablar / Comunicar', desc: 'Núcleo verbal para el diálogo recíproco y la conversación.' },
+        'arus': { role: 'Raíz Léxica: Conversar / Hablar', desc: 'Núcleo verbal para la comunicación hablada.' },
+        'chay': { role: 'Raíz Léxica: Ese / Eso', desc: 'Pronombre demostrativo de media distancia.' },
+        'mun': { role: 'Raíz Léxica: Deseo / Amor', desc: 'Núcleo verbal que significa "querer", "desear" o "amar". Ej: muntawa (quiero).' },
+        'wawa': { role: 'Raíz Léxica: Bebé / Niño', desc: 'Sustantivo que representa a un infante o hijo.' },
+        'int': { role: 'Raíz Léxica: Sol', desc: 'Sustantivo que designa al astro rey.' },
+        'lup': { role: 'Raíz Léxica: Sol / Calor', desc: 'Refiere al sol y su irradiación térmica directa.' },
+        'lupi': { role: 'Raíz Léxica: Sol / Luz solar', desc: 'Refiere a la luz del sol.' },
+        'uraq': { role: 'Raíz Léxica: Tierra / Suelo', desc: 'Espacio geográfico, suelo o parcela cultivable.' },
+        'uraqi': { role: 'Raíz Léxica: Tierra / Terreno', desc: 'Espacio geográfico, suelo o parcela cultivable.' },
+        'suti': { role: 'Raíz Léxica: Identidad / Nombre', desc: 'Sustantivo que representa el nombre o denominación.' },
+        'nay': { role: 'Raíz Léxica: Yo', desc: 'Pronombre personal de primera persona singular (Naya).' },
+        'paqa': { role: 'Raíz Léxica: Amanecer / Mañana', desc: 'Refiere a las horas tempranas del día.' },
+        'paqarin': { role: 'Raíz Léxica: Amanecer / Mañana', desc: 'Significa mañana o el amanecer.' },
+        'chayamu': { role: 'Raíz Léxica: Arribar / Llegar', desc: 'Acción de llegar o aproximarse a un destino.' },
+        'sar': { role: 'Raíz Léxica: Caminar / Ir', desc: 'Núcleo del verbo ir. Ej: saraskta (estás yendo).' },
+        'sara': { role: 'Raíz Léxica: Caminar / Ir / Maíz', desc: 'Núcleo del verbo ir o sustantivo maíz.' },
+        'alwa': { role: 'Raíz Léxica: Mañana / Alba', desc: 'Sustantivo para la mañana o el amanecer (de origen español adaptado).' },
+        'alwak': { role: 'Raíz Léxica: Mañana / Alba', desc: 'Sustantivo para la mañana.' },
+        'aski': { role: 'Raíz Léxica: Bueno / Bien', desc: 'Adjetivo calificativo de bondad o correcto estado. Ej: aski uru (buen día).' },
+        'jusp': { role: 'Raíz Léxica: Gratitud', desc: 'Raíz que denota agradecimiento.' },
+        'juspaj': { role: 'Raíz Léxica: Gratitud', desc: 'Raíz que denota agradecimiento.' },
+        'juspajara': { role: 'Raíz Léxica: Agradecimiento', desc: 'Significa "gracias". Deriva de "Dios pagará" adaptado al Aimara.' },
+        'jiki': { role: 'Raíz Léxica: Encuentro', desc: 'Base para la acción de encontrarse o toparse.' },
+        'jikis': { role: 'Raíz Léxica: Encontrarse', desc: 'Base para encontrarse.' },
+        'manq': { role: 'Raíz Léxica: Comer / Alimento', desc: 'Núcleo de comer o comida. Ej: manq\'atatawtwa (tengo hambre).' },
+        'u': { role: 'Raíz de una letra', desc: 'Fragmento de raíz fonémica.' },
+        'ñi': { role: 'Raíz Abreviada', desc: 'Fragmento fonémico.' },
+        'hu': { role: 'Raíz Abreviada', desc: 'Fragmento fonémico.' }
+    };
+
+    window.switchLargeGraphModel = function(modelId) {
+        window.currentLargeModel = modelId;
+        
+        // Actualizar estados visuales de los botones de toggle
+        const buttons = document.querySelectorAll('#largeGraphModelToggle button');
+        buttons.forEach(btn => {
+            if (btn.id === `btnLarge${modelId}`) {
+                btn.style.background = 'var(--primary)';
+                btn.style.color = '#fff';
+                btn.classList.add('active');
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.color = 'var(--text-muted)';
+                btn.classList.remove('active');
+            }
+        });
+
+        // Volver a renderizar con el nuevo modelo seleccionado
+        window.renderLargeGraphAndMorpho();
+    };
+
+    window.renderLargeGraphAndMorpho = function() {
+        const svgGroup = document.getElementById('svgGroupLargeSpace');
+        const chainContainer = document.getElementById('morphoChainContainer');
+        const wordLabel = document.getElementById('morphoWordSelectedLabel');
+        
+        if (!svgGroup || !chainContainer) return;
+
+        // Limpieza previa
+        svgGroup.innerHTML = "";
+        
+        if (!window.lastData) {
+            chainContainer.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: rgba(255,255,255,0.25); font-style: italic; font-size: 0.8rem; text-align: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.8rem; color: var(--primary); opacity: 0.5;"></i>
+                    <span>Realiza una traducción arriba para cargar y descomponer morfológicamente las palabras del idioma de destino.</span>
+                </div>
+            `;
+            return;
+        }
+
+        const modelId = window.currentLargeModel;
+        const key = modelId.toLowerCase();
+        const modelData = window.lastData.models[key];
+        
+        if (!modelData || !modelData.word_analysis || modelData.word_analysis.length === 0) {
+            chainContainer.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: rgba(255,255,255,0.25); font-style: italic; font-size: 0.8rem; text-align: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 1.8rem; color: var(--accent); opacity: 0.5;"></i>
+                    <span>No hay datos de análisis de palabras disponibles para ${modelData ? modelData.name : modelId}.</span>
+                </div>
+            `;
+            return;
+        }
+
+        const wordAnalysis = modelData.word_analysis;
+        const N = wordAnalysis.length;
+        wordLabel.innerText = `Visualizando desglose de ${modelData.name}`;
+
+        // 1. RENDERIZADO DEL GRÁFICO 2D (ESPACIO VECTORIAL SEMÁNTICO GRANDE)
+        wordAnalysis.forEach((item, idx) => {
+            const yEs = 25 + idx * (150 / Math.max(N - 1, 1));
+            const xEs = 60;
+            const S = item.similarity_pct / 100;
+            
+            // Proyección geométrica
+            const xAym = 60 + 200 * S;
+            const yAym = yEs + (1 - S) * 60 * (idx % 2 === 0 ? 1 : -1);
+            const yAymClamped = Math.max(15, Math.min(185, yAym));
+            
+            // A. Línea de conexión con láser de neón
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', xEs);
+            line.setAttribute('y1', yEs);
+            line.setAttribute('x2', xAym);
+            line.setAttribute('y2', yAymClamped);
+            
+            let strokeColor = '#ef4444'; // Rojo (Malo)
+            let glowColor = 'rgba(239, 68, 68, 0.4)';
+            if (item.similarity_pct >= 85) {
+                strokeColor = '#10b981'; // Verde (SOTA)
+                glowColor = 'rgba(16, 185, 129, 0.4)';
+            } else if (item.similarity_pct >= 60) {
+                strokeColor = '#f59e0b'; // Amarillo (Moderado)
+                glowColor = 'rgba(245, 158, 11, 0.4)';
+            }
+            
+            line.setAttribute('stroke', strokeColor);
+            line.setAttribute('stroke-width', '1.0');
+            line.setAttribute('stroke-dasharray', item.similarity_pct >= 85 ? 'none' : '3,3');
+            line.setAttribute('style', `filter: drop-shadow(0 0 3px ${strokeColor}); transition: all 0.3s; opacity: 0.75; cursor: pointer;`);
+            
+            // Eventos interactivos en la línea
+            line.addEventListener('mouseenter', () => {
+                line.setAttribute('stroke-width', '2.0');
+                line.setAttribute('opacity', '1.0');
+                highlightMorphoRow(idx, true);
+            });
+            line.addEventListener('mouseleave', () => {
+                line.setAttribute('stroke-width', '1.0');
+                line.setAttribute('opacity', '0.75');
+                highlightMorphoRow(idx, false);
+            });
+            
+            svgGroup.appendChild(line);
+            
+            // B. Nodo de Origen (Español)
+            const circleEs = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circleEs.setAttribute('cx', xEs);
+            circleEs.setAttribute('cy', yEs);
+            circleEs.setAttribute('r', '4');
+            circleEs.setAttribute('fill', '#94a3b8');
+            circleEs.setAttribute('style', 'filter: drop-shadow(0 0 2px #94a3b8); cursor: pointer;');
+            
+            // Hover sobre nodo español
+            circleEs.addEventListener('mouseenter', () => highlightMorphoRow(idx, true));
+            circleEs.addEventListener('mouseleave', () => highlightMorphoRow(idx, false));
+            svgGroup.appendChild(circleEs);
+            
+            // Etiqueta Español
+            const textEs = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textEs.setAttribute('x', xEs - 8);
+            textEs.setAttribute('y', yEs + 2.5);
+            textEs.setAttribute('fill', '#94a3b8');
+            textEs.setAttribute('font-size', '7.5');
+            textEs.setAttribute('font-weight', '700');
+            textEs.setAttribute('text-anchor', 'end');
+            textEs.setAttribute('style', 'pointer-events: none;');
+            textEs.textContent = item.aligned_word_es;
+            svgGroup.appendChild(textEs);
+            
+            // C. Nodo de Destino (Aimara) coloreado morfológicamente
+            const circleAym = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circleAym.setAttribute('cx', xAym);
+            circleAym.setAttribute('cy', yAymClamped);
+            circleAym.setAttribute('r', '4.5');
+            
+            const firstCat = item.morphology[0] || 'raiz';
+            let nodeColor = '#fb923c'; // Naranja
+            if (firstCat === 'raiz') nodeColor = '#3b82f6'; // Azul
+            else if (firstCat === 'sufijo') nodeColor = '#ec4899'; // Rosa
+            
+            circleAym.setAttribute('fill', nodeColor);
+            circleAym.setAttribute('style', `filter: drop-shadow(0 0 4px ${nodeColor}); cursor: pointer; transition: transform 0.2s;`);
+            
+            // Eventos sobre nodo Aymara
+            circleAym.addEventListener('mouseenter', () => {
+                circleAym.setAttribute('transform', `translate(${xAym}, ${yAymClamped}) scale(1.3) translate(${-xAym}, ${-yAymClamped})`);
+                highlightMorphoRow(idx, true);
+            });
+            circleAym.addEventListener('mouseleave', () => {
+                circleAym.setAttribute('transform', '');
+                highlightMorphoRow(idx, false);
+            });
+            svgGroup.appendChild(circleAym);
+            
+            // Etiqueta Aimara
+            const textAym = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textAym.setAttribute('x', xAym + 8);
+            textAym.setAttribute('y', yAymClamped + 2.5);
+            textAym.setAttribute('fill', '#fff');
+            textAym.setAttribute('font-size', '8.0');
+            textAym.setAttribute('font-weight', '800');
+            textAym.setAttribute('text-anchor', 'start');
+            textAym.setAttribute('style', 'pointer-events: none; filter: drop-shadow(0 0 2px rgba(0,0,0,0.8));');
+            textAym.textContent = item.word;
+            svgGroup.appendChild(textAym);
+        });
+
+        // 2. RENDERIZADO DEL DESGLOSE GRAMATICAL DE LAS COORDENADAS (CADENA DE LEGO)
+        chainContainer.innerHTML = "";
+        
+        wordAnalysis.forEach((item, idx) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.id = `morphoRow-${idx}`;
+            rowDiv.style.background = 'rgba(255,255,255,0.02)';
+            rowDiv.style.border = '1px solid rgba(255,255,255,0.03)';
+            rowDiv.style.borderRadius = '14px';
+            rowDiv.style.padding = '0.75rem';
+            rowDiv.style.display = 'flex';
+            rowDiv.style.flexDirection = 'column';
+            rowDiv.style.gap = '0.5rem';
+            rowDiv.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Título de la alineación
+            const titleDiv = document.createElement('div');
+            titleDiv.style.display = 'flex';
+            titleDiv.style.justifyContent = 'space-between';
+            titleDiv.style.alignItems = 'center';
+            titleDiv.innerHTML = `
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <span style="font-weight: 800; color: #fff; font-size: 0.85rem;">${item.word}</span>
+                    <i class="fa-solid fa-arrows-left-right" style="color: var(--accent); font-size:0.65rem;"></i>
+                    <span style="color: var(--text-muted); font-size: 0.72rem;">ES: <strong>${item.aligned_word_es}</strong></span>
+                </div>
+                <span class="metric-badge ${item.similarity_pct >= 85 ? 'badge-high' : (item.similarity_pct >= 60 ? 'badge-mid' : 'badge-low')}" style="font-size:0.62rem; padding: 0.05rem 0.35rem;">
+                    Similitud: ${item.similarity_pct}%
+                </span>
+            `;
+            rowDiv.appendChild(titleDiv);
+            
+            // Catenaria de bloques LEGO
+            const catenariaDiv = document.createElement('div');
+            catenariaDiv.style.display = 'flex';
+            catenariaDiv.style.alignItems = 'center';
+            catenariaDiv.style.gap = '0.35rem';
+            catenariaDiv.style.flexWrap = 'wrap';
+            catenariaDiv.style.background = 'rgba(0,0,0,0.15)';
+            catenariaDiv.style.padding = '0.4rem';
+            catenariaDiv.style.borderRadius = '10px';
+            catenariaDiv.style.border = '1px solid rgba(255,255,255,0.01)';
+            
+            item.tokens.forEach((tok, subIdx) => {
+                const category = item.morphology[subIdx];
+                const cleanTok = tok.replace(/^[ ##_]+|[ ##_]+$/g, '').toLowerCase();
+                
+                let badgeStyle = '';
+                let iconClass = 'fa-cube';
+                let typeLabel = 'Raíz';
+                
+                if (category === 'raiz') {
+                    badgeStyle = 'background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.3) 100%); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd; box-shadow: 0 0 8px rgba(59, 130, 246, 0.15);';
+                    iconClass = 'fa-cube';
+                    typeLabel = 'Raíz';
+                } else if (category === 'sufijo') {
+                    badgeStyle = 'background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(219, 39, 119, 0.3) 100%); border: 1px solid rgba(236, 72, 153, 0.4); color: #fbcfe8; box-shadow: 0 0 8px rgba(236, 72, 153, 0.15);';
+                    iconClass = 'fa-link';
+                    typeLabel = 'Sufijo';
+                } else {
+                    badgeStyle = 'background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.25) 100%); border: 1px solid rgba(249, 115, 22, 0.4); color: #fed7aa; box-shadow: 0 0 8px rgba(249, 115, 22, 0.1);';
+                    iconClass = 'fa-triangle-exclamation';
+                    typeLabel = 'Sub';
+                }
+                
+                // Pill element
+                const pill = document.createElement('div');
+                pill.setAttribute('style', `padding: 0.2rem 0.45rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; cursor: help; transition: all 0.2s; ${badgeStyle}`);
+                pill.innerHTML = `<i class="fa-solid ${iconClass}" style="font-size:0.6rem;"></i> <span>${tok}</span>`;
+                
+                // Hover interactive tooltip updating
+                pill.addEventListener('mouseenter', () => {
+                    pill.style.transform = 'translateY(-1px) scale(1.05)';
+                    pill.style.filter = 'brightness(1.2)';
+                    
+                    // Buscar explicación didáctica en el map
+                    let expl = { role: `${typeLabel} de Palabra`, desc: `Morfema individual fragmentado '${tok}'.` };
+                    if (morphoExplanationMap[cleanTok]) {
+                        expl = morphoExplanationMap[cleanTok];
+                    }
+                    
+                    const tooltipEl = document.getElementById('morphoLiveTooltip');
+                    tooltipEl.style.background = category === 'raiz' ? 'rgba(59, 130, 246, 0.08)' : (category === 'sufijo' ? 'rgba(236, 72, 153, 0.08)' : 'rgba(249, 115, 22, 0.08)');
+                    tooltipEl.style.borderColor = category === 'raiz' ? 'rgba(59, 130, 246, 0.3)' : (category === 'sufijo' ? 'rgba(236, 72, 153, 0.3)' : 'rgba(249, 115, 22, 0.3)');
+                    tooltipEl.innerHTML = `
+                        <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                            <strong style="color:#fff; font-size:0.78rem; display:flex; align-items:center; gap:0.3rem;">
+                                <i class="fa-solid ${iconClass}"></i> Bloque '${tok}': ${expl.role}
+                            </strong>
+                            <span style="color:#e5e7eb; font-size:0.72rem;">${expl.desc}</span>
+                        </div>
+                    `;
+                });
+                
+                pill.addEventListener('mouseleave', () => {
+                    pill.style.transform = '';
+                    pill.style.filter = '';
+                    
+                    const tooltipEl = document.getElementById('morphoLiveTooltip');
+                    tooltipEl.style.background = 'rgba(139, 92, 246, 0.05)';
+                    tooltipEl.style.borderColor = 'rgba(139, 92, 246, 0.15)';
+                    tooltipEl.innerHTML = `
+                        <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i>
+                        <span>Coloca el cursor sobre cualquier sub-token (LEGO bloque) de la cadena para revelar su función gramatical andina y traducción literal.</span>
+                    `;
+                });
+                
+                catenariaDiv.appendChild(pill);
+                
+                // Draw connect arrow if not the last block
+                if (subIdx < item.tokens.length - 1) {
+                    const arrow = document.createElement('i');
+                    arrow.className = 'fa-solid fa-arrow-right-long';
+                    arrow.setAttribute('style', 'font-size: 0.65rem; color: rgba(255,255,255,0.15); margin: 0 0.05rem;');
+                    catenariaDiv.appendChild(arrow);
+                }
+            });
+            
+            rowDiv.appendChild(catenariaDiv);
+            chainContainer.appendChild(rowDiv);
+        });
+    };
+
+    function highlightMorphoRow(idx, active) {
+        const row = document.getElementById(`morphoRow-${idx}`);
+        if (!row) return;
+        if (active) {
+            row.style.background = 'rgba(139, 92, 246, 0.06)';
+            row.style.borderColor = 'rgba(139, 92, 246, 0.25)';
+            row.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+            row.style.transform = 'translateX(4px)';
+        } else {
+            row.style.background = 'rgba(255,255,255,0.02)';
+            row.style.borderColor = 'rgba(255,255,255,0.03)';
+            row.style.boxShadow = 'none';
+            row.style.transform = '';
         }
     }
 </script>

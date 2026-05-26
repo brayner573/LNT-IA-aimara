@@ -687,7 +687,7 @@
         <div id="sciStep4" class="step-content-card">
             <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
                 <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: var(--primary);"></i> 4. Vectores de Palabras y Espacio Semántico
+                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: #8b5cf6;"></i> 4. Vectores de Palabras y Espacio Semántico
                 </h4>
                 <p>
                     Al proyectar los tokens en el hiperespacio de 1024 dimensiones, los conceptos que comparten significados semánticos equivalentes o complementarios se agrupan geométricamente muy cerca unos de otros.
@@ -699,31 +699,93 @@
                     <strong>Similitud Coseno:</strong> Se calcula el coseno del ángulo entre ambos vectores en el espacio de Hilbert 1024-D para determinar la proximidad matemática del significado.
                 </p>
             </div>
-            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.6rem;">
-                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--primary); font-weight: 700; letter-spacing: 0.5px;">Espacio Semántico Compartido (1024-D)</div>
+            <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 1.25rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.6);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <span style="text-transform: uppercase; font-size: 0.68rem; color: #8b5cf6; font-weight: 700; letter-spacing: 0.5px;">Visualización del Espacio Semántico (Proyección t-SNE / PCA)</span>
+                    <button onclick="animateVectors()" style="background: rgba(139, 92, 246, 0.15); border: 1px solid #8b5cf6; color: #fff; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fa-solid fa-play"></i> Simular Proyección
+                    </button>
+                </div>
                 
-                <svg viewBox="0 0 200 100" style="width: 100%; height: 75px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                    <!-- Gridlines -->
-                    <line x1="20" y1="10" x2="20" y2="90" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
-                    <line x1="20" y1="90" x2="190" y2="90" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="3,3" />
-                    
-                    <!-- Vectors -->
-                    <line x1="20" y1="90" x2="110" y2="25" stroke="var(--primary)" stroke-width="1.5" />
-                    <line x1="20" y1="90" x2="125" y2="35" stroke="var(--accent)" stroke-width="1.5" />
-                    
-                    <circle cx="110" cy="25" r="3" fill="var(--primary)" />
-                    <circle cx="125" cy="35" r="3" fill="var(--accent)" />
-                    
-                    <!-- Labels -->
-                    <text x="115" y="20" fill="#fff" font-size="7" font-weight="700">"hola" (ES)</text>
-                    <text x="130" y="45" fill="var(--accent)" font-size="7" font-weight="700">"kamisaraki" (AYM)</text>
-                    <text x="35" y="70" fill="var(--text-muted)" font-size="7">θ ≈ 5.2° (cos θ ≈ 0.996)</text>
-                </svg>
+                <div style="position: relative; width: 100%; height: 180px; background: rgba(10, 12, 22, 0.5); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03);">
+                    <svg id="vectorSpaceSvg" viewBox="0 0 300 180" style="width: 100%; height: 100%;">
+                        <!-- Gridlines -->
+                        <line x1="150" y1="0" x2="150" y2="180" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                        <line x1="0" y1="90" x2="300" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                        
+                        <circle cx="150" cy="90" r="40" fill="none" stroke="rgba(139, 92, 246, 0.05)" stroke-width="1" stroke-dasharray="2,2" />
+                        <circle cx="150" cy="90" r="80" fill="none" stroke="rgba(6, 182, 212, 0.05)" stroke-width="1" stroke-dasharray="2,2" />
+                        
+                        <!-- Axis labels -->
+                        <text x="285" y="85" fill="rgba(255,255,255,0.2)" font-size="6" font-weight="700">Dim 1</text>
+                        <text x="155" y="15" fill="rgba(255,255,255,0.2)" font-size="6" font-weight="700">Dim 2</text>
+                        
+                        <!-- Clúster Saludos (Violeta/Cian) -->
+                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
+                            <line x1="150" y1="90" x2="80" y2="50" stroke="#8b5cf6" stroke-width="1.2" stroke-opacity="0.4" />
+                            <line x1="150" y1="90" x2="72" y2="53" stroke="#06b6d4" stroke-width="1.2" stroke-opacity="0.4" />
+                            
+                            <circle cx="80" cy="50" r="4" fill="#8b5cf6" style="filter: drop-shadow(0 0 4px #8b5cf6);" />
+                            <circle cx="72" cy="53" r="4" fill="#06b6d4" style="filter: drop-shadow(0 0 4px #06b6d4);" />
+                            
+                            <text x="86" y="48" fill="#fff" font-size="7" font-weight="700">"hola" (ES)</text>
+                            <text x="35" y="63" fill="#a5f3fc" font-size="7" font-weight="700">"kamisaraki" (AYM)</text>
+                        </g>
+                        
+                        <!-- Clúster Pronombres (Verde) -->
+                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
+                            <line x1="150" y1="90" x2="220" y2="40" stroke="#10b981" stroke-width="1.2" stroke-opacity="0.4" />
+                            <line x1="150" y1="90" x2="228" y2="38" stroke="#34d399" stroke-width="1.2" stroke-opacity="0.4" />
+                            
+                            <circle cx="220" cy="40" r="4" fill="#10b981" />
+                            <circle cx="228" cy="38" r="4" fill="#34d399" />
+                            
+                            <text x="200" y="32" fill="#fff" font-size="7" font-weight="700">"yo" (ES)</text>
+                            <text x="234" y="44" fill="#a7f3d0" font-size="7" font-weight="700">"naya" (AYM)</text>
+                        </g>
+                        
+                        <!-- Clúster Familia (Amarillo) -->
+                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
+                            <line x1="150" y1="90" x2="190" y2="130" stroke="#f59e0b" stroke-width="1.2" stroke-opacity="0.4" />
+                            <line x1="150" y1="90" x2="198" y2="135" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4" />
+                            
+                            <circle cx="190" cy="130" r="4" fill="#f59e0b" />
+                            <circle cx="198" cy="135" r="4" fill="#fbbf24" />
+                            
+                            <text x="154" y="126" fill="#fff" font-size="7" font-weight="700">"madre" (ES)</text>
+                            <text x="204" y="142" fill="#fde68a" font-size="7" font-weight="700">"tayka" (AYM)</text>
+                        </g>
+
+                        <!-- Clúster Verbos (Rojo/Rosa) -->
+                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
+                            <line x1="150" y1="90" x2="70" y2="120" stroke="#ec4899" stroke-width="1.2" stroke-opacity="0.4" />
+                            <line x1="150" y1="90" x2="62" y2="125" stroke="#f472b6" stroke-width="1.2" stroke-opacity="0.4" />
+                            
+                            <circle cx="70" cy="120" r="4" fill="#ec4899" />
+                            <circle cx="62" cy="125" r="4" fill="#f472b6" />
+                            
+                            <text x="76" y="118" fill="#fff" font-size="7" font-weight="700">"hablar" (ES)</text>
+                            <text x="28" y="135" fill="#fbcfe8" font-size="7" font-weight="700">"aruskipaña" (AYM)</text>
+                        </g>
+                    </svg>
+                </div>
                 
-                <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35;">
-                    <i class="fa-solid fa-circle-nodes" style="color: var(--primary);"></i> <strong>Alineación Translingüística:</strong> Mapear ideas análogas de oraciones paralelas a vectores adyacentes optimiza drásticamente la capacidad sintáctica del decodificador.
+                <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.35; display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.02); padding: 0.4rem 0.6rem; border-radius: 8px;">
+                    <i class="fa-solid fa-circle-info" style="color: #8b5cf6;"></i>
+                    <span><strong>Proximidad Semántica:</strong> Pulsa en <em>"Simular Proyección"</em> para observar cómo el pre-entrenamiento de NLLB-200 alinea la semántica de palabras equivalentes.</span>
                 </div>
             </div>
+            
+            <script>
+                window.animateVectors = function() {
+                    const nodes = document.querySelectorAll('.vector-node');
+                    nodes.forEach((node, index) => {
+                        const rx = (Math.random() - 0.5) * 8;
+                        const ry = (Math.random() - 0.5) * 8;
+                        node.style.transform = `translate(${rx}px, ${ry}px)`;
+                    });
+                };
+            </script>
         </div>
 
         <!-- Step 5 Content -->

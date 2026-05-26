@@ -426,27 +426,387 @@
 
     <!-- Pestaña 2: Explicación Científica (NLP & PEFT) -->
     <div id="tabContentScientific" class="tab-content-panel" style="display: none;">
-        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: center;">
+        <style>
+            .stepper-container {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 1.25rem;
+                justify-content: space-between;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            .step-tab {
+                flex: 1;
+                min-width: 130px;
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 0.6rem 0.5rem;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.3rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            }
+            .step-tab:hover {
+                background: rgba(139, 92, 246, 0.06);
+                border-color: rgba(139, 92, 246, 0.3);
+                transform: translateY(-2px);
+            }
+            .step-tab.active {
+                background: rgba(139, 92, 246, 0.12);
+                border-color: var(--primary);
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+            }
+            .step-tab .step-number {
+                font-family: var(--font-title);
+                font-weight: 800;
+                font-size: 0.8rem;
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.06);
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+            .step-tab.active .step-number {
+                background: var(--primary);
+                color: #fff;
+                box-shadow: 0 0 8px var(--primary);
+            }
+            .step-tab .step-label {
+                font-family: var(--font-title);
+                font-weight: 700;
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                text-align: center;
+                transition: all 0.3s ease;
+            }
+            .step-tab.active .step-label {
+                color: #fff;
+            }
+            
+            /* Content Step Styles */
+            .step-content-card {
+                background: rgba(13, 15, 24, 0.35);
+                border: 1px solid rgba(139, 92, 246, 0.15);
+                border-radius: 18px;
+                padding: 1.5rem;
+                min-height: 280px;
+                display: none;
+                animation: fadeIn 0.4s ease-out;
+            }
+            .step-content-card.active {
+                display: grid;
+                grid-template-columns: 1.25fr 1fr;
+                gap: 1.5rem;
+                align-items: center;
+            }
+            
+            @media (max-width: 768px) {
+                .step-content-card.active {
+                    grid-template-columns: 1fr;
+                }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(8px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+
+        <!-- Stepper Row -->
+        <div class="stepper-container">
+            <button class="step-tab active" onclick="switchSciStep(1)">
+                <span class="step-number">1</span>
+                <span class="step-label">Corpus Paralelo</span>
+            </button>
+            <button class="step-tab" onclick="switchSciStep(2)">
+                <span class="step-number">2</span>
+                <span class="step-label">Tokenización</span>
+            </button>
+            <button class="step-tab" onclick="switchSciStep(3)">
+                <span class="step-number">3</span>
+                <span class="step-label">Embedding</span>
+            </button>
+            <button class="step-tab" onclick="switchSciStep(4)">
+                <span class="step-number">4</span>
+                <span class="step-label">Vectores</span>
+            </button>
+            <button class="step-tab" onclick="switchSciStep(5)">
+                <span class="step-number">5</span>
+                <span class="step-label">Arquitectura</span>
+            </button>
+            <button class="step-tab" onclick="switchSciStep(6)">
+                <span class="step-number">6</span>
+                <span class="step-label">Fine-Tuning LoRA</span>
+            </button>
+        </div>
+
+        <!-- Step 1 Content -->
+        <div id="sciStep1" class="step-content-card active">
             <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-database" style="color: var(--accent);"></i> 1. El Corpus Paralelo: Cimiento del NMT
+                </h4>
                 <p>
-                    A nivel matemático y computacional, el pipeline ejecuta tres fases de inferencia profunda asíncrona optimizada para GPU local <strong>NVIDIA RTX 5060</strong>:
+                    Un corpus paralelo consiste en un conjunto de oraciones equivalentes en idioma origen (Español) y destino (Aimara), alineadas de manera precisa línea a línea. Es el insumo fundamental sobre el cual se entrenan los modelos de traducción.
                 </p>
-                <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem;">
-                    <li><strong>Whisper ASR (👂):</strong> Transcribe la voz mono-PCM de 16kHz a texto utilizando capas convolucionales y auto-atención Transformer Seq2Seq.</li>
-                    <li><strong>NLLB-200 NMT + LoRA PEFT (🧠):</strong> Utiliza embeddings SentencePiece de 256k vocabulario. El codificador BART genera auto-atención mutua bidireccional. Congelamos los pesos pre-entrenados del modelo e inyectamos matrices de bajo rango entrenables $B \times A$ ($r=16$) en las capas de Proyección de Atención ($W_q$, $W_v$).</li>
-                    <li><strong>Meta MMS TTS ayr (🗣️):</strong> Síntesis generativa VITS (Variational Inference with adversarial learning) acoplado a un modelador de flujo estocástico que sintetiza el audio Aimara final.</li>
+                <p>
+                    Para este desarrollo, utilizamos el corpus de la ponencia <strong>AmericasNLP</strong> enfocado en Aimara Central. El preprocesamiento científico incluye:
+                </p>
+                <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                    <li><strong>Control de Calidad Riguroso:</strong> Eliminación de duplicados, líneas vacías y secuencias con caracteres corrompidos.</li>
+                    <li><strong>Filtro de Ratio de Longitud Extremo:</strong> Se descartan pares que no cumplan con el ratio de longitud relativa: <span style="font-family: monospace; color: var(--accent); font-weight: 600;">0.25 &lt; (Largo_ES / Largo_AYM) &lt; 4.0</span>. Esto previene que el mecanismo de atención intente mapear conceptos dispares.</li>
                 </ul>
             </div>
-            <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; justify-content: center; height: 100%;">
-                <div style="font-family: 'Courier New', monospace; font-size: 0.82rem; color: #fff; text-align: center; font-weight: 700; background: rgba(139, 92, 246, 0.1); border: 1px solid var(--primary); padding: 0.5rem; border-radius: 8px;">
-                    Matemática de LoRA PEFT:<br>
-                    <span style="color: var(--accent);">$W\' = W_0 + \Delta W = W_0 + \frac{\alpha}{r} (B \cdot A)$</span>
-                </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-                    <i class="fa-solid fa-microchip" style="color: var(--accent);"></i> Al congelar el 99.6% de los 600M de parámetros de NLLB y entrenar únicamente las matrices de rango bajo $r=16$, evitamos el <strong>olvido catastrófico</strong>. Esto posibilita que el traductor converge robustamente con solo ~18 MB de adaptadores entrenados sobre la GPU de la PC.
+            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem;">
+                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--accent); font-weight: 700; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Alineación de Muestra (LNT-IA Dataset)</div>
+                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div style="background: rgba(255,255,255,0.02); border-left: 2px solid var(--accent); padding: 0.4rem 0.6rem; border-radius: 0 6px 6px 0;">
+                        <div style="color: var(--text-muted); font-size: 0.72rem;">Español (ES)</div>
+                        <div style="color: #fff; font-weight: 500;">Hola, ¿cómo estás?</div>
+                        <div style="color: var(--text-muted); font-size: 0.72rem; margin-top: 0.25rem;">Aimara (AYM)</div>
+                        <div style="color: var(--accent); font-weight: 600;">Kamisaraki</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border-left: 2px solid var(--primary); padding: 0.4rem 0.6rem; border-radius: 0 6px 6px 0;">
+                        <div style="color: var(--text-muted); font-size: 0.72rem;">Español (ES)</div>
+                        <div style="color: #fff; font-weight: 500;">Nosotros hablaremos en aimara siempre.</div>
+                        <div style="color: var(--text-muted); font-size: 0.72rem; margin-top: 0.25rem;">Aimara (AYM)</div>
+                        <div style="color: var(--primary); font-weight: 600;">Jiwasax jichhax aymarat aruskipapxapxäsa.</div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Step 2 Content -->
+        <div id="sciStep2" class="step-content-card">
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-scissors" style="color: var(--primary);"></i> 2. La Tokenización de Subpalabras
+                </h4>
+                <p>
+                    La tokenización traduce texto libre a índices numéricos discretos que el modelo procesa. En lugar de procesar caracteres independientes o palabras completas, se utilizan algoritmos de <strong>subpalabras</strong>.
+                </p>
+                <p>
+                    <strong>SentencePiece (Unigram):</strong> Es el modelo predeterminado de NLLB-200. Trata los espacios en blanco como caracteres normales (representados por `_`) y segmenta morfológicamente. En lenguas altamente aglutinantes como el Aimara, aísla correctamente raíces de múltiples sufijos secuenciales (ej: <span style="color:#22c55e; font-weight:700;">-naka</span>, <span style="color:#22c55e; font-weight:700;">-wa</span>).
+                </p>
+                <p>
+                    <strong>El Problema de BPE (LLMs):</strong> Llama-3-8B utiliza Tiktoken BPE entrenado para inglés/código. Al no conocer la gramática aglutinante, fragmenta las palabras aimaras en astillas sin sentido de dos letras, colapsando el rendimiento sintáctico.
+                </p>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem;">
+                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--primary); font-weight: 700; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Segmentación de "aruskipapxañanakasakipunirakispawa"</div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                            <span><i class="fa-solid fa-square-check" style="color:#22c55e;"></i> NLLB-200 (SentencePiece)</span>
+                            <strong style="color: #22c55e;">11 tokens (Morfología Preservada)</strong>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.2rem; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); padding: 0.4rem; border-radius: 6px;">
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">arus</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">ki</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">pap</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">xa</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">ña</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">naka</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">saka</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">puni</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">raki</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">spa</span>
+                            <span style="background:rgba(255,255,255,0.06); padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem; border:1px solid rgba(255,255,255,0.1);">wa</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                            <span><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent);"></i> Llama-3-8B (BPE Tiktoken)</span>
+                            <strong style="color: var(--accent);">17 tokens (Sobrefragmentado)</strong>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.2rem; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); padding: 0.4rem; border-radius: 6px;">
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ar</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">usk</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ip</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ap</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">xa</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ñ</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">an</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ak</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">as</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ak</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ip</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">un</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ir</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">ak</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">is</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">pa</span>
+                            <span style="background:rgba(255,255,255,0.03); padding:0.1rem 0.2rem; border-radius:4px; font-size:0.65rem; color:#a5f3fc; border:1px solid rgba(6, 182, 212, 0.1);">wa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 Content -->
+        <div id="sciStep3" class="step-content-card">
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-link" style="color: var(--accent);"></i> 3. El Embedding: Puente al Espacio Vectorial
+                </h4>
+                <p>
+                    Las neuronas computan con tensores continuos, no con enteros de vocabulario. El **Embedding** mapea cada Token ID a un vector denso de alta dimensión en base al índice de su matriz.
+                </p>
+                <p>
+                    En el codificador de NLLB-200, la representación interna tiene una dimensionalidad de <strong>1024 características continuas</strong> ($d_{model} = 1024$).
+                </p>
+                <p>
+                    <strong>Positional Encoding (Codificación Posicional):</strong> Dado que los Transformers carecen de recurrencia secuencial intrínseca, procesan tokens en paralelo. Para inyectar el orden lógico gramatical de las palabras, sumamos directamente una onda sinusoidal y cosinusoidal a los vectores de embeddings:
+                </p>
+                <div style="font-family: monospace; font-size: 0.75rem; color: #a5f3fc; padding-left: 0.5rem;">
+                    Vector_Final = Embedding(Token_ID) + Positional_Encoding(Pos)
+                </div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--accent); font-weight: 700; letter-spacing: 0.5px;">Fórmula del Codificador Posicional</div>
+                <div style="font-family: 'Courier New', monospace; font-size: 0.8rem; background: rgba(6, 182, 212, 0.08); border: 1px solid var(--accent); padding: 0.5rem; border-radius: 8px; color: #fff; text-align: center; font-weight: bold;">
+                    PE(pos, 2i) = sin(pos / 10000<sup>2i/d</sup>)<br>
+                    PE(pos, 2i+1) = cos(pos / 10000<sup>2i/d</sup>)
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;">
+                    <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Sumando estas funciones a los embeddings se genera un mapa de calor secuencial que permite al Transformer inferir la sintaxis lógica.
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4 Content -->
+        <div id="sciStep4" class="step-content-card">
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: var(--primary);"></i> 4. Vectores de Palabras y Espacio Semántico
+                </h4>
+                <p>
+                    Al proyectar los tokens en el hiperespacio de 1024 dimensiones, los conceptos que comparten significados semánticos equivalentes o complementarios se agrupan geométricamente muy cerca unos de otros.
+                </p>
+                <p>
+                    Esto faculta al traductor a unificar representaciones de distintos idiomas: oraciones como <strong>"hola" (Español)</strong> y <strong>"kamisaraki" (Aimara)</strong> se proyectan en la misma región del espacio vectorial de embeddings cruzados de NLLB-200.
+                </p>
+                <p>
+                    <strong>Similitud Coseno:</strong> Se calcula el coseno del ángulo entre ambos vectores en el espacio de Hilbert 1024-D para determinar la proximidad matemática del significado.
+                </p>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--primary); font-weight: 700; letter-spacing: 0.5px;">Espacio Semántico Compartido (1024-D)</div>
+                
+                <svg viewBox="0 0 200 100" style="width: 100%; height: 75px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                    <!-- Gridlines -->
+                    <line x1="20" y1="10" x2="20" y2="90" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+                    <line x1="20" y1="90" x2="190" y2="90" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="3,3" />
+                    
+                    <!-- Vectors -->
+                    <line x1="20" y1="90" x2="110" y2="25" stroke="var(--primary)" stroke-width="1.5" />
+                    <line x1="20" y1="90" x2="125" y2="35" stroke="var(--accent)" stroke-width="1.5" />
+                    
+                    <circle cx="110" cy="25" r="3" fill="var(--primary)" />
+                    <circle cx="125" cy="35" r="3" fill="var(--accent)" />
+                    
+                    <!-- Labels -->
+                    <text x="115" y="20" fill="#fff" font-size="7" font-weight="700">"hola" (ES)</text>
+                    <text x="130" y="45" fill="var(--accent)" font-size="7" font-weight="700">"kamisaraki" (AYM)</text>
+                    <text x="35" y="70" fill="var(--text-muted)" font-size="7">θ ≈ 5.2° (cos θ ≈ 0.996)</text>
+                </svg>
+                
+                <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35;">
+                    <i class="fa-solid fa-circle-nodes" style="color: var(--primary);"></i> <strong>Alineación Translingüística:</strong> Mapear ideas análogas de oraciones paralelas a vectores adyacentes optimiza drásticamente la capacidad sintáctica del decodificador.
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5 Content -->
+        <div id="sciStep5" class="step-content-card">
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-diagram-project" style="color: var(--accent);"></i> 5. Arquitecturas Seq2Seq: El Transformer
+                </h4>
+                <p>
+                    La arquitectura SOTA para Machine Translation es el **Seq2Seq Transformer (Encoder-Decoder)** de Vaswani et al. (2017).
+                </p>
+                <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                    <li><strong>El Codificador (Encoder):</strong> Analiza la frase en español. Usa capas de <strong>Multi-Head Self-Attention</strong> para relacionar contextualemente cada palabra con todas las demás.</li>
+                    <li><strong>El Decodificador (Decoder):</strong> Genera oraciones en Aimara de forma autorregresiva (un token tras otro). Usa **Atención Cruzada (Cross-Attention)** para ligar lo que genera dinámicamente con los vectores del Encoder.</li>
+                </ul>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--accent); font-weight: 700; letter-spacing: 0.5px;">Ecuación de Atención por Producto Escalar Escalonado</div>
+                <div style="font-family: 'Courier New', monospace; font-size: 0.82rem; background: rgba(139, 92, 246, 0.08); border: 1px solid var(--primary); padding: 0.5rem; border-radius: 8px; color: #fff; text-align: center; font-weight: bold;">
+                    Attention(Q, K, V) = softmax( (Q · K<sup>T</sup>) / √d<sub>k</sub> ) · V
+                </div>
+                <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.4;">
+                    <i class="fa-solid fa-brain" style="color: var(--primary);"></i> Las consultas ($Q$) provienen del Decoder (Aimara) y buscan coincidencia con las Claves ($K$) y Valores ($V$) generados en el Encoder (Español).
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6 Content -->
+        <div id="sciStep6" class="step-content-card">
+            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-microchip" style="color: var(--primary);"></i> 6. Fine-Tuning de Bajo Rango con LoRA
+                </h4>
+                <p>
+                    Para adaptar eficientemente los pesos del modelo masivo pre-entrenado (600M parámetros) sobre hardware local (GPU RTX 5060 de 8 GB VRAM), utilizamos adaptadores **LoRA PEFT (Low-Rank Adaptation)**.
+                </p>
+                <p>
+                    En lugar de ajustar los gigabytes del modelo completo, congelamos el 99.6% de sus pesos originales ($\mathbf{W}_0$) e inyectamos matrices adaptadoras entrenables duales de bajo rango $r \ll d$ (ej. $r=16$) en las proyecciones de atención ($\mathbf{W}_q$, $\mathbf{W}_v$):
+                </p>
+                <div style="font-family: monospace; font-size: 0.75rem; color: #34d399; padding-left: 0.5rem;">
+                    W_final = W_0 + ΔW = W_0 + (α/r) · (B · A)
+                </div>
+                <p>
+                    Esto **previene el olvido catastrófico** del pre-entrenamiento global y reduce el archivo de pesos a entrenar a solo **~18 MB**, acelerando radicalmente la inferencia y entrenamiento locales.
+                </p>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; justify-content: center; height: 100%;">
+                <div style="font-family: 'Courier New', monospace; font-size: 0.82rem; color: #fff; text-align: center; font-weight: 700; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; padding: 0.5rem; border-radius: 8px;">
+                    Matemática de LoRA Adaptación:<br>
+                    <span style="color: #34d399;">$W = W_0 + \frac{\alpha}{r} (B \cdot A)$</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
+                    <i class="fa-solid fa-gears" style="color: var(--accent);"></i> Las matrices $A$ y $B$ actúan como desvíos de baja dimensión para canalizar el gradiente y moldear los pesos del Transformer únicamente para capturar los modismos sintácticos del idioma Aimara sin alterar el núcleo multilingüe global.
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // JavaScript dinámico local para el flujo del pipeline científico
+            window.switchSciStep = function(stepNum) {
+                // Remover clase activa de todos los botones de paso
+                const tabs = document.querySelectorAll('.step-tab');
+                tabs.forEach((tab, index) => {
+                    if (index === stepNum - 1) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+
+                // Ocultar todos los paneles de contenido y mostrar solo el activo
+                for (let i = 1; i <= 6; i++) {
+                    const card = document.getElementById(`sciStep${i}`);
+                    if (i === stepNum) {
+                        card.classList.add('active');
+                        card.style.display = 'grid';
+                    } else {
+                        card.classList.remove('active');
+                        card.style.display = 'none';
+                    }
+                }
+            };
+        </script>
     </div>
 </div>
 

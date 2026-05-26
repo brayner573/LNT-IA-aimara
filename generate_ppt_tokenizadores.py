@@ -280,7 +280,175 @@ def slide_portada(prs):
       size=11, color=MUTED, space_after=14)
     p(tf, "Mayo 2026", size=11, bold=True, color=PRIMARY)
 
-# --- Diapositiva 2: El Desafío del Aimara ---
+# --- Diapositiva 2: El Corpus Paralelo ---
+def slide_corpus_paralelo(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    apply_bg(slide)
+    add_top_bar(slide, prs)
+    add_bottom_bar(slide, prs)
+
+    tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
+    p(tx_num.text_frame, "2 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+
+    tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
+    tf = tx.text_frame
+    section_label(tf, "Fase 1 del Pipeline NMT")
+    title_line(tf, "El Corpus Paralelo: El Cimiento de la Traducción Automática", size=24)
+
+    L, T, W, H = Inches(0.6), Inches(1.3), Inches(5.9), Inches(5.7)
+    add_card(slide, L, T, W, H, ACCENT)
+    tx_l = add_txbox(slide, L + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_l = tx_l.text_frame; tf_l.word_wrap = True
+    title_line(tf_l, "Alineación de Textos Paralelos", size=15, color=ACCENT)
+    bullet(tf_l, "Un corpus paralelo consiste en un conjunto de pares de oraciones paralelas traducidas y alineadas exactamente línea por línea.")
+    bullet(tf_l, "Para este proyecto, se utilizó el corpus de la ponencia AmericasNLP (Español ⇄ Aimara Central), que contiene expresiones de dominio general, gubernamental y salud.")
+    bullet(tf_l, "El cimiento de la calidad del modelo seq2seq recae en la consistencia gramatical y léxica de estas alineaciones.")
+
+    L2 = Inches(7.03)
+    add_card(slide, L2, T, W, H, PRIMARY)
+    tx_r = add_txbox(slide, L2 + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_r = tx_r.text_frame; tf_r.word_wrap = True
+    title_line(tf_r, "Preprocesamiento y Calidad (QA)", size=15, color=PRIMARY)
+    bullet(tf_r, "Control de Calidad Riguroso: Eliminación de pares duplicados, líneas vacías y oraciones desalineadas.")
+    bullet(tf_r, "Filtro de Ratio de Longitud Extremo: Se descartaron frases donde:")
+    p(tf_r, "0.25 < (Largo_ES / Largo_AYM) < 4.0", size=12, bold=True, color=WARNING, align=PP_ALIGN.CENTER, space_after=8)
+    bullet(tf_r, "Esto previene que el Transformer intente mapear conceptos dispares o vacíos, optimizando la pérdida durante el entrenamiento.")
+
+# --- Diapositiva 3: La Tokenización ---
+def slide_tokenizacion_teoria(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    apply_bg(slide)
+    add_top_bar(slide, prs)
+    add_bottom_bar(slide, prs)
+
+    tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
+    p(tx_num.text_frame, "3 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+
+    tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
+    tf = tx.text_frame
+    section_label(tf, "Fase 2 del Pipeline NMT")
+    title_line(tf, "La Tokenización: Segmentación y Mapeo Numérico", size=24)
+
+    L, T, W, H = Inches(0.6), Inches(1.3), Inches(5.9), Inches(5.7)
+    add_card(slide, L, T, W, H, BORDER)
+    tx_l = add_txbox(slide, L + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_l = tx_l.text_frame; tf_l.word_wrap = True
+    title_line(tf_l, "Algoritmos de Subpalabras (Subwords)", size=14, color=ACCENT)
+    bullet(tf_l, "SentencePiece (Kudo et al., 2018): Trata el texto como una secuencia de caracteres (sin depender de espacios) y aprende subpalabras flexibles utilizando modelos de unigrama o BPE.")
+    bullet(tf_l, "Byte-Pair Encoding (BPE): Une iterativamente pares de bytes o caracteres más frecuentes para formar un vocabulario compacto.")
+    bullet(tf_l, "El tokenizador aísla las flexiones gramaticales (como el sufijo -wa o -naka en Aimara) y las almacena como elementos individuales.")
+
+    L2 = Inches(7.03)
+    add_card(slide, L2, T, W, H, BORDER)
+    tx_r = add_txbox(slide, L2 + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_r = tx_r.text_frame; tf_r.word_wrap = True
+    title_line(tf_r, "Mapeo a Token IDs (Discretos)", size=14, color=PRIMARY)
+    bullet(tf_r, "Una vez que la frase se divide en subpalabras (tokens), cada token se asocia de forma determinista con un número entero único (Token ID) en base al índice del vocabulario.")
+    p(tf_r, '"kamisaraki" ➔ ["kamis", "araki"] ➔ [4562, 12903]', size=11, bold=True, color=WARNING, align=PP_ALIGN.CENTER, space_after=10)
+    bullet(tf_r, "El vocabulario de NLLB-200 tiene 256,206 índices únicos, lo que le permite representar oraciones complejas de forma compacta y eficiente.")
+
+# --- Diapositiva 4: El Embedding ---
+def slide_embedding_teoria(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    apply_bg(slide)
+    add_top_bar(slide, prs)
+    add_bottom_bar(slide, prs)
+
+    tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
+    p(tx_num.text_frame, "4 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+
+    tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
+    tf = tx.text_frame
+    section_label(tf, "Fase 3 del Pipeline NMT")
+    title_line(tf, "El Embedding: Del Espacio Discreto al Continuo", size=24)
+
+    L, T, W, H = Inches(0.6), Inches(1.3), Inches(5.9), Inches(5.7)
+    add_card(slide, L, T, W, H, BORDER)
+    tx_l = add_txbox(slide, L + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_l = tx_l.text_frame; tf_l.word_wrap = True
+    title_line(tf_l, "La Matriz de Embeddings", size=14, color=ACCENT)
+    bullet(tf_l, "Las redes neuronales no procesan enteros planos. La capa de Embedding traduce cada Token ID discreto a un vector numérico continuo y denso.")
+    bullet(tf_l, "El modelo NLLB-200 utiliza una dimensión de representación interna ($d_{model} = 1024$).")
+    bullet(tf_l, "Cada token es representado por una fila en la matriz de pesos del embedding de tamaño ($V \\times d_{model}$), donde $V = 256k$.")
+
+    L2 = Inches(7.03)
+    add_card(slide, L2, T, W, H, BORDER)
+    tx_r = add_txbox(slide, L2 + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_r = tx_r.text_frame; tf_r.word_wrap = True
+    title_line(tf_r, "Adición de Información Posicional", size=14, color=PRIMARY)
+    bullet(tf_r, "Dado que la arquitectura Transformer procesa todos los tokens en paralelo (sin recurrencia), carece de noción de orden secuencial.")
+    bullet(tf_r, "Para resolver esto, se suma al vector del embedding un vector posicional (Positional Encoding):")
+    p(tf_r, "Vector_Final = Embedding(ID) + Positional_Encoding", size=11, bold=True, color=WARNING, align=PP_ALIGN.CENTER, space_after=10)
+    bullet(tf_r, "Esto inyecta la posición exacta de cada palabra dentro del espacio sintáctico, permitiendo capturar el orden lógico gramatical.")
+
+# --- Diapositiva 5: Vectores de Palabras ---
+def slide_vectores_palabras(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    apply_bg(slide)
+    add_top_bar(slide, prs)
+    add_bottom_bar(slide, prs)
+
+    tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
+    p(tx_num.text_frame, "5 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+
+    tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
+    tf = tx.text_frame
+    section_label(tf, "Fase 4 del Pipeline NMT")
+    title_line(tf, "Vectores de Palabras y Proximidad del Espacio Semántico", size=24)
+
+    L, T, W, H = Inches(0.6), Inches(1.3), Inches(5.9), Inches(5.7)
+    add_card(slide, L, T, W, H, ACCENT)
+    tx_l = add_txbox(slide, L + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_l = tx_l.text_frame; tf_l.word_wrap = True
+    title_line(tf_l, "Geometría del Significado", size=15, color=ACCENT)
+    bullet(tf_l, "En el espacio continuo de 1024 dimensiones, los tokens con significados semánticos similares se agrupan geométricamente cerca unos de otros.")
+    bullet(tf_l, "Esto permite a la red comprender que 'kamisaraki' y 'hola' comparten la misma zona de representación, a pesar de pertenecer a lenguas distintas.")
+    bullet(tf_l, "Relaciones de Analogía: El espacio conserva simetrías lógicas, como capturar las declinaciones de género, persona y número.")
+
+    L2 = Inches(7.03)
+    add_card(slide, L2, T, W, H, PRIMARY)
+    tx_r = add_txbox(slide, L2 + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_r = tx_r.text_frame; tf_r.word_wrap = True
+    title_line(tf_r, "Cálculo de Proximidad Coseno", size=15, color=PRIMARY)
+    bullet(tf_r, "Para medir qué tan parecidas son dos palabras matemáticamente, la red calcula el coseno del ángulo entre sus vectores (Cosine Similarity):")
+    p(tf_r, "Sim(A, B) = cos(θ) = (A · B) / (||A|| ||B||)", size=11, bold=True, color=WARNING, align=PP_ALIGN.CENTER, space_after=8)
+    bullet(tf_r, "Si los vectores apuntan en la misma dirección (Sim ≈ 1.0), los términos son sinónimos u oraciones con traducción equivalente.")
+    bullet(tf_r, "Esto provee una representación matemática robusta y abstracta que unifica el Español y el Aimara.")
+
+# --- Diapositiva 6: Arquitectura Transformer ---
+def slide_transformer_arquitectura(prs):
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    apply_bg(slide)
+    add_top_bar(slide, prs)
+    add_bottom_bar(slide, prs)
+
+    tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
+    p(tx_num.text_frame, "6 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+
+    tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
+    tf = tx.text_frame
+    section_label(tf, "Fase 5 del Pipeline NMT")
+    title_line(tf, "Arquitecturas para Machine Translation: Seq2Seq Transformers", size=24)
+
+    L, T, W, H = Inches(0.6), Inches(1.3), Inches(5.9), Inches(5.7)
+    add_card(slide, L, T, W, H, BORDER)
+    tx_l = add_txbox(slide, L + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_l = tx_l.text_frame; tf_l.word_wrap = True
+    title_line(tf_l, "El Rol del Encoder (Español)", size=14, color=ACCENT)
+    bullet(tf_l, "El Encoder lee la secuencia de vectores del Español y computa capas de Multi-Head Self-Attention.")
+    bullet(tf_l, "Esto permite relacionar cada palabra con todo su contexto circundante en la oración fuente (por ejemplo, entender si 'banco' refiere a una entidad financiera o un mueble para sentarse).")
+    bullet(tf_l, "Produce una representación de estados ocultos contextualizada para toda la frase de entrada.")
+
+    L2 = Inches(7.03)
+    add_card(slide, L2, T, W, H, BORDER)
+    tx_r = add_txbox(slide, L2 + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
+    tf_r = tx_r.text_frame; tf_r.word_wrap = True
+    title_line(tf_r, "El Decoder y la Atención Cruzada (Aimara)", size=14, color=PRIMARY)
+    bullet(tf_r, "El Decoder genera los tokens en Aimara de forma autorregresiva (uno a uno de izquierda a derecha).")
+    bullet(tf_r, "Multi-Head Cross-Attention: En cada paso, el decoder asocia lo que está traduciendo con la representación contextual del encoder.")
+    bullet(tf_r, "Mecanismo de Proyección: La salida densa del decoder se proyecta a la dimensión del vocabulario ($256k$) aplicando softmax para elegir el Token ID de mayor probabilidad en Aimara.")
+
+# --- Diapositiva 7: El Desafío del Aimara ---
 def slide_desafio_aimara(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -288,7 +456,7 @@ def slide_desafio_aimara(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "2 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "7 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
     tf = tx.text_frame
@@ -319,41 +487,7 @@ def slide_desafio_aimara(prs):
     bullet(tf_r, "Si alimentamos al Transformer con palabras enteras, el modelo sufrirá colapso por palabras fuera de vocabulario (OOV).")
     bullet(tf_r, "Se requiere obligatoriamente segmentar a nivel de subpalabras (subwords) para que la red capture la raíz y los morfemas por separado.")
 
-# --- Diapositiva 3: Por qué la Tokenización define NMT ---
-def slide_rol_tokenizacion(prs):
-    slide = prs.slides.add_slide(prs.slide_layouts[6])
-    apply_bg(slide)
-    add_top_bar(slide, prs)
-    add_bottom_bar(slide, prs)
-
-    tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "3 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
-
-    tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
-    tf = tx.text_frame
-    section_label(tf, "Arquitectura de Tokenizadores")
-    title_line(tf, "Por qué la Tokenización define el Rendimiento del NMT", size=24)
-
-    L, T, W, H = Inches(0.6), Inches(1.3), Inches(5.9), Inches(5.7)
-    add_card(slide, L, T, W, H, BORDER)
-    tx_l = add_txbox(slide, L + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
-    tf_l = tx_l.text_frame; tf_l.word_wrap = True
-    title_line(tf_l, "El Dilema del Vocabulario Abierto", size=14, color=ACCENT)
-    bullet(tf_l, "La tokenización actúa como las 'tijeras' de la red neuronal. Convierte caracteres en IDs numéricos indexados en una matriz de embeddings.")
-    bullet(tf_l, "Si cortamos muy poco (palabras enteras): El vocabulario explota y el modelo no puede generalizar a palabras no vistas durante el entrenamiento.")
-    bullet(tf_l, "Si cortamos en exceso (letras individuales): La secuencia se vuelve extremadamente larga, erosionando y colapsando la ventana de auto-atención del Transformer.")
-    bullet(tf_l, "Segmentación de Subpalabras (Subword Tokenization): Busca el equilibrio óptimo de entropía, segmentando en unidades semánticamente cohesivas.")
-
-    L2 = Inches(7.03)
-    add_card(slide, L2, T, W, H, BORDER)
-    tx_r = add_txbox(slide, L2 + Inches(0.18), T + Inches(0.18), W - Inches(0.36), H - Inches(0.36))
-    tf_r = tx_r.text_frame; tf_r.word_wrap = True
-    title_line(tf_r, "Impacto en la Atención de la GPU", size=14, color=PRIMARY)
-    bullet(tf_r, "En lenguas aglutinantes, la sobrefragmentación morfológica causa que palabras cortas se segmenten en decenas de micro-tokens sin significado.")
-    bullet(tf_r, "Esto diluye la representación semántica en el vector espacial de embeddings y sobrecarga innecesariamente el mecanismo de Multi-Head Attention del Transformer.")
-    bullet(tf_r, "Un tokenizador especializado debe capturar y mantener las raíces léxicas y aislar los sufijos gramaticales completos de forma morfológicamente coherente.")
-
-# --- Diapositiva 4: Los 4 Modelos Comparados ---
+# --- Diapositiva 8: Los 4 Modelos Comparados ---
 def slide_modelos_comparados(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -361,7 +495,7 @@ def slide_modelos_comparados(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "4 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "8 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
     tf = tx.text_frame
@@ -377,7 +511,7 @@ def slide_modelos_comparados(prs):
     c1 = add_card(slide, Inches(0.6), card_y, card_width, card_height, PRIMARY)
     tx_c1 = add_txbox(slide, Inches(0.7), card_y + Inches(0.15), card_width - Inches(0.2), card_height - Inches(0.3))
     tf_c1 = tx_c1.text_frame; tf_c1.word_wrap = True
-    title_line(tf_c1, "1. NLLB + LoRA\nFine-Tuned", size=13, color=PRIMARY)
+    title_line(tf_c1, "1. NLLB + LoRA\\nFine-Tuned", size=13, color=PRIMARY)
     bullet(tf_c1, "Tokenizador: SentencePiece especializado.", size=10)
     bullet(tf_c1, "Vocabulario: 256,206 subpalabras nativas de 'ayr_Latn'.", size=10)
     bullet(tf_c1, "Efecto: Excelente salud. Aísla las raíces y los sufijos morfológicos completos respetando la gramática.", size=10)
@@ -386,7 +520,7 @@ def slide_modelos_comparados(prs):
     c2 = add_card(slide, Inches(3.65), card_y, card_width, card_height, BORDER)
     tx_c2 = add_txbox(slide, Inches(3.75), card_y + Inches(0.15), card_width - Inches(0.2), card_height - Inches(0.3))
     tf_c2 = tx_c2.text_frame; tf_c2.word_wrap = True
-    title_line(tf_c2, "2. NLLB Base\nOriginal Meta", size=13, color=WHITE)
+    title_line(tf_c2, "2. NLLB Base\\nOriginal Meta", size=13, color=WHITE)
     bullet(tf_c2, "Tokenizador: SentencePiece.", size=10)
     bullet(tf_c2, "Vocabulario: 256,206.", size=10)
     bullet(tf_c2, "Efecto: Mismo vocabulario estructural, pero carece de fine-tuning para mapear las relaciones morfológicas a nivel semántico.", size=10)
@@ -395,7 +529,7 @@ def slide_modelos_comparados(prs):
     c3 = add_card(slide, Inches(6.7), card_y, card_width, card_height, WARNING)
     tx_c3 = add_txbox(slide, Inches(6.8), card_y + Inches(0.15), card_width - Inches(0.2), card_height - Inches(0.3))
     tf_c3 = tx_c3.text_frame; tf_c3.word_wrap = True
-    title_line(tf_c3, "3. Llama-3-8B\nMeta LLM", size=13, color=WARNING)
+    title_line(tf_c3, "3. Llama-3-8B\\nMeta LLM", size=13, color=WARNING)
     bullet(tf_c3, "Tokenizador: Tiktoken BPE.", size=10)
     bullet(tf_c3, "Vocabulario: 128,256 general.", size=10)
     bullet(tf_c3, "Efecto: Colapso por sobrefragmentación. Al carecer de pre-entrenamiento en Aimara, corta palabras largas en minúsculos trozos sin sentido.", size=10)
@@ -404,12 +538,12 @@ def slide_modelos_comparados(prs):
     c4 = add_card(slide, Inches(9.75), card_y, card_width, card_height, ACCENT)
     tx_c4 = add_txbox(slide, Inches(9.85), card_y + Inches(0.15), card_width - Inches(0.2), card_height - Inches(0.3))
     tf_c4 = tx_c4.text_frame; tf_c4.word_wrap = True
-    title_line(tf_c4, "4. Gemma-2-9B\nGoogle LLM", size=13, color=ACCENT)
+    title_line(tf_c4, "4. Gemma-2-9B\\nGoogle LLM", size=13, color=ACCENT)
     bullet(tf_c4, "Tokenizador: SentencePiece masivo.", size=10)
     bullet(tf_c4, "Vocabulario: 256,000 multilingüe.", size=10)
     bullet(tf_c4, "Efecto: Moderado. Aunque gestiona mejor los espacios debido al algoritmo SP, fragmenta en exceso las flexiones aglutinantes por falta de corpus base.", size=10)
 
-# --- Diapositiva 5: Batalla de Segmentación (Matplotlib Chart) ---
+# --- Diapositiva 9: Batalla de Segmentación (Matplotlib Chart) ---
 def slide_batalla_segmentacion(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -417,7 +551,7 @@ def slide_batalla_segmentacion(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "5 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "9 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
     tf = tx.text_frame
@@ -437,7 +571,7 @@ def slide_batalla_segmentacion(prs):
     divider_line(tf_r)
     bullet(tf_r, "Menor fragmentación a nivel morfológico reduce significativamente la entropía y optimiza el contexto del mecanismo de atención.")
 
-# --- Diapositiva 6: Coherencia Morfológica (Largo de Tokens Matplotlib Chart) ---
+# --- Diapositiva 10: Coherencia Morfológica (Largo de Tokens Matplotlib Chart) ---
 def slide_longitud_tokens(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -445,7 +579,7 @@ def slide_longitud_tokens(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "6 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "10 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
     tf = tx.text_frame
@@ -465,7 +599,7 @@ def slide_longitud_tokens(prs):
     divider_line(tf_r)
     bullet(tf_r, "Un largo de token balanceado que mapee con los límites morfológicos es la clave para la convergencia científica en lenguas polisintéticas.")
 
-# --- Diapositiva 7: Analogía LEGO de Bloques (Diagrama incrustado) ---
+# --- Diapositiva 11: Analogía LEGO de Bloques (Diagrama incrustado) ---
 def slide_diagrama_lego(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -473,7 +607,7 @@ def slide_diagrama_lego(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "7 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "11 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
     tf = tx.text_frame
@@ -491,7 +625,7 @@ def slide_diagrama_lego(prs):
     bullet(tf_exp, "NLLB-200 es como usar 'tijeras inteligentes': Corta la palabra en las uniones de los bloques LEGO reales. Así, es sumamente fácil entender el significado de cada pieza y volver a unirlas de forma lógica.")
     bullet(tf_exp, "Llama-3-8B es como usar 'tijeras rotas': No conoce el idioma y corta los bloques LEGO a la mitad, dejándolos en diminutas astillas de dos letras que no significan nada, colapsando el cerebro del Transformer.")
 
-# --- Diapositiva 8: Métricas BLEU vs ChrF++ ---
+# --- Diapositiva 12: Métricas BLEU vs ChrF++ ---
 def slide_metricas_evaluacion(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -499,7 +633,7 @@ def slide_metricas_evaluacion(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "8 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "12 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     tx = add_txbox(slide, Inches(0.6), Inches(0.2), Inches(12.1), Inches(0.8))
     tf = tx.text_frame
@@ -524,7 +658,7 @@ def slide_metricas_evaluacion(prs):
     bullet(tf_r, "Si el modelo traduce de manera morfológicamente coherente la raíz del verbo pero falla levemente en el sufijo, ChrF++ premia la coincidencia morfológica parcial.")
     bullet(tf_r, "Es la métrica recomendada por la comunidad científica (WMT, AmericasNLP) para evaluar con rigurosidad y justicia las lenguas originarias de las Américas.")
 
-# --- Diapositiva 9: Conclusiones ---
+# --- Diapositiva 13: Conclusiones ---
 def slide_conclusiones(prs):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     apply_bg(slide)
@@ -532,7 +666,7 @@ def slide_conclusiones(prs):
     add_bottom_bar(slide, prs)
 
     tx_num = add_txbox(slide, Inches(12.5), Inches(7.15), Inches(0.8), Inches(0.3))
-    p(tx_num.text_frame, "9 / 9", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
+    p(tx_num.text_frame, "13 / 13", size=8, color=MUTED, align=PP_ALIGN.RIGHT)
 
     add_card(slide, Inches(0.75), Inches(0.8), Inches(11.83), Inches(5.8), SUCCESS)
 
@@ -559,30 +693,38 @@ def main():
     print("[*] Iniciando generación de la presentación 'comparativa_tokenizadores.pptx'...")
     prs = new_presentation()
 
-    print("  [1/9] Creando Portada...")
+    print("  [1/13] Creando Portada...")
     slide_portada(prs)
-    print("  [2/9] Creando diapositiva: El Desafío del Aimara...")
+    print("  [2/13] Creando diapositiva: El Corpus Paralelo...")
+    slide_corpus_paralelo(prs)
+    print("  [3/13] Creando diapositiva: La Tokenización Teoría...")
+    slide_tokenizacion_teoria(prs)
+    print("  [4/13] Creando diapositiva: El Embedding Teoría...")
+    slide_embedding_teoria(prs)
+    print("  [5/13] Creando diapositiva: Vectores de Palabras...")
+    slide_vectores_palabras(prs)
+    print("  [6/13] Creando diapositiva: Arquitectura Transformer...")
+    slide_transformer_arquitectura(prs)
+    print("  [7/13] Creando diapositiva: El Desafío del Aimara...")
     slide_desafio_aimara(prs)
-    print("  [3/9] Creando diapositiva: El Rol de la Tokenización...")
-    slide_rol_tokenizacion(prs)
-    print("  [4/9] Creando diapositiva: Los 4 Modelos Comparados...")
+    print("  [8/13] Creando diapositiva: Los 4 Modelos Comparados...")
     slide_modelos_comparados(prs)
-    print("  [5/9] Creando diapositiva: Batalla de Segmentación (Recuento de Tokens)...")
+    print("  [9/13] Creando diapositiva: Batalla de Segmentación (Recuento de Tokens)...")
     slide_batalla_segmentacion(prs)
-    print("  [6/9] Creando diapositiva: Coherencia Morfológica (Largo de Tokens)...")
+    print("  [10/13] Creando diapositiva: Coherencia Morfológica (Largo de Tokens)...")
     slide_longitud_tokens(prs)
-    print("  [7/9] Creando diapositiva: Analogía Didáctica (LEGO/Tijeras)...")
+    print("  [11/13] Creando diapositiva: Analogía Didáctica (LEGO/Tijeras)...")
     slide_diagrama_lego(prs)
-    print("  [8/9] Creando diapositiva: Evaluación Científica (BLEU vs ChrF++)...")
+    print("  [12/13] Creando diapositiva: Evaluación Científica (BLEU vs ChrF++)...")
     slide_metricas_evaluacion(prs)
-    print("  [9/9] Creando diapositiva: Conclusiones y Trabajo Futuro...")
+    print("  [13/13] Creando diapositiva: Conclusiones y Trabajo Futuro...")
     slide_conclusiones(prs)
 
     output_filename = "comparativa_tokenizadores.pptx"
     prs.save(output_filename)
     print(f"\n[+] ¡Presentación premium creada con éxito!")
     print(f"[+] Archivo: {os.path.abspath(output_filename)}")
-    print(f"[+] Total de diapositivas: 9")
+    print(f"[+] Total de diapositivas: 13")
     print(f"[+] Gráficos incrustados: 3 (matplotlib)")
 
 if __name__ == "__main__":

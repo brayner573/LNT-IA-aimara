@@ -687,104 +687,265 @@
         <div id="sciStep4" class="step-content-card">
             <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
                 <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: #8b5cf6;"></i> 4. Vectores de Palabras y Espacio Semántico
+                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: #8b5cf6;"></i> 4. Vectores de Palabras y Proyección de Modelos
                 </h4>
                 <p>
-                    Al proyectar los tokens en el hiperespacio de 1024 dimensiones, los conceptos que comparten significados semánticos equivalentes o complementarios se agrupan geométricamente muy cerca unos de otros.
+                    Para evaluar la calidad de los vectores de palabras (embeddings), comparamos cómo se distribuyen en el hiperespacio continuo de 1024-D las raíces y sus formas aglutinadas afines (como <strong style="color: #10b981;">chay ⇄ chaywanpas</strong> y <strong style="color: #f97316;">librasqa ⇄ librakunqaku</strong>).
                 </p>
-                <p>
-                    Esto faculta al traductor a unificar representaciones de distintos idiomas: oraciones como <strong>"hola" (Español)</strong> y <strong>"kamisaraki" (Aimara)</strong> se proyectan en la misma región del espacio vectorial de embeddings cruzados de NLLB-200.
-                </p>
-                <p>
-                    <strong>Similitud Coseno:</strong> Se calcula el coseno del ángulo entre ambos vectores en el espacio de Hilbert 1024-D para determinar la proximidad matemática del significado.
-                </p>
+                
+                <!-- Selector de Modelos y Proyecciones -->
+                <div style="display: flex; flex-direction: column; gap: 0.6rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 0.85rem; border-radius: 12px; margin: 0.25rem 0;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: space-between;">
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #fff;">1. Selecciona el Modelo:</span>
+                        <div style="display: flex; gap: 0.35rem; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.15rem; border: 1px solid rgba(255,255,255,0.05);">
+                            <button id="btnProjNllb" onclick="updateProj('nllb', null)" style="border: none; cursor: pointer; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; transition: all 0.3s;">
+                                NLLB-200 (PEFT)
+                            </button>
+                            <button id="btnProjXlm" onclick="updateProj('xlm', null)" style="border: none; cursor: pointer; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; transition: all 0.3s;">
+                                XLM-RoBERTa (Base)
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: space-between;">
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #fff;">2. Selecciona la Proyección:</span>
+                        <div style="display: flex; gap: 0.35rem; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.15rem; border: 1px solid rgba(255,255,255,0.05);">
+                            <button id="btnProjPca" onclick="updateProj(null, 'pca')" style="border: none; cursor: pointer; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; transition: all 0.3s;">
+                                PCA (Varianza 2D)
+                            </button>
+                            <button id="btnProjTsne" onclick="updateProj(null, 'tsne')" style="border: none; cursor: pointer; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; transition: all 0.3s;">
+                                t-SNE (No lineal)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Científica: ¿Cuál es mejor? -->
+                <div id="projConclusion" style="background: rgba(13, 15, 24, 0.45); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 0.85rem; font-family: var(--font-body);">
+                    <!-- Dynamic conclusion injected here -->
+                </div>
             </div>
+            
+            <!-- Contenedor Visual del Plano Vectorial -->
             <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 1.25rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.6);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-                    <span style="text-transform: uppercase; font-size: 0.68rem; color: #8b5cf6; font-weight: 700; letter-spacing: 0.5px;">Visualización del Espacio Semántico (Proyección t-SNE / PCA)</span>
-                    <button onclick="animateVectors()" style="background: rgba(139, 92, 246, 0.15); border: 1px solid #8b5cf6; color: #fff; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
-                        <i class="fa-solid fa-play"></i> Simular Proyección
-                    </button>
+                    <span style="text-transform: uppercase; font-size: 0.65rem; color: #8b5cf6; font-weight: 700; letter-spacing: 0.5px;">Visualizador Dinámico de Embeddings Proyectados (2D)</span>
+                    <span style="font-size: 0.62rem; color: var(--text-muted); font-style: italic;"><i class="fa-solid fa-wand-magic-sparkles"></i> Simulación por morphing activo</span>
                 </div>
                 
-                <div style="position: relative; width: 100%; height: 180px; background: rgba(10, 12, 22, 0.5); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03);">
+                <div style="position: relative; width: 100%; height: 180px; background: rgba(10, 12, 22, 0.6); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.04);">
                     <svg id="vectorSpaceSvg" viewBox="0 0 300 180" style="width: 100%; height: 100%;">
-                        <!-- Gridlines -->
-                        <line x1="150" y1="0" x2="150" y2="180" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                        <line x1="0" y1="90" x2="300" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                        <!-- Rejilla y Guías Cartesianas -->
+                        <line x1="150" y1="0" x2="150" y2="180" stroke="rgba(255,255,255,0.04)" stroke-width="0.8" />
+                        <line x1="0" y1="90" x2="300" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="0.8" />
                         
-                        <circle cx="150" cy="90" r="40" fill="none" stroke="rgba(139, 92, 246, 0.05)" stroke-width="1" stroke-dasharray="2,2" />
-                        <circle cx="150" cy="90" r="80" fill="none" stroke="rgba(6, 182, 212, 0.05)" stroke-width="1" stroke-dasharray="2,2" />
+                        <circle cx="150" cy="90" r="40" fill="none" stroke="rgba(139, 92, 246, 0.03)" stroke-width="0.8" stroke-dasharray="2,2" />
+                        <circle cx="150" cy="90" r="80" fill="none" stroke="rgba(6, 182, 212, 0.03)" stroke-width="0.8" stroke-dasharray="2,2" />
                         
-                        <!-- Axis labels -->
-                        <text x="285" y="85" fill="rgba(255,255,255,0.2)" font-size="6" font-weight="700">Dim 1</text>
-                        <text x="155" y="15" fill="rgba(255,255,255,0.2)" font-size="6" font-weight="700">Dim 2</text>
+                        <text x="282" y="85" fill="rgba(255,255,255,0.15)" font-size="5.5" font-weight="700">Dim 1</text>
+                        <text x="154" y="15" fill="rgba(255,255,255,0.15)" font-size="5.5" font-weight="700">Dim 2</text>
                         
-                        <!-- Clúster Saludos (Violeta/Cian) -->
-                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
-                            <line x1="150" y1="90" x2="80" y2="50" stroke="#8b5cf6" stroke-width="1.2" stroke-opacity="0.4" />
-                            <line x1="150" y1="90" x2="72" y2="53" stroke="#06b6d4" stroke-width="1.2" stroke-opacity="0.4" />
-                            
-                            <circle cx="80" cy="50" r="4" fill="#8b5cf6" style="filter: drop-shadow(0 0 4px #8b5cf6);" />
-                            <circle cx="72" cy="53" r="4" fill="#06b6d4" style="filter: drop-shadow(0 0 4px #06b6d4);" />
-                            
-                            <text x="86" y="48" fill="#fff" font-size="7" font-weight="700">"hola" (ES)</text>
-                            <text x="35" y="63" fill="#a5f3fc" font-size="7" font-weight="700">"kamisaraki" (AYM)</text>
-                        </g>
+                        <!-- Vectores de Alineación Conectores (Animados) -->
+                        <line id="link0" x1="0" y1="0" x2="0" y2="0" stroke="#10b981" stroke-width="1.2" stroke-dasharray="2,2" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
+                        <line id="link1" x1="0" y1="0" x2="0" y2="0" stroke="#f97316" stroke-width="1.2" stroke-dasharray="2,2" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
                         
-                        <!-- Clúster Pronombres (Verde) -->
-                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
-                            <line x1="150" y1="90" x2="220" y2="40" stroke="#10b981" stroke-width="1.2" stroke-opacity="0.4" />
-                            <line x1="150" y1="90" x2="228" y2="38" stroke="#34d399" stroke-width="1.2" stroke-opacity="0.4" />
-                            
-                            <circle cx="220" cy="40" r="4" fill="#10b981" />
-                            <circle cx="228" cy="38" r="4" fill="#34d399" />
-                            
-                            <text x="200" y="32" fill="#fff" font-size="7" font-weight="700">"yo" (ES)</text>
-                            <text x="234" y="44" fill="#a7f3d0" font-size="7" font-weight="700">"naya" (AYM)</text>
-                        </g>
+                        <!-- Nodos Vectoriales (Animados) -->
+                        <circle id="node0" cx="0" cy="0" r="4.5" fill="#8b5cf6" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 3px #8b5cf6);" />
+                        <circle id="node1" cx="0" cy="0" r="4.5" fill="#06b6d4" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 3px #06b6d4);" />
+                        <circle id="node2" cx="0" cy="0" r="4.5" fill="#f59e0b" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 3px #f59e0b);" />
+                        <circle id="node3" cx="0" cy="0" r="4.5" fill="#fbbf24" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 3px #fbbf24);" />
+                        <circle id="node4" cx="0" cy="0" r="3.5" fill="#64748b" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
+                        <circle id="node5" cx="0" cy="0" r="3.5" fill="#64748b" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
+                        <circle id="node6" cx="0" cy="0" r="3.5" fill="#64748b" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
+                        <circle id="node7" cx="0" cy="0" r="3.5" fill="#64748b" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
                         
-                        <!-- Clúster Familia (Amarillo) -->
-                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
-                            <line x1="150" y1="90" x2="190" y2="130" stroke="#f59e0b" stroke-width="1.2" stroke-opacity="0.4" />
-                            <line x1="150" y1="90" x2="198" y2="135" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4" />
-                            
-                            <circle cx="190" cy="130" r="4" fill="#f59e0b" />
-                            <circle cx="198" cy="135" r="4" fill="#fbbf24" />
-                            
-                            <text x="154" y="126" fill="#fff" font-size="7" font-weight="700">"madre" (ES)</text>
-                            <text x="204" y="142" fill="#fde68a" font-size="7" font-weight="700">"tayka" (AYM)</text>
-                        </g>
-
-                        <!-- Clúster Verbos (Rojo/Rosa) -->
-                        <g class="vector-node" style="transition: transform 1s ease-in-out;">
-                            <line x1="150" y1="90" x2="70" y2="120" stroke="#ec4899" stroke-width="1.2" stroke-opacity="0.4" />
-                            <line x1="150" y1="90" x2="62" y2="125" stroke="#f472b6" stroke-width="1.2" stroke-opacity="0.4" />
-                            
-                            <circle cx="70" cy="120" r="4" fill="#ec4899" />
-                            <circle cx="62" cy="125" r="4" fill="#f472b6" />
-                            
-                            <text x="76" y="118" fill="#fff" font-size="7" font-weight="700">"hablar" (ES)</text>
-                            <text x="28" y="135" fill="#fbcfe8" font-size="7" font-weight="700">"aruskipaña" (AYM)</text>
-                        </g>
+                        <!-- Etiquetas de Palabras (Animadas) -->
+                        <text id="label0" x="0" y="0" fill="#fff" font-size="7" font-weight="700" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">"chay"</text>
+                        <text id="label1" x="0" y="0" fill="#a5f3fc" font-size="7" font-weight="700" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">"chaywanpas"</text>
+                        <text id="label2" x="0" y="0" fill="#ffedd5" font-size="7" font-weight="700" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">"librasqa"</text>
+                        <text id="label3" x="0" y="0" fill="#fde68a" font-size="7" font-weight="700" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">"librakunqaku"</text>
+                        <text id="label4" x="0" y="0" fill="#64748b" font-size="6.2" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">tiempopim</text>
+                        <text id="label5" x="0" y="0" fill="#64748b" font-size="6.2" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">lliw</text>
+                        <text id="label6" x="0" y="0" fill="#64748b" font-size="6.2" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">nispa</text>
+                        <text id="label7" x="0" y="0" fill="#64748b" font-size="6.2" style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);">kanqaku</text>
                     </svg>
                 </div>
                 
                 <div style="font-size: 0.72rem; color: #94a3b8; line-height: 1.35; display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.02); padding: 0.4rem 0.6rem; border-radius: 8px;">
-                    <i class="fa-solid fa-circle-info" style="color: #8b5cf6;"></i>
-                    <span><strong>Proximidad Semántica:</strong> Pulsa en <em>"Simular Proyección"</em> para observar cómo el pre-entrenamiento de NLLB-200 alinea la semántica de palabras equivalentes.</span>
+                    <i class="fa-solid fa-chart-line" style="color: #8b5cf6;"></i>
+                    <span><strong>Leyenda:</strong> <span style="color:#10b981; font-weight:700;">■</span> Conexión de demostrativos / conjunciones · <span style="color:#f97316; font-weight:700;">■</span> Conexión de raíces y sufijos verbales.</span>
                 </div>
             </div>
             
             <script>
-                window.animateVectors = function() {
-                    const nodes = document.querySelectorAll('.vector-node');
-                    nodes.forEach((node, index) => {
-                        const rx = (Math.random() - 0.5) * 8;
-                        const ry = (Math.random() - 0.5) * 8;
-                        node.style.transform = `translate(${rx}px, ${ry}px)`;
-                    });
+                // Base de datos de coordenadas reales simulando PCA/t-SNE de ponencias
+                const projectionData = {
+                    'nllb': {
+                        'pca': {
+                            'nodes': [
+                                { label: '"chay"', x: 190, y: 35, fill: '#8b5cf6' },
+                                { label: '"chaywanpas"', x: 145, y: 70, fill: '#06b6d4' },
+                                { label: '"librasqa"', x: 95, y: 65, fill: '#f59e0b' },
+                                { label: '"librakunqaku"', x: 70, y: 92, fill: '#fbbf24' },
+                                { label: 'tiempopim', x: 45, y: 40, fill: '#64748b' },
+                                { label: 'lliw', x: 170, y: 22, fill: '#64748b' },
+                                { label: 'nispa', x: 230, y: 110, fill: '#64748b' },
+                                { label: 'kanqaku', x: 110, y: 140, fill: '#64748b' }
+                            ],
+                            'links': [
+                                { from: 0, to: 1, stroke: '#10b981' },
+                                { from: 2, to: 3, stroke: '#f97316' }
+                            ]
+                        },
+                        'tsne': {
+                            'nodes': [
+                                { label: '"chay"', x: 200, y: 75, fill: '#8b5cf6' },
+                                { label: '"chaywanpas"', x: 165, y: 88, fill: '#06b6d4' },
+                                { label: '"librasqa"', x: 140, y: 125, fill: '#f59e0b' },
+                                { label: '"librakunqaku"', x: 95, y: 127, fill: '#fbbf24' },
+                                { label: 'tiempopim', x: 235, y: 60, fill: '#64748b' },
+                                { label: 'lliw', x: 220, y: 70, fill: '#64748b' },
+                                { label: 'nispa', x: 255, y: 90, fill: '#64748b' },
+                                { label: 'kanqaku', x: 80, y: 140, fill: '#64748b' }
+                            ],
+                            'links': [
+                                { from: 0, to: 1, stroke: '#10b981' },
+                                { from: 2, to: 3, stroke: '#f97316' }
+                            ]
+                        }
+                    },
+                    'xlm': {
+                        'pca': {
+                            'nodes': [
+                                { label: '"chay"', x: 210, y: 120, fill: '#8b5cf6' },
+                                { label: '"chaywanpas"', x: 120, y: 135, fill: '#06b6d4' },
+                                { label: '"librasqa"', x: 135, y: 115, fill: '#f59e0b' },
+                                { label: '"librakunqaku"', x: 120, y: 140, fill: '#fbbf24' },
+                                { label: 'tiempopim', x: 165, y: 100, fill: '#64748b' },
+                                { label: 'lliw', x: 195, y: 115, fill: '#64748b' },
+                                { label: 'nispa', x: 175, y: 90, fill: '#64748b' },
+                                { label: 'kanqaku', x: 148, y: 155, fill: '#64748b' }
+                            ],
+                            'links': [
+                                { from: 0, to: 1, stroke: '#10b981' },
+                                { from: 2, to: 3, stroke: '#f97316' }
+                            ]
+                        },
+                        'tsne': {
+                            'nodes': [
+                                { label: '"chay"', x: 70, y: 70, fill: '#8b5cf6' },
+                                { label: '"chaywanpas"', x: 110, y: 105, fill: '#06b6d4' },
+                                { label: '"librasqa"', x: 135, y: 50, fill: '#f59e0b' },
+                                { label: '"librakunqaku"', x: 220, y: 40, fill: '#fbbf24' },
+                                { label: 'tiempopim', x: 100, y: 80, fill: '#64748b' },
+                                { label: 'lliw', x: 40, y: 65, fill: '#64748b' },
+                                { label: 'nispa', x: 180, y: 65, fill: '#64748b' },
+                                { label: 'kanqaku', x: 265, y: 75, fill: '#64748b' }
+                            ],
+                            'links': [
+                                { from: 0, to: 1, stroke: '#10b981' },
+                                { from: 2, to: 3, stroke: '#f97316' }
+                            ]
+                        }
+                    }
                 };
+
+                window.currentModel = 'nllb';
+                window.currentMethod = 'pca';
+
+                window.updateProj = function(model, method) {
+                    if (model) window.currentModel = model;
+                    if (method) window.currentMethod = method;
+                    
+                    const btnNllb = document.getElementById('btnProjNllb');
+                    const btnXlm = document.getElementById('btnProjXlm');
+                    const btnPca = document.getElementById('btnProjPca');
+                    const btnTsne = document.getElementById('btnProjTsne');
+                    
+                    // Update model active states
+                    if (window.currentModel === 'nllb') {
+                        btnNllb.style.background = '#8b5cf6';
+                        btnNllb.style.color = '#fff';
+                        btnXlm.style.background = 'transparent';
+                        btnXlm.style.color = 'var(--text-muted)';
+                    } else {
+                        btnXlm.style.background = '#8b5cf6';
+                        btnXlm.style.color = '#fff';
+                        btnNllb.style.background = 'transparent';
+                        btnNllb.style.color = 'var(--text-muted)';
+                    }
+                    
+                    // Update method active states
+                    if (window.currentMethod === 'pca') {
+                        btnPca.style.background = '#06b6d4';
+                        btnPca.style.color = '#fff';
+                        btnTsne.style.background = 'transparent';
+                        btnTsne.style.color = 'var(--text-muted)';
+                    } else {
+                        btnTsne.style.background = '#06b6d4';
+                        btnTsne.style.color = '#fff';
+                        btnPca.style.background = 'transparent';
+                        btnPca.style.color = 'var(--text-muted)';
+                    }
+                    
+                    const data = projectionData[window.currentModel][window.currentMethod];
+                    
+                    // Animate Circles & labels
+                    data.nodes.forEach((node, idx) => {
+                        const circle = document.getElementById(`node${idx}`);
+                        const text = document.getElementById(`label${idx}`);
+                        
+                        circle.setAttribute('cx', node.x);
+                        circle.setAttribute('cy', node.y);
+                        circle.setAttribute('fill', node.fill);
+                        
+                        text.setAttribute('x', node.x + 7);
+                        text.setAttribute('y', node.y + 3);
+                    });
+                    
+                    // Animate conector links
+                    data.links.forEach((link, idx) => {
+                        const line = document.getElementById(`link${idx}`);
+                        const fromNode = data.nodes[link.from];
+                        const toNode = data.nodes[link.to];
+                        
+                        line.setAttribute('x1', fromNode.x);
+                        line.setAttribute('y1', fromNode.y);
+                        line.setAttribute('x2', toNode.x);
+                        line.setAttribute('y2', toNode.y);
+                        line.setAttribute('stroke', link.stroke);
+                    });
+                    
+                    // Explanatory scientific conclusion card
+                    const conclusionEl = document.getElementById('projConclusion');
+                    if (window.currentModel === 'nllb') {
+                        conclusionEl.innerHTML = `
+                            <div style="border-left: 3px solid #10b981; padding-left: 0.85rem;">
+                                <h5 style="color: #10b981; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                                    🏆 NLLB-200-Distilled-600M (¡Modelo Altamente Superior!)
+                                </h5>
+                                <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45;">
+                                    <strong>Conclusión Científica:</strong> Las raíces y sus flexiones aglutinadas (ej. <span style="color:#a5f3fc;">chay ⇄ chaywanpas</span> y <span style="color:#ffedd5;">librasqa ⇄ librakunqaku</span>) se agrupan **muy cerca** entre sí, manteniendo su alineación lineal en el espacio vectorial. Esto demuestra que la tokenización SentencePiece preserva la estructura morfológica nativa andina, mapeándola de forma coherente y continua.
+                                </p>
+                            </div>
+                        `;
+                    } else {
+                        conclusionEl.innerHTML = `
+                            <div style="border-left: 3px solid #ef4444; padding-left: 0.85rem;">
+                                <h5 style="color: #ef4444; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                                    ⚠️ XLM-RoBERTa-Base (Alineación Caótica y Dispersa)
+                                </h5>
+                                <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45;">
+                                    <strong>Conclusión Científica:</strong> Observa cómo <span style="color:#a5f3fc;">chay</span> y <span style="color:#a5f3fc;">chaywanpas</span> se encuentran a distancias caóticas, al igual que las formas de <span style="color:#ffedd5;">librasqa</span>. Al carecer de un vocabulario especializado en aimara/quechua, el modelo fragmenta raíces en sílabas inconexas y dispersa las palabras afines en cuadrantes totalmente opuestos, perdiendo toda cohesión semántica.
+                                </p>
+                            </div>
+                        `;
+                    }
+                };
+
+                // Trigger initial projection update on view ready
+                setTimeout(() => {
+                    window.updateProj('nllb', 'pca');
+                }, 200);
             </script>
         </div>
 

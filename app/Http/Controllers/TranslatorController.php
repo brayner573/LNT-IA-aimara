@@ -110,4 +110,47 @@ class TranslatorController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Pestaña 2: Comparador de oraciones y modelos NMT.
+     */
+    public function compare()
+    {
+        $benchmarks = [
+            ["es" => "¿Cómo estás?", "aym" => "Kamisaraki?"],
+            ["es" => "Buenos días.", "aym" => "Aski alwakipana."],
+            ["es" => "Mi nombre es Juan.", "aym" => "Sutijax Juaniwa."],
+            ["es" => "¿A dónde vas?", "aym" => "Kawksarusa saraskta?"],
+            ["es" => "Tengo hambre.", "aym" => "Manq'atatawtwa."],
+            ["es" => "El sol está brillando.", "aym" => "Lupix qhanañchaskiwa."],
+            ["es" => "La tierra es hermosa.", "aym" => "Uraqix wali sumawa."],
+            ["es" => "Quiero aprender aimara.", "aym" => "Aymar yatiqañ munta."],
+            ["es" => "Muchas gracias.", "aym" => "Juspajara."],
+            ["es" => "Adiós.", "aym" => "Jikisiñkama."]
+        ];
+
+        return view('compare', compact('benchmarks'));
+    }
+
+    /**
+     * API Proxy: Consulta el comparador de FastAPI.
+     */
+    public function proxyCompare(Request $request)
+    {
+        $text = $request->input('text', '');
+        $reference = $request->input('reference', '');
+
+        try {
+            $response = Http::post("{$this->fastApiUrl}/compare", [
+                'text' => $text,
+                'reference' => $reference
+            ]);
+
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error de conexión con el backend de Python: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

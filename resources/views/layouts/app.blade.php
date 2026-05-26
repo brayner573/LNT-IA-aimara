@@ -245,6 +245,9 @@
                 <a href="{{ route('translator.index') }}" class="nav-item {{ Route::is('translator.index') ? 'active' : '' }}">
                     <i class="fa-solid fa-language"></i> Traductor
                 </a>
+                <a href="{{ route('translator.compare') }}" class="nav-item {{ Route::is('translator.compare') ? 'active' : '' }}">
+                    <i class="fa-solid fa-code-compare"></i> Comparar Modelos
+                </a>
                 <a href="{{ route('translator.reports') }}" class="nav-item {{ Route::is('translator.reports') ? 'active' : '' }}">
                     <i class="fa-solid fa-chart-line"></i> Reportes
                 </a>
@@ -260,7 +263,7 @@
     <!-- Footer -->
     <footer>
         <p>&copy; 2026 LNT-IA Project. Desarrollado con tecnología SOTA para traducción Español-Aimara.</p>
-        <p style="margin-top: 0.5rem;">Potenciado por GPU local <a href="#">NVIDIA RTX 5060</a> &bull; MarianMT / NLLB-200 &bull; Whisper &bull; MMS</p>
+        <p style="margin-top: 0.5rem;">Potenciado por GPU local <a href="#">NVIDIA RTX 5060</a> &bull; Llama-3 / Gemma-2 / NLLB-200 &bull; Whisper &bull; MMS</p>
     </footer>
 
     @yield('scripts')

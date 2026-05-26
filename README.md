@@ -12,6 +12,27 @@ Sistema de **Traducción Automática Neuronal (NMT)** de Español a Aimara (Cent
 
 ---
 
+## 🧬 Estudio Científico de Tokenizadores y Ponencias Premium (Mayo 2026)
+
+Hemos incorporado un robusto marco de análisis y exposición académica sobre el impacto de la segmentación de subpalabras (subwords) en lenguas polisintéticas y aglutinantes como el Aimara:
+
+### 1. Generador Científico de Ponencias Académicas
+* **Script**: `generate_ppt_tokenizadores.py`
+* **Presentación Generada**: `comparativa_tokenizadores.pptx` (Panorámica 16:9 Premium)
+* **Descripción**: Genera una presentación premium en segundo plano con diseño oscuro futurista y **gráficos científicos en caliente** creados dinámicamente con `matplotlib` e incrustados directamente en el PowerPoint:
+  * **Gráfico 1 — Fragmentación (Tokens Count)**: Comparativa de recuento de tokens generados por los 4 tokenizadores para la palabra insignia `"aruskipapxañanakasakipunirakispawa"`.
+  * **Gráfico 2 — Longitud de Token (Coherencia Morfológica)**: Mide el promedio de caracteres por token para evaluar si el modelo captura raíces y sufijos completos.
+  * **Gráfico 3 — Diagrama Visual LEGO**: Representa de forma interactiva la analogía de bloques LEGO y la segmentación morfológica correcta de SentencePiece.
+  * **Diapositivas Académicas**: El dilema del vocabulario abierto, morfología aglutinante, BLEU vs ChrF++ y el pipeline unificado.
+
+### 2. Explicación del Modelo Integrada en la Interfaz Web
+* **Módulo**: `/compare` (Arena de Modelos)
+* **Descripción**: Se añadió un panel interactivo premium con diseño glassmorphism en la parte superior que ofrece dos visiones de la IA:
+  * **Didáctica Infantil (El Teléfono Mágico)**: Presenta de forma lúdica a **Willy el Escuchador** 👂 (Whisper ASR), **Nico el Traductor** 🧠 (NLLB-200 NMT) y **Mimi la Habladora** 🗣️ (MMS TTS) junto con la analogía interactiva de piezas LEGO para los tokenizadores.
+  * **Explicación Científica (NLP & PEFT)**: Detalla la arquitectura de atención seq2seq de Nico, embeddings SentencePiece, y la inyección matemática de matrices de bajo rango de LoRA ($W' = W_0 + \frac{\alpha}{r} B \cdot A$).
+
+---
+
 ## 🤖 Modelos de IA utilizados
 
 | Modelo | Función | Fuente |

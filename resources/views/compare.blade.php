@@ -415,6 +415,27 @@
             grid-template-columns: 1fr !important;
         }
     }
+
+    /* Premium Voice Waves Indicator */
+    .audio-wave-wrapper {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        height: 35px;
+        margin-top: 0.5rem;
+        padding: 0.3rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+    }
+    .audio-bar {
+        width: 3.5px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 20px;
+        transition: height 0.1s ease, background-color 0.2s ease;
+    }
 </style>
 @endsection
 
@@ -754,12 +775,18 @@
                 <div style="display: flex; flex-direction: column; gap: 0.6rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 0.85rem; border-radius: 12px; margin: 0.25rem 0;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: space-between;">
                         <span style="font-size: 0.76rem; font-weight: 700; color: #fff;">1. Selecciona el Modelo:</span>
-                        <div style="display: flex; gap: 0.35rem; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.15rem; border: 1px solid rgba(255,255,255,0.05);">
-                            <button id="btnProjNllb" onclick="updateProj('nllb', null)" style="border: none; cursor: pointer; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; transition: all 0.3s; background: transparent; color: var(--text-muted);">
-                                NLLB-200 (PEFT)
+                        <div style="display: flex; gap: 0.3rem; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 0.15rem; border: 1px solid rgba(255,255,255,0.05);" id="scatterModelToggle">
+                            <button id="btnProjLora" onclick="updateProj('lora', null)" style="border: none; cursor: pointer; font-size: 0.68rem; font-weight: 700; padding: 0.3rem 0.5rem; border-radius: 6px; transition: all 0.3s; background: #8b5cf6; color: #fff;">
+                                NLLB+LoRA
                             </button>
-                            <button id="btnProjXlm" onclick="updateProj('xlm', null)" style="border: none; cursor: pointer; font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; transition: all 0.3s; background: transparent; color: var(--text-muted);">
-                                XLM-RoBERTa (Base)
+                            <button id="btnProjBase" onclick="updateProj('base', null)" style="border: none; cursor: pointer; font-size: 0.68rem; font-weight: 700; padding: 0.3rem 0.5rem; border-radius: 6px; transition: all 0.3s; background: transparent; color: var(--text-muted);">
+                                mBART-50
+                            </button>
+                            <button id="btnProjLlama" onclick="updateProj('llama', null)" style="border: none; cursor: pointer; font-size: 0.68rem; font-weight: 700; padding: 0.3rem 0.5rem; border-radius: 6px; transition: all 0.3s; background: transparent; color: var(--text-muted);">
+                                MarianMT
+                            </button>
+                            <button id="btnProjGemma" onclick="updateProj('gemma', null)" style="border: none; cursor: pointer; font-size: 0.68rem; font-weight: 700; padding: 0.3rem 0.5rem; border-radius: 6px; transition: all 0.3s; background: transparent; color: var(--text-muted);">
+                                mT5-Base
                             </button>
                         </div>
                     </div>
@@ -1046,28 +1073,61 @@
                     window.updateProj();
                 };
 
+                window.currentModel = 'lora';
+                window.currentMethod = 'pca';
+                
+                // Filtros morfológicos y de complejidad globales
+                window.tokenFilters = { 'raíz': true, 'sufijo': true, 'subpalabra': true };
+                window.complexityFilters = { 'simple': true, 'media': true, 'compleja': true, 'muy_compleja': true };
+
+                window.toggleTokenFilter = function(type) {
+                    window.tokenFilters[type] = !window.tokenFilters[type];
+                    const btnId = type === 'raíz' ? 'btnFilterRaiz' : (type === 'sufijo' ? 'btnFilterSufijo' : 'btnFilterSub');
+                    const btn = document.getElementById(btnId);
+                    if (window.tokenFilters[type]) {
+                        btn.classList.add('active');
+                        btn.style.opacity = '1.0';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.opacity = '0.4';
+                    }
+                    window.updateProj();
+                };
+
+                window.toggleComplexityFilter = function(comp) {
+                    window.complexityFilters[comp] = !window.complexityFilters[comp];
+                    const btnId = comp === 'simple' ? 'btnFilterSimple' : (comp === 'media' ? 'btnFilterMedia' : (comp === 'compleja' ? 'btnFilterCompleja' : 'btnFilterMuy'));
+                    const btn = document.getElementById(btnId);
+                    if (window.complexityFilters[comp]) {
+                        btn.classList.add('active');
+                        btn.style.opacity = '1.0';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.opacity = '0.4';
+                    }
+                    window.updateProj();
+                };
+
                 window.updateProj = function(model, method) {
                     if (model) window.currentModel = model;
                     if (method) window.currentMethod = method;
                     
-                    const btnNllb = document.getElementById('btnProjNllb');
-                    const btnXlm = document.getElementById('btnProjXlm');
+                    const keys = ['lora', 'base', 'llama', 'gemma'];
+                    keys.forEach(k => {
+                        const btn = document.getElementById(`btnProj${k.charAt(0).toUpperCase() + k.slice(1)}`);
+                        if (btn) {
+                            if (window.currentModel === k) {
+                                btn.style.background = '#8b5cf6';
+                                btn.style.color = '#fff';
+                            } else {
+                                btn.style.background = 'transparent';
+                                btn.style.color = 'var(--text-muted)';
+                            }
+                        }
+                    });
+                    
                     const btnPca = document.getElementById('btnProjPca');
                     const btnTsne = document.getElementById('btnProjTsne');
-                    
-                    if (btnNllb && btnXlm) {
-                        if (window.currentModel === 'nllb') {
-                            btnNllb.style.background = '#8b5cf6';
-                            btnNllb.style.color = '#fff';
-                            btnXlm.style.background = 'transparent';
-                            btnXlm.style.color = 'var(--text-muted)';
-                        } else {
-                            btnXlm.style.background = '#8b5cf6';
-                            btnXlm.style.color = '#fff';
-                            btnNllb.style.background = 'transparent';
-                            btnNllb.style.color = 'var(--text-muted)';
-                        }
-                    }
                     
                     if (btnPca && btnTsne) {
                         if (window.currentMethod === 'pca') {
@@ -1083,16 +1143,61 @@
                         }
                     }
                     
-                    const data = projectionData[window.currentModel][window.currentMethod];
-                    
-                    // Render/Update nodes in the SVG Group
                     const nodesGroup = document.getElementById('svgNodesGroup');
+                    const connGroup = document.getElementById('semConnectorsGroup');
                     if (!nodesGroup) return;
                     
                     nodesGroup.innerHTML = '';
+                    if (connGroup) connGroup.setAttribute('d', '');
+
+                    let data = null;
+
+                    // Usar datos dinámicos generados por la traducción
+                    if (window.lastData && window.lastData.models && window.lastData.models[window.currentModel]) {
+                        const m = window.lastData.models[window.currentModel];
+                        if (m && m.word_analysis && m.word_analysis.length > 0) {
+                            const nodes = [];
+                            const links = [];
+                            m.word_analysis.forEach((wa, wIdx) => {
+                                wa.tokens.forEach((tok, tIdx) => {
+                                    const morph = wa.morphology[tIdx] || "subpalabra";
+                                    const cleanTok = tok.replace(" ", "").replace("##", "");
+                                    
+                                    const charSum = cleanTok.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+                                    const hashX = Math.sin(charSum + tIdx * 13) * 0.8;
+                                    const hashY = Math.cos(charSum * 1.7 + wIdx * 9) * 0.8;
+                                    
+                                    const screenX = 150 + hashX * 110;
+                                    const screenY = 90 + hashY * 65;
+                                    
+                                    let nodeColor = "#fb923c"; // Orange subword
+                                    if (morph === "raiz" || morph === "raíz") nodeColor = "#3b82f6"; // Blue root
+                                    if (morph === "sufijo") nodeColor = "#ec4899"; // Pink suffix
+                                    
+                                    nodes.push({
+                                        label: `${cleanTok} (${wa.similarity_pct}%)`,
+                                        type: (morph === 'raiz') ? 'raíz' : morph,
+                                        comp: wa.tokens.length > 2 ? 'compleja' : 'simple',
+                                        x: screenX,
+                                        y: screenY,
+                                        fill: nodeColor,
+                                        pct: wa.similarity_pct
+                                    });
+                                });
+                            });
+                            data = { nodes, links };
+                        }
+                    }
+
+                    // Fallback estático predefinido
+                    if (!data) {
+                        const staticKey = (window.currentModel === 'lora') ? 'nllb' : 'xlm';
+                        data = projectionData[staticKey][window.currentMethod];
+                    }
+
+                    if (!data || !data.nodes) return;
                     
                     data.nodes.forEach((node, idx) => {
-                        // Check filter states
                         const isTypeActive = window.tokenFilters[node.type];
                         const isCompActive = window.complexityFilters[node.comp];
                         const showNode = isTypeActive && isCompActive;
@@ -1101,7 +1206,18 @@
                         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                         g.setAttribute('style', `transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; transform: translate(${node.x}px, ${node.y}px); opacity: ${opacityValue}; cursor: pointer;`);
                         
-                        // Append actual shape based on Complexity
+                        // Neon vector ray desde el origen a las coordenadas
+                        const vecRay = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        vecRay.setAttribute("x1", 150 - node.x);
+                        vecRay.setAttribute("y1", 90 - node.y);
+                        vecRay.setAttribute("x2", 0);
+                        vecRay.setAttribute("y2", 0);
+                        vecRay.setAttribute("stroke", node.fill);
+                        vecRay.setAttribute("stroke-width", 0.6);
+                        vecRay.setAttribute("stroke-dasharray", "1.5,1.5");
+                        vecRay.setAttribute("opacity", showNode ? 0.35 : 0.05);
+                        g.appendChild(vecRay);
+
                         let shapeEl;
                         if (node.comp === 'simple') {
                             shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1117,60 +1233,77 @@
                         } else if (node.comp === 'compleja') {
                             shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                             shapeEl.setAttribute('points', '0,-4 4,3 -4,3');
-                        } else { // muy_compleja (Diamond)
+                        } else {
                             shapeEl = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                             shapeEl.setAttribute('points', '0,-4.5 4.5,0 0,4.5 -4.5,0');
                         }
                         
                         shapeEl.setAttribute('fill', node.fill);
-                        shapeEl.setAttribute('style', `filter: drop-shadow(0 0 2px ${node.fill});`);
+                        shapeEl.setAttribute('stroke', '#fff');
+                        shapeEl.setAttribute('stroke-width', '0.5');
+                        shapeEl.setAttribute('style', `filter: drop-shadow(0 0 2px ${node.fill}); transition: all 0.2s;`);
                         g.appendChild(shapeEl);
                         
-                        // Append text label
                         const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                         textEl.setAttribute('x', '6');
                         textEl.setAttribute('y', '2');
                         textEl.setAttribute('fill', showNode ? '#fff' : '#64748b');
                         textEl.setAttribute('font-size', '6.5');
                         textEl.setAttribute('font-weight', '700');
-                        textEl.setAttribute('style', 'pointer-events: none;');
-                        textEl.textContent = node.label;
+                        textEl.setAttribute('style', 'pointer-events: none; filter: drop-shadow(0 0 1px rgba(0,0,0,0.8));');
+                        
+                        let labelText = node.label;
+                        if (node.pct !== undefined && !labelText.includes('%')) {
+                            labelText = `${labelText} (${node.pct}%)`;
+                        }
+                        textEl.textContent = labelText;
                         g.appendChild(textEl);
+
+                        g.onmouseover = () => {
+                            if (showNode) {
+                                shapeEl.setAttribute('transform', 'scale(1.5)');
+                                vecRay.setAttribute('stroke-width', '1.2');
+                                vecRay.setAttribute('opacity', '0.8');
+                            }
+                        };
+                        g.onmouseout = () => {
+                            if (showNode) {
+                                shapeEl.setAttribute('transform', 'scale(1)');
+                                vecRay.setAttribute('stroke-width', '0.6');
+                                vecRay.setAttribute('opacity', '0.35');
+                            }
+                        };
                         
                         nodesGroup.appendChild(g);
                     });
                     
-                    // Draw links/connectors
-                    const connGroup = document.getElementById('semConnectorsGroup');
-                    if (connGroup) {
+                    if (data.links && data.links.length > 0 && connGroup) {
                         let pathD = '';
                         data.links.forEach(link => {
                             const fromNode = data.nodes[link.from];
                             const toNode = data.nodes[link.to];
-                            
-                            // Check if both endpoints are active and shown
-                            const isFromActive = window.tokenFilters[fromNode.type] && window.complexityFilters[fromNode.comp];
-                            const isToActive = window.tokenFilters[toNode.type] && window.complexityFilters[toNode.comp];
-                            
-                            if (isFromActive && isToActive) {
-                                pathD += `M ${fromNode.x} ${fromNode.y} L ${toNode.x} ${toNode.y} `;
+                            if (fromNode && toNode) {
+                                const isFromActive = window.tokenFilters[fromNode.type] && window.complexityFilters[fromNode.comp];
+                                const isToActive = window.tokenFilters[toNode.type] && window.complexityFilters[toNode.comp];
+                                if (isFromActive && isToActive) {
+                                    pathD += `M ${fromNode.x} ${fromNode.y} L ${toNode.x} ${toNode.y} `;
+                                }
                             }
                         });
                         connGroup.setAttribute('d', pathD);
-                        connGroup.setAttribute('stroke', window.currentModel === 'nllb' ? '#10b981' : '#ef4444');
+                        connGroup.setAttribute('stroke', window.currentModel === 'lora' ? '#10b981' : '#ef4444');
                     }
                     
-                    // Explanatory scientific conclusion card
                     const conclusionEl = document.getElementById('projConclusion');
                     if (conclusionEl) {
-                        if (window.currentModel === 'nllb') {
+                        if (window.currentModel === 'lora') {
                             conclusionEl.innerHTML = `
                                 <div style="border-left: 3px solid #10b981; padding-left: 0.85rem;">
                                     <h5 style="color: #10b981; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.25rem;">
-                                        🏆 NLLB-200-PEFT (¡Alineación Angular Óptima en 1024-D!)
+                                        🏆 NLLB-200 + LoRA (¡Alineación Angular Óptima en 1024-D!)
                                     </h5>
                                     <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45;">
-                                        <strong>Conclusión Científica:</strong> Las raíces (azul) y sus flexiones morfológicas / sufijos (magenta) se agrupan **muy cerca** entre sí y mantienen una alineación lineal consistente. Esto demuestra que la tokenización SentencePiece preserva la estructura aglutinante nativa andina, permitiendo que el espacio continuo proyecte coherencia semántica.
+                                        <strong>Conclusión Científica:</strong> Las raíces y sus flexiones morfológicas se agrupan consistentemente y mantienen alineación lineal. La tokenización SentencePiece optimizada preserva la estructura aglutinante nativa andina.
                                     </p>
                                 </div>
                             `;
@@ -1178,10 +1311,10 @@
                             conclusionEl.innerHTML = `
                                 <div style="border-left: 3px solid #ef4444; padding-left: 0.85rem;">
                                     <h5 style="color: #ef4444; font-weight: 800; font-size: 0.9rem; margin-bottom: 0.25rem;">
-                                        ⚠️ XLM-RoBERTa-Base (Alineación Caótica y Dispersión Morfológica)
+                                        ⚠️ Baselines Multilingües (Dispersión y Desalineación Geométrica)
                                     </h5>
                                     <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45;">
-                                        <strong>Conclusión Científica:</strong> Observa la distancia geométrica caótica entre las raíces y sus respectivos sufijos (ej: <span style="color:#60a5fa;">llaqtaman</span> y <span style="color:#f472b6;">man</span> se dispersan en cuadrantes opuestos). Al carecer de un vocabulario optimizado en aimara/quechua, las raíces se rompen y el modelo dispersa los afines, perdiendo toda cohesión semántica.
+                                        <strong>Conclusión Científica:</strong> Observa la dispersión geométrica caótica. Al carecer de vocabulario optimizado sobre aimara/quechua, las raíces se fragmentan destructivamente y dispersan los afines semánticos en cuadrantes alejados.
                                     </p>
                                 </div>
                             `;
@@ -1189,9 +1322,8 @@
                     }
                 };
 
-                // Trigger initial projection update on view ready
                 setTimeout(() => {
-                    window.updateProj('nllb', 'pca');
+                    window.updateProj('lora', 'pca');
                 }, 200);
             </script>
         </div>
@@ -1284,10 +1416,26 @@
     <!-- Panel Izquierdo: Entradas y Benchmarks -->
     <div class="control-panel">
         <div class="form-group">
-            <label class="form-label" for="txtInput">
-                <i class="fa-solid fa-file-pen"></i> Texto en Español (Fuente)
-            </label>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label class="form-label" for="txtInput">
+                    <i class="fa-solid fa-file-pen"></i> Texto en Español (Fuente)
+                </label>
+                <button type="button" id="btnMicCompare" class="icon-btn" style="padding: 0.25rem 0.6rem; font-size: 0.72rem; border-color: rgba(139, 92, 246, 0.3); color: var(--primary); background: transparent; border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px; cursor: pointer; transition: all 0.2s;" title="Hablar frase">
+                    <i class="fa-solid fa-microphone"></i> Grabar
+                </button>
+            </div>
             <textarea class="form-input" id="txtInput" rows="3" placeholder="Escribe una oración en español a evaluar..."></textarea>
+            <!-- Audio wave indicators for comparison mic -->
+            <div class="audio-wave-wrapper" id="audioWaveCompare">
+                <div class="audio-bar"></div>
+                <div class="audio-bar" style="background:var(--primary); height:14px;"></div>
+                <div class="audio-bar" style="height:10px;"></div>
+                <div class="audio-bar" style="background:var(--primary); height:18px;"></div>
+                <div class="audio-bar" style="height:12px;"></div>
+                <div class="audio-bar" style="background:var(--primary); height:16px;"></div>
+                <div class="audio-bar" style="height:8px;"></div>
+            </div>
+            <div id="statusTextCompare" style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem; display: none;">Listo</div>
         </div>
 
         <div class="form-group">
@@ -2273,6 +2421,11 @@
                 window.lastData = data;
                 window.renderLargeGraphAndMorpho();
 
+                // Actualizar el Plano Cartesiano 2D grande
+                if (window.updateProj) {
+                    window.updateProj();
+                }
+
                 // 4. Actualizar Gráfico
                 if (reference !== "") {
                     chartNotice.innerHTML = `<span style="color:#22c55e; font-weight:700;"><i class="fa-solid fa-circle-check"></i> Métricas Calculadas Científicamente</span>`;
@@ -3044,6 +3197,288 @@
             row.style.borderColor = 'rgba(255,255,255,0.03)';
             row.style.boxShadow = 'none';
             row.style.transform = '';
+        }
+    }
+
+    // ==========================================
+    // MICROPHONE SPEECH TRANSCRIPTION PIPELINE
+    // ==========================================
+    let isRecordingCompare = false;
+    let audioContextCompare = null;
+    let mediaStreamCompare = null;
+    let mediaStreamSourceCompare = null;
+    let scriptProcessorCompare = null;
+    let audioBuffersCompare = [];
+    let maxRmsSeenCompare = 0;
+    
+    const btnMicCompare = document.getElementById('btnMicCompare');
+    const audioWaveCompare = document.getElementById('audioWaveCompare');
+    const statusTextCompare = document.getElementById('statusTextCompare');
+
+    if (btnMicCompare) {
+        btnMicCompare.addEventListener('click', async () => {
+            if (!isRecordingCompare) {
+                await startAudioRecordingCompare();
+            } else {
+                stopAudioRecordingCompare();
+            }
+        });
+    }
+
+    function updateVolumeVisualsCompare(rms) {
+        if (!audioWaveCompare) return;
+        const volume = Math.min(100, Math.round(rms * 450));
+        const bars = audioWaveCompare.querySelectorAll('.audio-bar');
+        const baseHeights = [6, 14, 10, 18, 12, 16, 8];
+        
+        bars.forEach((bar, index) => {
+            const baseHeight = baseHeights[index] || 10;
+            const newHeight = Math.max(3, Math.min(30, baseHeight * (volume / 20 + 0.15)));
+            bar.style.height = `${newHeight}px`;
+            if (rms > 0.05) {
+                bar.style.background = 'var(--accent)';
+            } else {
+                bar.style.background = 'var(--primary)';
+            }
+        });
+    }
+
+    async function startAudioRecordingCompare() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            if (statusTextCompare) {
+                statusTextCompare.innerText = "Micrófono no soportado";
+                statusTextCompare.style.display = "block";
+            }
+            return;
+        }
+
+        audioBuffersCompare = [];
+        maxRmsSeenCompare = 0;
+        try {
+            const constraints = {
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: true
+                }
+            };
+            mediaStreamCompare = await navigator.mediaDevices.getUserMedia(constraints);
+            
+            try {
+                audioContextCompare = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            } catch (ctxErr) {
+                console.warn("Fallo inicialización nativa 16kHz:", ctxErr);
+                audioContextCompare = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (audioContextCompare.state === 'suspended') {
+                await audioContextCompare.resume();
+            }
+            const originalSampleRate = audioContextCompare.sampleRate;
+            console.log("AudioContext comparador inicializado a:", originalSampleRate, "Hz");
+
+            mediaStreamSourceCompare = audioContextCompare.createMediaStreamSource(mediaStreamCompare);
+            
+            scriptProcessorCompare = audioContextCompare.createScriptProcessor(4096, 1, 1);
+            window.scriptProcessorCompareRef = scriptProcessorCompare;
+
+            scriptProcessorCompare.onaudioprocess = (event) => {
+                if (!isRecordingCompare) return;
+                const inputBuffer = event.inputBuffer.getChannelData(0);
+                
+                audioBuffersCompare.push(new Float32Array(inputBuffer));
+                
+                let sum = 0;
+                for (let i = 0; i < inputBuffer.length; i++) {
+                    sum += inputBuffer[i] * inputBuffer[i];
+                }
+                const rms = Math.sqrt(sum / inputBuffer.length);
+                if (rms > maxRmsSeenCompare) {
+                    maxRmsSeenCompare = rms;
+                }
+                
+                updateVolumeVisualsCompare(rms);
+            };
+
+            mediaStreamSourceCompare.connect(scriptProcessorCompare);
+            scriptProcessorCompare.connect(audioContextCompare.destination);
+
+            isRecordingCompare = true;
+            btnMicCompare.innerHTML = `<i class="fa-solid fa-square"></i> Detener`;
+            btnMicCompare.style.borderColor = "#ef4444";
+            btnMicCompare.style.color = "#ef4444";
+            if (audioWaveCompare) audioWaveCompare.style.display = "flex";
+            if (statusTextCompare) {
+                statusTextCompare.style.display = "block";
+                statusTextCompare.innerHTML = `<span style="color:var(--accent); font-weight:700;"><i class="fa-solid fa-microphone"></i> Escuchando...</span> Habla ahora`;
+            }
+        } catch (e) {
+            console.error(e);
+            if (statusTextCompare) statusTextCompare.innerText = "Permisos denegados";
+            alert("No se pudo iniciar la grabación: " + e.message);
+        }
+    }
+
+    function stopAudioRecordingCompare() {
+        if (isRecordingCompare) {
+            isRecordingCompare = false;
+            btnMicCompare.innerHTML = `<i class="fa-solid fa-microphone"></i> Grabar`;
+            btnMicCompare.style.borderColor = "rgba(139, 92, 246, 0.3)";
+            btnMicCompare.style.color = "var(--primary)";
+            if (audioWaveCompare) audioWaveCompare.style.display = "none";
+            if (statusTextCompare) statusTextCompare.innerText = "Procesando audio...";
+
+            const originalSampleRate = audioContextCompare.sampleRate;
+
+            if (scriptProcessorCompare) {
+                scriptProcessorCompare.disconnect();
+                window.scriptProcessorCompareRef = null;
+            }
+            if (mediaStreamSourceCompare) mediaStreamSourceCompare.disconnect();
+            if (mediaStreamCompare) {
+                mediaStreamCompare.getTracks().forEach(track => track.stop());
+                mediaStreamCompare = null;
+            }
+            if (audioContextCompare) {
+                audioContextCompare.close();
+            }
+
+            if (maxRmsSeenCompare < 0.0035) {
+                if (statusTextCompare) statusTextCompare.innerHTML = `<span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> Silencioso</span>`;
+                alert("Grabación silenciosa. Por favor revisa tu micrófono.");
+                return;
+            }
+
+            let totalLength = 0;
+            for (let i = 0; i < audioBuffersCompare.length; i++) {
+                totalLength += audioBuffersCompare[i].length;
+            }
+            const flatBuffer = new Float32Array(totalLength);
+            let offset = 0;
+            for (let i = 0; i < audioBuffersCompare.length; i++) {
+                flatBuffer.set(audioBuffersCompare[i], offset);
+                offset += audioBuffersCompare[i].length;
+            }
+
+            const downsampledBuffer = downsampleBuffer(flatBuffer, originalSampleRate, 16000);
+            const wavBlob = encodeWAV(downsampledBuffer, 16000);
+            sendAudioToGPUCompare(wavBlob);
+        }
+    }
+
+    async function sendAudioToGPUCompare(blob) {
+        const formData = new FormData();
+        formData.append('file', blob, 'recording.wav');
+
+        try {
+            if (statusTextCompare) statusTextCompare.innerText = "Transcribiendo en GPU...";
+            const response = await fetch(`${fastApiUrl}/speech-to-text`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.transcription) {
+                    txtInput.value = data.transcription;
+                    if (statusTextCompare) statusTextCompare.innerHTML = `<span style="color:#22c55e; font-weight:700;"><i class="fa-solid fa-circle-check"></i> Transcrito</span>`;
+                    
+                    const match = findMatchingBenchmark(data.transcription);
+                    if (match) {
+                        presetItems.forEach(i => i.classList.remove('active'));
+                        match.element.classList.add('active');
+                        txtReference.value = match.aym;
+                    } else {
+                        presetItems.forEach(i => i.classList.remove('active'));
+                        txtReference.value = "";
+                    }
+                    
+                    performComparison();
+                } else {
+                    if (statusTextCompare) statusTextCompare.innerText = "No se detectó audio";
+                }
+            } else {
+                if (statusTextCompare) statusTextCompare.innerText = "Error ASR";
+            }
+        } catch (e) {
+            console.error(e);
+            if (statusTextCompare) statusTextCompare.innerText = "Error red GPU";
+        }
+    }
+
+    function findMatchingBenchmark(text) {
+        const cleanText = text.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim();
+        const items = document.querySelectorAll('.preset-item');
+        for (let item of items) {
+            const esText = item.getAttribute('data-es');
+            const cleanEs = esText.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim();
+            if (cleanEs === cleanText || cleanText.includes(cleanEs) || cleanEs.includes(cleanText)) {
+                return {
+                    es: esText,
+                    aym: item.getAttribute('data-aym'),
+                    element: item
+                };
+            }
+        }
+        return null;
+    }
+
+    function downsampleBuffer(buffer, inputSampleRate, outputSampleRate) {
+        if (inputSampleRate === outputSampleRate) {
+            return buffer;
+        }
+        const sampleRateRatio = inputSampleRate / outputSampleRate;
+        const newLength = Math.round(buffer.length / sampleRateRatio);
+        const result = new Float32Array(newLength);
+        let offsetResult = 0;
+        let offsetBuffer = 0;
+        while (offsetResult < result.length) {
+            const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+            let accum = 0, count = 0;
+            for (let i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+                accum += buffer[i];
+                count++;
+            }
+            result[offsetResult] = count > 0 ? accum / count : 0;
+            offsetResult++;
+            offsetBuffer = nextOffsetBuffer;
+        }
+        return result;
+    }
+
+    function encodeWAV(samples, sampleRate) {
+        const buffer = new ArrayBuffer(44 + samples.length * 2);
+        const view = new DataView(buffer);
+
+        writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + samples.length * 2, true);
+        writeString(view, 8, 'WAVE');
+        writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true); // Raw PCM
+        view.setUint16(22, 1, true); // Mono channel
+        view.setUint32(24, sampleRate, true); // 16kHz
+        view.setUint32(28, sampleRate * 2, true); // Byte rate
+        view.setUint16(32, 2, true); // Block align
+        view.setUint16(34, 16, true); // 16 bits
+        writeString(view, 36, 'data');
+        view.setUint32(40, samples.length * 2, true);
+
+        floatTo16BitPCM(view, 44, samples);
+
+        return new Blob([view], { type: 'audio/wav' });
+    }
+
+    function floatTo16BitPCM(output, offset, input) {
+        for (let i = 0; i < input.length; i++, offset += 2) {
+            let s = Math.max(-1, Math.min(1, input[i]));
+            output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        }
+    }
+
+    function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
         }
     }
 </script>

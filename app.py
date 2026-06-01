@@ -24,7 +24,7 @@ class VersionString(str):
             except Exception:
                 return True
         return super().__ge__(other)
-        
+
     def __le__(self, other):
         if isinstance(other, tuple):
             try:
@@ -92,7 +92,7 @@ async def lifespan(app: FastAPI):
     print(f"[*] INICIANDO SERVIDOR WEB TRADUCTOR SOTA (DISPOSITIVO: {device.upper()})")
     print("[*] Cargando Modelos de Inteligencia Artificial en memoria...")
     print("="*60)
-    
+
     # 1. Pre-poblar el historial de entrenamiento para demostración académica instantánea si no existe
     history_file = os.path.join(TEMP_DIR, "train_history.json")
     if not os.path.exists(history_file):
@@ -111,7 +111,7 @@ async def lifespan(app: FastAPI):
         ]
         with open(history_file, "w", encoding="utf-8") as f:
             json.dump(dummy_history, f, ensure_ascii=False, indent=2)
-            
+
     # Inicializar archivo de progreso en Inactivo
     progress_file = os.path.join(TEMP_DIR, "train_progress.json")
     with open(progress_file, "w", encoding="utf-8") as f:
@@ -134,11 +134,11 @@ async def lifespan(app: FastAPI):
             models["nmt"] = PeftModel.from_pretrained(base_nmt, lora_dir)
         else:
             models["nmt"] = base_nmt
-            
+
         models["tokenizer_nmt"] = tokenizer_nmt
         models["nmt"].to(device)
         print("[+] NLLB-200 NMT cargado exitosamente.")
-        
+
         # Cargar Whisper ASR
         print("\n[*] 2/3 Cargando OpenAI Whisper Large V3 Turbo Pipeline...")
         from transformers import pipeline
@@ -148,7 +148,7 @@ async def lifespan(app: FastAPI):
                 kwargs["attn_implementation"] = "flash_attention_2"
             except Exception:
                 kwargs["attn_implementation"] = "sdpa"
-                
+
         models["asr"] = pipeline(
             "automatic-speech-recognition",
             model="openai/whisper-large-v3-turbo",
@@ -157,7 +157,7 @@ async def lifespan(app: FastAPI):
             **kwargs
         )
         print("[+] OpenAI Whisper ASR Pipeline cargado exitosamente.")
-        
+
         # Cargar MMS TTS
         print("\n[*] 3/3 Cargando Meta MMS TTS Aymara...")
         from transformers import VitsModel, AutoTokenizer
@@ -165,16 +165,16 @@ async def lifespan(app: FastAPI):
         models["tts_model"] = VitsModel.from_pretrained("facebook/mms-tts-ayr")
         models["tts_model"].to(device)
         print("[+] Meta MMS TTS cargado exitosamente.")
-        
+
         print("\n[+] ¡TODOS LOS MODELOS LISTOS PARA INFERENCIA!")
         print("="*60 + "\n")
-        
+
     except Exception as e:
         print(f"\n[!] ERROR CRÍTICO CARGANDO MODELOS: {e}")
         print("[!] El servidor correrá con limitaciones o en modo diferido.\n")
-        
+
     yield
-    
+
     print("[*] Apagando servidor...")
     print("[+] Servidor cerrado de forma segura.")
 
@@ -279,29 +279,29 @@ PRESET_BENCHMARKS = {
 def calculate_sacrebleu_metrics(hypothesis, reference):
     if not reference or not hypothesis:
         return {"chrf": 0.0, "bleu": 0.0, "ter": 100.0}
-    
+
     # sacrebleu requiere formato de lista de listas para referencias
     refs = [[reference.strip()]]
     sys = [hypothesis.strip()]
-    
+
     try:
         chrf = sacrebleu.corpus_chrf(sys, refs, word_order=2)
         chrf_score = round(chrf.score, 2)
     except Exception:
         chrf_score = 0.0
-        
+
     try:
         bleu = sacrebleu.corpus_bleu(sys, refs)
         bleu_score = round(bleu.score, 2)
     except Exception:
         bleu_score = 0.0
-        
+
     try:
         ter = sacrebleu.corpus_ter(sys, refs)
         ter_score = round(ter.score, 2)
     except Exception:
         ter_score = 100.0
-        
+
     return {
         "chrf": chrf_score,
         "bleu": bleu_score,
@@ -311,12 +311,12 @@ def calculate_sacrebleu_metrics(hypothesis, reference):
 
 def simulate_baseline_translation(text, model_type):
     text_lower = text.lower().strip().rstrip(".!?¿")
-    
+
     # Buscar si es un benchmark exacto
     for key, val in PRESET_BENCHMARKS.items():
         if key.rstrip(".!?¿") == text_lower:
             return val[model_type]
-            
+
     # Diccionarios de vocabularios de fallback realistas
     mbart_vocab = {
         "hola": "kamisarak",
@@ -341,7 +341,7 @@ def simulate_baseline_translation(text, model_type):
         "quiero": "munta",
         "aprender": "yatiqañ"
     }
-    
+
     marian_vocab = {
         "hola": "kamisaraki tata",
         "gracias": "walja yuspagara",
@@ -365,7 +365,7 @@ def simulate_baseline_translation(text, model_type):
         "quiero": "munta",
         "aprender": "yachaqay"
     }
-    
+
     mt5_vocab = {
         "hola": "kamisarakipana",
         "gracias": "juspajarawa",
@@ -389,10 +389,10 @@ def simulate_baseline_translation(text, model_type):
         "quiero": "muntawa",
         "aprender": "yatiqaña"
     }
-    
+
     words = text.split()
     translated_words = []
-    
+
     vocab = mbart_vocab if model_type == "base" else (marian_vocab if model_type == "llama" else mt5_vocab)
     for w in words:
         clean_w = w.lower().strip(".,;:!?¿")
@@ -403,20 +403,20 @@ def simulate_baseline_translation(text, model_type):
             translated_words.append(tw)
         else:
             translated_words.append(w)
-            
+
     return " ".join(translated_words)
 
 
 def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
     if not text_aym:
         return []
-        
+
     import hashlib
-    
+
     # 1. Limpiar y separar palabras
     words_es = [w.strip(".,;:!?¿").lower() for w in text_es.split() if w.strip(".,;:!?¿")]
     words_aym = [w.strip(".,;:!?¿") for w in text_aym.split() if w.strip(".,;:!?¿")]
-    
+
     # Mapeo directo para alineación semántica basada en diccionario léxico
     lexicon_map = {
         "hola": ["kamisaraki", "kamisarak", "kamisarakipana"],
@@ -447,25 +447,25 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
         "a": ["kawksarusa", "kawksa", "kawkirusa"],
         "vas": ["saraskta"]
     }
-    
+
     suffixes = [
         'naka', 'puni', 'raki', 'saka', 'spa', 'wa', 'wan', 'man', 'mi', 'ta', 'qa', 'na', 'nki', 'y', 'chik', 'sk',
-        'iri', 'pxa', 'ña', 'sa', 'xa', 'pi', 'r', 'ay', 'kuna', 'kuta', 'llaqtaman', 'chu', 'qa', 'pis', 'pas', 'pa', 
+        'iri', 'pxa', 'ña', 'sa', 'xa', 'pi', 'r', 'ay', 'kuna', 'kuta', 'llaqtaman', 'chu', 'qa', 'pis', 'pas', 'pa',
         'm', 'si', 'chá', 'wanpas', 'kunqaku'
     ]
-    
+
     roots = [
-        'kamisa', 'aruskip', 'arus', 'chay', 'libra', 'mun', 'wawa', 'int', 'lup', 'uraq', 'suti', 'nay', 
+        'kamisa', 'aruskip', 'arus', 'chay', 'libra', 'mun', 'wawa', 'int', 'lup', 'uraq', 'suti', 'nay',
         'paqa', 'ri', 'ti', 'llaqta', 'chakra', 'tikra', 'paqarin', 'chayamu', 'sar', 'sara', 'alwa', 'alwak',
         'aski', 'jusp', 'juspaj', 'jiki', 'jikis', 'kamisaraki', 'manq', 'u', 'ñi', 'hu', 'gen', 'cia'
     ]
-    
+
     analysis = []
-    
+
     for i, word in enumerate(words_aym):
         word_clean = word.strip(".,;:!?¿")
         word_lower = word_clean.lower()
-        
+
         # A. Buscar alineación con palabra en Español
         aligned_es = ""
         for es_w in words_es:
@@ -473,14 +473,14 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
                 if any(word_lower.startswith(aym_w) or aym_w.startswith(word_lower) for aym_w in lexicon_map[es_w]):
                     aligned_es = es_w
                     break
-        
+
         # Fallback por orden
         if not aligned_es and words_es:
             aligned_es = words_es[min(i, len(words_es)-1)]
-            
+
         if not aligned_es:
             aligned_es = "palabra"
-            
+
         # B. Fragmentación de tokens simulada de alta fidelidad
         sub_tokens = []
         if model_type in ["lora", "base"]:
@@ -532,19 +532,19 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
                 sub_tokens = [" " + word_clean[:3], word_clean[3:]]
             else:
                 sub_tokens = [" " + word_clean]
-                
+
         sub_tokens = [st for st in sub_tokens if st]
-        
+
         # C. Generar Token IDs, morfología y vectores de embeddings unitarios
         token_ids = []
         morphology = []
         vectors = []
-        
+
         for st in sub_tokens:
             st_hash = hashlib.md5(st.encode('utf-8')).digest()
             tok_id = int.from_bytes(st_hash[:2], byteorder='little') % 49000 + 1000
             token_ids.append(tok_id)
-            
+
             st_clean = st.replace(" ", "").replace("##", "").lower()
             if st.startswith("##"):
                 morphology.append("subpalabra")
@@ -554,26 +554,26 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
                 morphology.append("raiz")
             else:
                 morphology.append("subpalabra")
-                
+
             # Generar Vector de 8 dimensiones determinista
             v_vals = []
             for j in range(8):
                 val_byte = int.from_bytes(st_hash[j:j+1], byteorder='little', signed=True)
                 v_vals.append(val_byte / 128.0)
-            
+
             v_norm = np.linalg.norm(v_vals)
             if v_norm > 0:
                 v_vals = [float(v / v_norm) for v in v_vals]
             else:
                 v_vals = [0.0] * 8
                 v_vals[0] = 1.0
-                
+
             vectors.append([round(v, 3) for v in v_vals])
-            
+
         # D. Similitud Coseno por palabra
         val_hash = (sum(ord(c) for c in word_clean) + sum(ord(c) for c in aligned_es)) % 10
         variance = val_hash * 0.7
-        
+
         if model_type == "lora":
             base_sim = 89.0
         elif model_type == "base": # mbart
@@ -582,10 +582,10 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
             base_sim = 52.0
         else: # mt5
             base_sim = 60.0
-            
+
         similarity_pct = min(base_sim + variance, 99.8)
         similarity_pct = round(similarity_pct, 1)
-        
+
         # Vector promedio del embedding de la palabra
         avg_vector = [0.0] * 8
         for v in vectors:
@@ -593,11 +593,11 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
                 avg_vector[j] += v[j]
         for j in range(8):
             avg_vector[j] /= len(vectors)
-            
+
         avg_norm = np.linalg.norm(avg_vector)
         if avg_norm > 0:
             avg_vector = [float(v / avg_norm) for v in avg_vector]
-            
+
         analysis.append({
             "word": word,
             "aligned_word_es": aligned_es,
@@ -607,14 +607,14 @@ def generate_word_analysis(text_es, text_aym, model_type, tokenizer_nllb=None):
             "vector": [round(v, 3) for v in avg_vector],
             "similarity_pct": similarity_pct
         })
-        
+
     return analysis
 
 
 def simulate_tokenization(text, model_type, tokenizer_nllb=None):
     if not text:
         return {"tokens": [], "count": 0, "avg_len": 0.0, "health": "Vacío", "health_color": "badge-ter"}
-        
+
     # Si es NLLB+LoRA (usar real si existe)
     if model_type == "lora" and tokenizer_nllb:
         try:
@@ -631,11 +631,11 @@ def simulate_tokenization(text, model_type, tokenizer_nllb=None):
             }
         except Exception:
             pass
-            
+
     # Mapeos de tokenización determinista para baselines
     words = text.split()
     tokens = []
-    
+
     if model_type in ["lora", "base"]:
         # SentencePiece Unigram
         for w in words:
@@ -705,9 +705,9 @@ async def api_translate(request: TranslationRequest):
         models["tokenizer_nmt"].src_lang = request.source_lang
         inputs = models["tokenizer_nmt"](request.text, return_tensors="pt", max_length=128, truncation=True)
         inputs = {k: v.to(device) for k, v in inputs.items()}
-        
+
         forced_bos_token_id = models["tokenizer_nmt"].convert_tokens_to_ids(request.target_lang)
-        
+
         with torch.no_grad():
             output_ids = models["nmt"].generate(
                 **inputs,
@@ -716,7 +716,7 @@ async def api_translate(request: TranslationRequest):
                 num_beams=5,
                 early_stopping=True
             )
-            
+
         translated_text = models["tokenizer_nmt"].decode(output_ids[0], skip_special_tokens=True).strip()
         return {"original_text": request.text, "translated_text": translated_text}
     except Exception as e:
@@ -727,17 +727,17 @@ async def api_translate(request: TranslationRequest):
 async def api_compare(request: CompareRequest):
     if "nmt" not in models:
         raise HTTPException(status_code=503, detail="El modelo NMT no está cargado.")
-        
+
     try:
         text_clean = request.text.strip()
         text_lower = text_clean.lower().rstrip(".!?¿")
-        
+
         # 1. Configurar tokenizer para NLLB-200
         models["tokenizer_nmt"].src_lang = "spa_Latn"
         inputs = models["tokenizer_nmt"](text_clean, return_tensors="pt", max_length=128, truncation=True)
         inputs = {k: v.to(device) for k, v in inputs.items()}
         forced_bos_token_id = models["tokenizer_nmt"].convert_tokens_to_ids("ayr_Latn")
-        
+
         # MODELO 1: NLLB-200 + LoRA (SOTA Fine-Tuned)
         t_start = time.time()
         with torch.no_grad():
@@ -750,22 +750,22 @@ async def api_compare(request: CompareRequest):
             )
         trans_lora = models["tokenizer_nmt"].decode(output_ids[0], skip_special_tokens=True).strip()
         lat_lora = int((time.time() - t_start) * 1000)
-        
+
         # MODELO 2: mBART-50 (Meta Multilingual Seq2Seq)
         t_start = time.time()
         trans_base = simulate_baseline_translation(text_clean, "base")
         lat_base = int((time.time() - t_start) * 1000) + 14
-        
+
         # MODELO 3: MarianMT (Helsinki Dedicated Translation)
         t_start = time.time()
         trans_llama = simulate_baseline_translation(text_clean, "llama")
         lat_llama = int((time.time() - t_start) * 1000) + 18
-        
+
         # MODELO 4: mT5-Base (Google Multilingual T5)
         t_start = time.time()
         trans_gemma = simulate_baseline_translation(text_clean, "gemma")
         lat_gemma = int((time.time() - t_start) * 1000) + 16
-        
+
         # Si es un benchmark exacto, forzar las traducciones empíricas correctas
         preset_match = False
         for key, val in PRESET_BENCHMARKS.items():
@@ -776,26 +776,26 @@ async def api_compare(request: CompareRequest):
                 trans_gemma = val["gemma"]
                 preset_match = True
                 break
-                
+
         # 5. Calcular métricas para todos los modelos
         ref_text = request.reference.strip()
         metrics_lora = calculate_sacrebleu_metrics(trans_lora, ref_text)
         metrics_base = calculate_sacrebleu_metrics(trans_base, ref_text)
         metrics_llama = calculate_sacrebleu_metrics(trans_llama, ref_text)
         metrics_gemma = calculate_sacrebleu_metrics(trans_gemma, ref_text)
-        
+
         # 6. Calcular análisis de tokenización
         tok_lora = simulate_tokenization(trans_lora, "lora", models.get("tokenizer_nmt"))
         tok_base = simulate_tokenization(trans_base, "base")
         tok_llama = simulate_tokenization(trans_llama, "llama")
         tok_gemma = simulate_tokenization(trans_gemma, "gemma")
-        
+
         # 7. Calcular análisis palabra por palabra
         wa_lora = generate_word_analysis(text_clean, trans_lora, "lora", models.get("tokenizer_nmt"))
         wa_base = generate_word_analysis(text_clean, trans_base, "base")
         wa_llama = generate_word_analysis(text_clean, trans_llama, "llama")
         wa_gemma = generate_word_analysis(text_clean, trans_gemma, "gemma")
-        
+
         return {
             "original_text": text_clean,
             "reference_text": ref_text,
@@ -843,59 +843,83 @@ async def api_compare(request: CompareRequest):
 async def api_speech_to_text(file: UploadFile = File(...)):
     if "asr" not in models or "nmt" not in models:
         raise HTTPException(status_code=503, detail="Modelos de voz o traducción no inicializados.")
-        
+
+    # Verificar dependencias críticas
+    try:
+        import soundfile
+    except ImportError:
+        raise HTTPException(status_code=500, detail="Falta la librería 'soundfile' en el servidor. Ejecuta: pip install soundfile")
+
     file_id = str(uuid.uuid4())
     temp_wav_path = os.path.join(TEMP_DIR, f"{file_id}_input.wav")
-    
+
     try:
         with open(temp_wav_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-            
-        import soundfile as sf
-        audio_data, samplerate = sf.read(temp_wav_path)
-        asr_result = models["asr"](
-            {"raw": audio_data, "sampling_rate": samplerate},
-            generate_kwargs={"language": "spanish", "task": "transcribe"}
-        )
+
+        # Whisper puede fallar si el archivo WAV enviado por el móvil tiene un formato no estándar.
+        # Intentamos la transcripción directa.
+        try:
+            asr_result = models["asr"](
+                temp_wav_path,
+                generate_kwargs={"language": "spanish", "task": "transcribe"}
+            )
+        except Exception as inner_e:
+            print(f"[!] Re-intento con parámetros de robustez: {inner_e}")
+            asr_result = models["asr"](
+                temp_wav_path,
+                chunk_length_s=30,
+                generate_kwargs={"language": "spanish", "task": "transcribe"}
+            )
+
         transcription = asr_result["text"].strip()
-        
+
+        if not transcription or len(transcription) < 2:
+            return {"transcription": "", "translation": "(No se detectó voz clara. Habla más fuerte o acerca el micro)"}
+
         translation = translate_nllb(transcription, models["nmt"], models["tokenizer_nmt"], device=device)
         return {"transcription": transcription, "translation": translation}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error procesando audio: {e}")
+        import traceback
+        print(f"[!] ERROR 500 en Speech-to-Text:")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Error en el servidor de voz: {str(e)}")
     finally:
         if os.path.exists(temp_wav_path):
-            os.remove(temp_wav_path)
+            try:
+                os.remove(temp_wav_path)
+            except:
+                pass
 
 
 @app.post("/api/text-to-speech")
 async def api_text_to_speech(request: TTSRequest):
     if "tts_model" not in models:
         raise HTTPException(status_code=503, detail="El modelo MMS TTS no está cargado.")
-        
+
     file_id = str(uuid.uuid4())
     output_wav_path = os.path.join(TEMP_DIR, f"{file_id}_output.wav")
-    
+
     try:
         text = request.text.strip()
         inputs = models["tts_tokenizer"](text, return_tensors="pt")
         inputs = {k: v.to(device) for k, v in inputs.items()}
-        
+
         with torch.no_grad():
             outputs = models["tts_model"](**inputs)
-            
+
         waveform = outputs.waveform.cpu().numpy().squeeze()
         sampling_rate = models["tts_model"].config.sampling_rate
-        
+
         max_val = np.max(np.abs(waveform))
         if max_val > 0:
             waveform = waveform / max_val
-            
+
         waveform_int16 = (waveform * 32767).astype(np.int16)
-        
+
         import scipy.io.wavfile
         scipy.io.wavfile.write(output_wav_path, rate=sampling_rate, data=waveform_int16)
-        
+
         return FileResponse(output_wav_path, media_type="audio/wav", filename="translated_voice.wav")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error en síntesis TTS: {e}")
@@ -905,16 +929,16 @@ async def api_text_to_speech(request: TTSRequest):
 async def api_speech_to_speech(file: UploadFile = File(...)):
     if "asr" not in models or "nmt" not in models or "tts_model" not in models:
         raise HTTPException(status_code=503, detail="Modelos no cargados.")
-        
+
     file_id = str(uuid.uuid4())
     input_wav_path = os.path.join(TEMP_DIR, f"{file_id}_mic_in.wav")
     output_wav_name = f"{file_id}_aym_out.wav"
     output_wav_path = os.path.join(TEMP_DIR, output_wav_name)
-    
+
     try:
         with open(input_wav_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-            
+
         import soundfile as sf
         audio_data, samplerate = sf.read(input_wav_path)
         asr_result = models["asr"](
@@ -922,26 +946,26 @@ async def api_speech_to_speech(file: UploadFile = File(...)):
             generate_kwargs={"language": "spanish", "task": "transcribe"}
         )
         transcription = asr_result["text"].strip()
-        
+
         translation = translate_nllb(transcription, models["nmt"], models["tokenizer_nmt"], device=device)
-        
+
         tts_inputs = models["tts_tokenizer"](translation, return_tensors="pt")
         tts_inputs = {k: v.to(device) for k, v in tts_inputs.items()}
-        
+
         with torch.no_grad():
             tts_outputs = models["tts_model"](**tts_inputs)
-            
+
         waveform = tts_outputs.waveform.cpu().numpy().squeeze()
         sampling_rate = models["tts_model"].config.sampling_rate
-        
+
         max_val = np.max(np.abs(waveform))
         if max_val > 0:
             waveform = waveform / max_val
         waveform_int16 = (waveform * 32767).astype(np.int16)
-        
+
         import scipy.io.wavfile
         scipy.io.wavfile.write(output_wav_path, rate=sampling_rate, data=waveform_int16)
-        
+
         return {
             "transcription": transcription,
             "translation": translation,
@@ -965,20 +989,20 @@ def run_background_train(epochs: int, batch_size: int, learning_rate: float):
     """
     global is_training_active
     is_training_active = True
-    
+
     progress_file = os.path.join(TEMP_DIR, "train_progress.json")
     with open(progress_file, "w", encoding="utf-8") as f:
         json.dump({
             "step": 0, "epoch": 0, "loss": 0.0, "chrf": 0.0, "bleu": 0.0, "percent": 0, "status": "Entrenando"
         }, f)
-        
+
     try:
         from nmt_translator import train_sota_nmt_model
-        
+
         # Desmontar modelo temporalmente de GPU para liberar memoria si es necesario
         if "nmt" in models:
             models["nmt"].to("cpu")
-            
+
         # Ejecutar fine-tuning LoRA
         train_sota_nmt_model(
             train_es_path="train.es",
@@ -991,7 +1015,7 @@ def run_background_train(epochs: int, batch_size: int, learning_rate: float):
             learning_rate=learning_rate,
             gradient_accumulation_steps=2
         )
-        
+
         # Recargar el modelo con los adaptadores entrenados en la RTX 5060
         print("[*] Recargando modelo NMT con los nuevos adaptadores LoRA...")
         lora_dir = "./nmt_sota_checkpoints/best_lora_adapters"
@@ -1005,18 +1029,18 @@ def run_background_train(epochs: int, batch_size: int, learning_rate: float):
         models["tokenizer_nmt"] = tokenizer_nmt
         models["nmt"].to(device)
         print("[+] Modelo NMT recargado correctamente.")
-        
+
         with open(progress_file, "w", encoding="utf-8") as f:
             json.dump({
                 "step": 100, "epoch": epochs, "loss": 0.0, "chrf": 48.6, "bleu": 26.5, "percent": 100, "status": "Completado"
             }, f)
-            
+
     except Exception as e:
         print(f"[!] Error durante el entrenamiento: {e}")
         # Intentar restaurar modelo a GPU
         if "nmt" in models:
             models["nmt"].to(device)
-            
+
         with open(progress_file, "w", encoding="utf-8") as f:
             json.dump({
                 "step": 0, "epoch": 0, "loss": 0.0, "chrf": 0.0, "bleu": 0.0, "percent": 0, "status": f"Error: {str(e)}"
@@ -1033,12 +1057,12 @@ async def api_train(request: TrainRequest, background_tasks: BackgroundTasks):
     global is_training_active
     if is_training_active:
         return JSONResponse(status_code=400, content={"message": "Ya hay un entrenamiento activo."})
-        
+
     # Agendar tarea en background para no bloquear el servidor FastAPI
     background_tasks.add_task(
-        run_background_train, 
-        epochs=request.epochs, 
-        batch_size=request.batch_size, 
+        run_background_train,
+        epochs=request.epochs,
+        batch_size=request.batch_size,
         learning_rate=request.learning_rate
     )
     return {"message": "Entrenamiento agendado y ejecutándose en segundo plano (GPU RTX 5060)."}
@@ -1083,4 +1107,4 @@ async def read_index():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=False)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=False)

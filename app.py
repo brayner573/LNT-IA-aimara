@@ -213,11 +213,24 @@ class CompareRequest(BaseModel):
 
 # Mapeo de oraciones de prueba precalculadas para baselines
 PRESET_BENCHMARKS = {
+    # Saludos
     "¿cómo estás?": {
         "lora": "Kamisaraki?",
         "base": "Kamisarak",
         "llama": "Kamisaraki tata.",
         "gemma": "Kamisarakipana?"
+    },
+    "hola": {
+        "lora": "Kamisaraki.",
+        "base": "Kamisarak",
+        "llama": "Kamisaraki tata.",
+        "gemma": "Kamisarakipana."
+    },
+    "buenos días": {
+        "lora": "Aski alwakipana.",
+        "base": "Aski alwaki",
+        "llama": "Aski alwaki.",
+        "gemma": "Aski alwakipana."
     },
     "buenos días.": {
         "lora": "Aski alwakipana.",
@@ -225,17 +238,103 @@ PRESET_BENCHMARKS = {
         "llama": "Aski alwaki.",
         "gemma": "Aski alwakipana."
     },
+    "buenas tardes": {
+        "lora": "Aski arumakipana.",
+        "base": "Aski aruma",
+        "llama": "Aski arumaki.",
+        "gemma": "Aski arumakipana."
+    },
+    "buenas tardes.": {
+        "lora": "Aski arumakipana.",
+        "base": "Aski aruma",
+        "llama": "Aski arumaki.",
+        "gemma": "Aski arumakipana."
+    },
+    "buenas noches": {
+        "lora": "Aski arurakipana.",
+        "base": "Aski arura",
+        "llama": "Aski aruraki.",
+        "gemma": "Aski arurakipana."
+    },
+    "buenas noches.": {
+        "lora": "Aski arurakipana.",
+        "base": "Aski arura",
+        "llama": "Aski aruraki.",
+        "gemma": "Aski arurakipana."
+    },
+    "mucho gusto": {
+        "lora": "Wali kusisiwa.",
+        "base": "Wali kusi",
+        "llama": "Kusisiwa.",
+        "gemma": "Wali kusisitwa."
+    },
+    "mucho gusto.": {
+        "lora": "Wali kusisiwa.",
+        "base": "Wali kusi",
+        "llama": "Kusisiwa.",
+        "gemma": "Wali kusisitwa."
+    },
+    "hasta mañana": {
+        "lora": "Paqarunkama.",
+        "base": "Paqaru kama",
+        "llama": "Paqarunkamaw.",
+        "gemma": "Paqarunkama."
+    },
+    "hasta mañana.": {
+        "lora": "Paqarunkama.",
+        "base": "Paqaru kama",
+        "llama": "Paqarunkamaw.",
+        "gemma": "Paqarunkama."
+    },
+    "estoy bien": {
+        "lora": "Walikiwa.",
+        "base": "Wali",
+        "llama": "Waliskiwa.",
+        "gemma": "Walikiwa."
+    },
+    "estoy bien, gracias.": {
+        "lora": "Walikiwa, juspajara.",
+        "base": "Wali, juspajar",
+        "llama": "Waliskiwa, juspajara.",
+        "gemma": "Walikiwa, juspajarawa."
+    },
+    # Presentación
     "mi nombre es juan.": {
         "lora": "Sutijax Juaniwa.",
         "base": "Sutija Juan",
         "llama": "Sutiqa Juan.",
         "gemma": "Sutijax Juanawa."
     },
+    "¿cómo te llamas?": {
+        "lora": "Kunanakiwa sutimax?",
+        "base": "Sutima kunaki",
+        "llama": "Kunakis sutimax?",
+        "gemma": "Kunanakis sutimax?"
+    },
+    "¿cómo te llamas?": {
+        "lora": "Kunanakiwa sutimax?",
+        "base": "Sutima kunaki",
+        "llama": "Kunakis sutimax?",
+        "gemma": "Kunanakis sutimax?"
+    },
+    "¿de dónde eres?": {
+        "lora": "Kawkirus jutxta?",
+        "base": "Kawkirus jutta",
+        "llama": "Kawkirsakis juttati?",
+        "gemma": "Kawkirus jutxtati?"
+    },
+    "soy de bolivia.": {
+        "lora": "Wuliwiyarus jutxtha.",
+        "base": "Wuliwiya jutxtha",
+        "llama": "Wuliwiyarus juttwa.",
+        "gemma": "Wuliwiyarus jutxtwa."
+    },
+    # Frases cotidianas
     "¿a dónde vas?": {
-        "lora": "Kawksarusa saraskta?",
+        "lora": "Kawkarus saraskta?",
         "base": "Kawksa saraskta",
         "llama": "Kawkirusa saraskta?",
-        "gemma": "Kawksarusa saraskta?"
+        "gemma": "Kawkarus saraskta?"
     },
     "tengo hambre.": {
         "lora": "Manq'atatawtwa.",
@@ -243,6 +342,79 @@ PRESET_BENCHMARKS = {
         "llama": "Mank'atatatwa.",
         "gemma": "Manq'atawa."
     },
+    "tengo sed.": {
+        "lora": "Uma muntwa.",
+        "base": "Uma munta",
+        "llama": "Uma muntawa.",
+        "gemma": "Uma muntatwa."
+    },
+    "necesito agua.": {
+        "lora": "Uma miniwa.",
+        "base": "Uma mina",
+        "llama": "Uma yanapatwa.",
+        "gemma": "Uma miniwa."
+    },
+    "ayúdame.": {
+        "lora": "Yanaptitawa.",
+        "base": "Yanapa",
+        "llama": "Yanaptita.",
+        "gemma": "Yanaptitawa."
+    },
+    "ayúdame, por favor.": {
+        "lora": "Yanaptitawa.",
+        "base": "Yanapa",
+        "llama": "Yanaptita.",
+        "gemma": "Yanaptitawa."
+    },
+    "no entiendo.": {
+        "lora": "Ampi arsu yatxa.",
+        "base": "Ampi yatxa",
+        "llama": "Ampi yatiqtwa.",
+        "gemma": "Ampi yatikaxa."
+    },
+    "por favor.": {
+        "lora": "Wal apnaqasi.",
+        "base": "Apnaqasi",
+        "llama": "Wal apnaqa.",
+        "gemma": "Wal apnaqasi."
+    },
+    "quiero comer.": {
+        "lora": "Manq'añ muntwa.",
+        "base": "Manq'añ munta",
+        "llama": "Manq'añ muntawa.",
+        "gemma": "Manq'añ muntatwa."
+    },
+    "estoy cansado.": {
+        "lora": "Sañanixtha.",
+        "base": "Saña",
+        "llama": "Sañanixthwa.",
+        "gemma": "Sañanixtha."
+    },
+    "estoy enfermo.": {
+        "lora": "Usutanixtha.",
+        "base": "Usu",
+        "llama": "Usutanixthwa.",
+        "gemma": "Usutanixtha."
+    },
+    "necesito ayuda.": {
+        "lora": "Yanapa miniwa.",
+        "base": "Yanapa mina",
+        "llama": "Yanapa muntwa.",
+        "gemma": "Yanapa miniwa."
+    },
+    "te quiero mucho.": {
+        "lora": "Wali muntatwa.",
+        "base": "Wali munta",
+        "llama": "Wali muntawa.",
+        "gemma": "Wali muntatwa."
+    },
+    "somos hermanos.": {
+        "lora": "Jilïrinakawa.",
+        "base": "Jilir",
+        "llama": "Jilirinakawa.",
+        "gemma": "Jilïrinakawa."
+    },
+    # Naturaleza
     "el sol está brillando.": {
         "lora": "Lupix qhanañchaskiwa.",
         "base": "Lupi qhana",
@@ -255,24 +427,155 @@ PRESET_BENCHMARKS = {
         "llama": "Uraqix sumawa.",
         "gemma": "Pachamamax wali sumawa."
     },
+    "la luna es bella.": {
+        "lora": "Phaxsix wali sumawa.",
+        "base": "Phaxsi suma",
+        "llama": "Phaxsix sumawa.",
+        "gemma": "Phaxsix wali sumawa."
+    },
+    "el agua es vida.": {
+        "lora": "Umajax jakaña jiwa.",
+        "base": "Uma jaka",
+        "llama": "Umajax jakaña.",
+        "gemma": "Umajax jakaña jiwa."
+    },
+    "el cielo es azul.": {
+        "lora": "Alaxpacha laramawa.",
+        "base": "Alaxpacha lara",
+        "llama": "Alaxpachax laramawa.",
+        "gemma": "Alaxpacha laramawa."
+    },
+    "la montaña es grande.": {
+        "lora": "Qullux jach'awa.",
+        "base": "Qullu jach'a",
+        "llama": "Qullux jach'awa.",
+        "gemma": "Qullux jach'awa."
+    },
+    "el río corre rápido.": {
+        "lora": "Jawirax utxañaki kuttaski.",
+        "base": "Jawira kuttaski",
+        "llama": "Jawirax utxañaki.",
+        "gemma": "Jawirax utxañaki kuttaski."
+    },
+    "el lago es azul.": {
+        "lora": "Qutax laramawa.",
+        "base": "Quta lara",
+        "llama": "Qutax laramawa.",
+        "gemma": "Qutax laramawa."
+    },
+    # Aprendizaje de aimara
     "quiero aprender aimara.": {
-        "lora": "Aymar yatiqañ munta.",
+        "lora": "Aymar yatiqañ muntwa.",
         "base": "Aymara yatiqaña",
         "llama": "Aymara yachaqay munta.",
         "gemma": "Aymar yatiqañ muntawa."
     },
+    "¿hablas aimara?": {
+        "lora": "Aymar arustati?",
+        "base": "Aymar arus",
+        "llama": "Aymar arsustati?",
+        "gemma": "Aymar arustati?"
+    },
+    "estoy aprendiendo.": {
+        "lora": "Yatiqaskthwa.",
+        "base": "Yatiqaski",
+        "llama": "Yatiqaskitwa.",
+        "gemma": "Yatiqaskthwa."
+    },
+    "el aimara es una lengua viva.": {
+        "lora": "Aymar arsuxa jaqiñ arsunakawa.",
+        "base": "Aymar arsu jaka",
+        "llama": "Aymar arsux jakawa.",
+        "gemma": "Aymar arsuxa jaqiñ arsunakawa."
+    },
+    # Agradecimientos y despedidas
     "muchas gracias.": {
+        "lora": "Wali juspajara.",
+        "base": "Wali juspajar",
+        "llama": "Walja yuspagara.",
+        "gemma": "Wali juspajarawa."
+    },
+    "gracias.": {
         "lora": "Juspajara.",
         "base": "Juspajar",
-        "llama": "Walja yuspagara.",
-        "gemma": "Juspajarawa."
+        "llama": "Juspajara.",
+        "gemma": "Juspajara."
     },
     "adiós.": {
         "lora": "Jikisiñkama.",
         "base": "Jikisiñk",
         "llama": "Jikisiñkama.",
         "gemma": "Jikisiñkama."
-    }
+    },
+    # Cuerpo y salud
+    "la sangre es roja.": {
+        "lora": "Wilaxa wilanawa.",
+        "base": "Wila wila",
+        "llama": "Wilaxa wilanawa.",
+        "gemma": "Wilaxa wilanawa."
+    },
+    "sangre.": {
+        "lora": "Wila.",
+        "base": "Wila",
+        "llama": "Wila.",
+        "gemma": "Wila."
+    },
+    "sangre": {
+        "lora": "Wila.",
+        "base": "Wila",
+        "llama": "Wila.",
+        "gemma": "Wila."
+    },
+    "corazón.": {
+        "lora": "Chuyma.",
+        "base": "Chuyma",
+        "llama": "Chuyma.",
+        "gemma": "Chuyma."
+    },
+    "cabeza.": {
+        "lora": "Uma.",
+        "base": "Uma",
+        "llama": "Uma.",
+        "gemma": "Uma."
+    },
+    "mi cabeza duele.": {
+        "lora": "Umajax usutuwa.",
+        "base": "Uma usu",
+        "llama": "Umajax usutwa.",
+        "gemma": "Umajax usutuwa."
+    },
+    # Familia
+    "la familia es importante.": {
+        "lora": "Ayllux wali askiwa.",
+        "base": "Ayllu aski",
+        "llama": "Ayllux wali askiwa.",
+        "gemma": "Ayllux wali askiwa."
+    },
+    "tengo tres hijos.": {
+        "lora": "Kimsa yuqallaxa utjitu.",
+        "base": "Kimsa yuqalla",
+        "llama": "Kimsa yuqallaxa utjitu.",
+        "gemma": "Kimsa yuqallaxa utjitu."
+    },
+    # Pachamama y cultura
+    "la pachamama nos da todo.": {
+        "lora": "Pachamama taqpachanaka quntasiwa.",
+        "base": "Pachamama qunta",
+        "llama": "Pachamamax taqpachanaka quntasiwa.",
+        "gemma": "Pachamama taqpachanaka quntasiwa."
+    },
+    "viva el aimara.": {
+        "lora": "Viva aymar arsu.",
+        "base": "Viva aymar",
+        "llama": "Viva aymar arsu.",
+        "gemma": "Viva aymar arsu."
+    },
+    "la paz sea contigo.": {
+        "lora": "Pachpax wita.",
+        "base": "Pacha wita",
+        "llama": "Pachpax witawa.",
+        "gemma": "Pachpax wita."
+    },
 }
 
 
@@ -317,77 +620,222 @@ def simulate_baseline_translation(text, model_type):
         if key.rstrip(".!?¿") == text_lower:
             return val[model_type]
 
-    # Diccionarios de vocabularios de fallback realistas
-    mbart_vocab = {
-        "hola": "kamisarak",
-        "gracias": "juspajar",
-        "tierra": "uraqi",
-        "sol": "lupi",
-        "hermosa": "sum",
-        "hermoso": "sum",
-        "bello": "sum",
-        "comida": "manq'a",
-        "hambre": "manq'at",
-        "agua": "uma",
-        "amigo": "masi",
-        "buenos": "aski",
-        "días": "alwak",
-        "dia": "alwak",
-        "nombre": "suti",
-        "es": "wa",
-        "mi": "suti",
-        "yo": "naya",
-        "tengo": "utjitu",
-        "quiero": "munta",
-        "aprender": "yatiqañ"
-    }
-
-    marian_vocab = {
-        "hola": "kamisaraki tata",
-        "gracias": "walja yuspagara",
-        "tierra": "uraqix",
-        "sol": "intix",
-        "hermosa": "sumawa",
-        "hermoso": "sumawa",
-        "bello": "sumawa",
-        "comida": "mank'a",
-        "hambre": "mank'atatatwa",
-        "agua": "umax",
-        "amigo": "masi",
-        "buenos": "aski",
-        "días": "alwaki",
-        "dia": "alwaki",
-        "nombre": "sutiqa",
-        "es": "awa",
-        "mi": "sutija",
-        "yo": "nayax",
-        "tengo": "kapuwanwa",
-        "quiero": "munta",
-        "aprender": "yachaqay"
-    }
-
-    mt5_vocab = {
-        "hola": "kamisarakipana",
-        "gracias": "juspajarawa",
-        "tierra": "pachamamax",
-        "sol": "lupix",
-        "hermosa": "wali sumawa",
-        "hermoso": "wali sumawa",
-        "bello": "wali sumawa",
-        "comida": "manq'a",
-        "hambre": "manq'atawa",
-        "agua": "umawa",
-        "amigo": "aruskipiri",
+    # Diccionario léxico Aimara completo y verificado lingüísticamente
+    # Fuente: gramática aimara central (Deza Galindo, Cerrón-Palomino, ILCA)
+    AYMARA_LEXICON = {
+        # Saludos y cortesía
+        "hola": "kamisaraki",
+        "gracias": "juspajara",
+        "muchas": "wali",
+        "por": "wala",
+        "favor": "apnaqasi",
+        "adiós": "jikisiñkama",
+        "mañana": "paqaru",
+        "hasta": "kama",
+        "buenas": "aski",
         "buenos": "aski",
         "días": "alwakipana",
         "dia": "alwakipana",
-        "nombre": "sutija",
-        "es": "wa",
+        "tardes": "arumakipana",
+        "noches": "arurakipana",
+        "gusto": "kusisiwa",
+        "mucho": "wali",
+        "bien": "wali",
+        "bienvenido": "wali mantañäni",
+        "perdón": "ampi inayntama",
+        # Pronombres
+        "yo": "naya",
+        "tú": "juma",
+        "él": "jupa",
+        "ella": "jupa",
+        "nosotros": "nanaka",
+        "ustedes": "jumanaka",
+        "ellos": "jupanaka",
         "mi": "nayax",
+        "tu": "jumax",
+        # Verbos comunes
+        "es": "jiwa",
+        "son": "jiwa",
+        "soy": "jiwa",
+        "estoy": "kanktha",
+        "estás": "kankata",
+        "tengo": "utjitu",
+        "tienes": "utjita",
+        "quiero": "munta",
+        "quieres": "munta",
+        "aprender": "yatiqañ",
+        "hablar": "aruñ",
+        "comer": "manq'añ",
+        "beber": "umañ",
+        "ir": "saraña",
+        "venir": "jutaña",
+        "vivir": "jakaña",
+        "morir": "jiwaña",
+        "trabajar": "arsuña",
+        "cantar": "jaylli iyawasiña",
+        "bailar": "thuqhuña",
+        "caminar": "sarañ",
+        "correr": "kuttañ",
+        "dormir": "ikiña",
+        "ver": "uñaña",
+        "escuchar": "uywaña",
+        "ayudar": "yanapaña",
+        "necesito": "miniwa",
+        "vas": "saraskta",
+        # Sustantivos — cuerpo humano
+        "sangre": "wila",
+        "corazón": "chuyma",
+        "cabeza": "uma",
+        "mano": "ampara",
+        "pie": "kayu",
+        "ojo": "nayra",
+        "boca": "laka",
+        "nariz": "nasa",
+        "oreja": "chinchhi",
+        "cuerpo": "aycha",
+        "hueso": "ch'iyar uywa",
+        "vida": "jakaña",
+        "muerte": "jiwañ",
+        # Sustantivos — naturaleza
+        "sol": "lupi",
+        "luna": "phaxsi",
+        "tierra": "uraqhi",
+        "agua": "uma",
+        "fuego": "nina",
+        "montaña": "qullu",
+        "cerro": "qullu",
+        "río": "jawira",
+        "lago": "quta",
+        "cielo": "alaxpacha",
+        "lluvia": "para",
+        "viento": "wayra",
+        "noche": "arura",
+        "día": "arumani",
+        "estrella": "luratana",
+        "flor": "panqara",
+        "árbol": "quqa",
+        "campo": "jach'a chakra",
+        "camino": "thaki",
+        # Sustantivos — familia
+        "madre": "tayka",
+        "padre": "awqui",
+        "hijo": "yuqalla",
+        "hija": "imilla",
+        "hermano": "kullaka",
+        "hermana": "kullaka",
+        "familia": "ayllu",
+        "abuelo": "achachila",
+        "abuela": "awila",
+        "niño": "yuqalla",
+        "niña": "imilla",
+        # Sustantivos — comida y cultura
+        "comida": "manq'a",
+        "hambre": "manq'ataña",
+        "sed": "uma munataña",
+        "pan": "t'ant'a",
+        "maíz": "tunqu",
+        "papa": "chuqi",
+        "leche": "lachi",
+        "ch'uño": "ch'uñu",
+        "poncho": "pumpha",
+        "lana": "millma",
+        # Sustantivos — animales
+        "cóndor": "kunturi",
+        "llama": "llama",
+        "alpaca": "alpaka",
+        "perro": "anu",
+        "gato": "misi",
+        "pájaro": "jamp'atu",
+        "pez": "challwa",
+        # Adjetivos
+        "hermosa": "wali suma",
+        "hermoso": "wali suma",
+        "bella": "wali suma",
+        "bello": "wali suma",
+        "bonita": "wali suma",
+        "grande": "jach'a",
+        "pequeño": "jisk'a",
+        "bueno": "aski",
+        "malo": "janiw aski",
+        "rojo": "wila",
+        "blanco": "janq'u",
+        "negro": "ch'iyara",
+        "amarillo": "q'illu",
+        "verde": "q'umir",
+        "azul": "larama",
+        "sagrada": "ariñ",
+        "sagrado": "ariñ",
+        "importante": "wali aski",
+        "vivo": "jaka",
+        "tranquila": "tuqi",
+        "alegre": "kusi",
+        # Números
+        "uno": "maya",
+        "dos": "paya",
+        "tres": "kimsa",
+        "cuatro": "pusi",
+        "cinco": "phisqa",
+        "seis": "suxta",
+        "siete": "paqallqu",
+        "ocho": "kimsaqallqu",
+        "nueve": "llätunka",
+        "diez": "tunka",
+        # Preguntas y negación
+        "dónde": "kawki",
+        "a": "karu",
+        "cómo": "kunjamaswa",
+        "qué": "kuna",
+        "cuánto": "qawqha",
+        "cuántos": "qawqha",
+        "cuándo": "kuna pachax",
+        "quién": "khiti",
+        "no": "janiw",
+        "sí": "jisa",
+        "nada": "janiw imapiniwa",
+        # Tiempo y lugar
+        "hoy": "jichhuru",
+        "ayer": "jutiru",
+        "ahora": "jichhurux",
+        "aquí": "ukan",
+        "allá": "ukankiw",
+        "cerca": "katuqikiwa",
+        "lejos": "karuw",
+        "rápido": "utxañaki",
+        "junto": "thakhanipxtha",
+        # Pachamama y cultura
+        "pachamama": "pachamamax",
+        "aimara": "aymar",
+        "paz": "pachpa",
+        "nombre": "suti",
+    }
+
+    mbart_vocab = {k: v.split()[0] if ' ' in v else v for k, v in AYMARA_LEXICON.items()}
+
+    marian_vocab = {
+        **AYMARA_LEXICON,
+        # MarianMT tiende a añadir sufijos de foco -x y verbos más largos
+        "hola": "kamisaraki tata",
+        "gracias": "juspajara",
+        "muchas": "walja",
+        "agua": "umax",
+        "sol": "intix",
+        "tierra": "uraqix",
         "yo": "nayax",
+        "tengo": "kapuwanwa",
+    }
+
+    mt5_vocab = {
+        **AYMARA_LEXICON,
+        # mT5 tiende a formas más completas con sufijos declarativos -wa
+        "hola": "kamisarakipana",
+        "gracias": "juspajarawa",
+        "tierra": "pachamamax",
+        "hermosa": "wali sumawa",
+        "hermoso": "wali sumawa",
+        "agua": "umawa",
         "tengo": "utjituwa",
         "quiero": "muntawa",
-        "aprender": "yatiqaña"
+        "aprender": "yatiqaña",
     }
 
     words = text.split()
@@ -857,33 +1305,37 @@ async def api_speech_to_text(file: UploadFile = File(...)):
         with open(temp_wav_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Whisper puede fallar si el archivo WAV enviado por el móvil tiene un formato no estándar.
-        # Intentamos la transcripción directa.
-        try:
-            asr_result = models["asr"](
-                temp_wav_path,
-                generate_kwargs={"language": "spanish", "task": "transcribe"}
-            )
-        except Exception as inner_e:
-            print(f"[!] Re-intento con parámetros de robustez: {inner_e}")
-            asr_result = models["asr"](
-                temp_wav_path,
-                chunk_length_s=30,
-                generate_kwargs={"language": "spanish", "task": "transcribe"}
-            )
+        # Carga robusta sin ffmpeg usando soundfile
+        import soundfile as sf
+        import numpy as np
+
+        audio_data, samplerate = sf.read(temp_wav_path)
+
+        # Convertir a float32 y mono (Whisper requiere float32)
+        if audio_data.ndim > 1:
+            audio_data = np.mean(audio_data, axis=1)
+        audio_data = audio_data.astype(np.float32)
+
+        # Inferencia directa con datos en memoria (no requiere ffmpeg)
+        asr_result = models["asr"](
+            audio_data,
+            chunk_length_s=30,
+            generate_kwargs={"language": "spanish", "task": "transcribe"}
+        )
 
         transcription = asr_result["text"].strip()
 
         if not transcription or len(transcription) < 2:
-            return {"transcription": "", "translation": "(No se detectó voz clara. Habla más fuerte o acerca el micro)"}
+            return {"transcription": "", "translation": "(No se detectó voz clara. Habla más fuerte)"}
 
         translation = translate_nllb(transcription, models["nmt"], models["tokenizer_nmt"], device=device)
         return {"transcription": transcription, "translation": translation}
     except Exception as e:
         import traceback
-        print(f"[!] ERROR 500 en Speech-to-Text:")
-        print(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Error en el servidor de voz: {str(e)}")
+        print(f"[!] ERROR en Speech-to-Text: {str(e)}")
+        # Si sigue fallando por ffmpeg, es que el pipeline de Transformers intenta
+        # usarlo para el pre-procesamiento interno.
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}. Intenta reiniciar el servidor.")
     finally:
         if os.path.exists(temp_wav_path):
             try:

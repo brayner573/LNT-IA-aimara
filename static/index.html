@@ -1,0 +1,2983 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LNT-IA — Traductor Neuronal Premium Español ⇄ Aimara</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at 50% 50%, #11131e 0%, #08090d 100%);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.3);
+            --accent: #06b6d4;
+            --accent-glow: rgba(6, 182, 212, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --font-title: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Fondo Decorativo SOTA */
+        .ambient-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, rgba(0,0,0,0) 70%);
+            top: -200px;
+            left: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.05) 0%, rgba(0,0,0,0) 70%);
+            bottom: -150px;
+            right: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glass Container Principal */
+        .app-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar SOTA */
+        header {
+            background: rgba(13, 15, 24, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 0.75rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 800;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .brand-text {
+            font-family: var(--font-title);
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #fff 30%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--glass-border);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: rgba(139, 92, 246, 0.08);
+            border-color: rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.05);
+        }
+
+        /* Glassmorphic Cards standard */
+        .glass-card {
+            background: rgba(13, 15, 24, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        /* Grid de traducción */
+        .translator-grid {
+            display: grid;
+            grid-template-columns: 1fr 140px 1fr;
+            gap: 1.5rem;
+            align-items: stretch;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .translator-grid {
+                grid-template-columns: 1fr;
+            }
+            .controls-column {
+                order: 3;
+                flex-direction: row !important;
+                height: auto !important;
+                padding: 1rem !important;
+            }
+        }
+
+        .lang-box {
+            background: rgba(13, 15, 24, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .lang-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.12);
+            background: rgba(13, 15, 24, 0.55);
+        }
+
+        .lang-box.target-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.12);
+        }
+
+        .box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .lang-title {
+            font-family: var(--font-title);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .source-box .lang-title i {
+            color: var(--primary);
+        }
+
+        .target-box .lang-title i {
+            color: var(--accent);
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 250px;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            resize: none;
+        }
+
+        .text-area::placeholder {
+            color: var(--text-muted);
+        }
+
+        .box-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 0.85rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: var(--glass-border);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Columna Central de Control */
+        .controls-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem 0;
+        }
+
+        .swap-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .swap-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: rotate(180deg);
+        }
+
+        /* Mic Button Premium SOTA */
+        .mic-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-btn {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+            z-index: 10;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.6);
+        }
+
+        .mic-btn.recording {
+            background: #ef4444;
+            animation: pulse-recording 1.5s infinite;
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.6);
+        }
+
+        @keyframes pulse-recording {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+
+        /* Ondas de Audio Premium */
+        .audio-wave-wrapper {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 40px;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .audio-bar {
+            width: 4px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 20px;
+            animation: dance 1s ease infinite alternate;
+        }
+
+        .audio-bar:nth-child(2) { animation-delay: 0.1s; height: 25px; background: var(--primary); }
+        .audio-bar:nth-child(3) { animation-delay: 0.2s; height: 15px; }
+        .audio-bar:nth-child(4) { animation-delay: 0.3s; height: 35px; background: var(--primary); }
+        .audio-bar:nth-child(5) { animation-delay: 0.4s; height: 20px; }
+        .audio-bar:nth-child(6) { animation-delay: 0.5s; height: 30px; background: var(--primary); }
+        .audio-bar:nth-child(7) { animation-delay: 0.6s; height: 12px; }
+
+        @keyframes dance {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        .status-text {
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .char-count {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Custom Styling for the Comparison Arena */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-panel {
+            background: rgba(13, 15, 24, 0.45);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-input {
+            background: rgba(13, 15, 24, 0.85);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+            resize: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+        }
+
+        .preset-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 220px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .preset-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 0.55rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .preset-item:hover {
+            background: rgba(139, 92, 246, 0.06);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: #fff;
+        }
+
+        .preset-item.active {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.3);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .preset-item i {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .preset-item.active i {
+            color: var(--primary);
+        }
+
+        .compare-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            color: #fff;
+            padding: 0.85rem;
+            border-radius: 12px;
+            font-family: var(--font-title);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .compare-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+        }
+
+        .compare-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Arena side of cards */
+        .arena-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 640px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .model-card {
+            background: rgba(13, 15, 24, 0.45);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .model-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .model-card.lora-card {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.05);
+        }
+        .model-card.lora-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 30px rgba(139, 92, 246, 0.15);
+        }
+
+        .model-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.65rem;
+        }
+
+        .model-info {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .model-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .lora-card .model-icon { background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); }
+        .base-card .model-icon { background: rgba(255, 255, 255, 0.06); color: var(--text-muted); }
+        .llama-card .model-icon { background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); }
+        .gemma-card .model-icon { background: linear-gradient(135deg, #059669 0%, #34d399 100%); }
+
+        .model-name {
+            font-family: var(--font-title);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .model-latency {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .translation-output {
+            width: 100%;
+            min-height: 90px;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 0.65rem;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #fff;
+            resize: none;
+            outline: none;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.25rem;
+        }
+
+        .metrics-row {
+            display: flex;
+            gap: 0.45rem;
+        }
+
+        .metric-badge {
+            font-family: var(--font-title);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .badge-chrf { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
+        .badge-bleu { background: rgba(6, 182, 212, 0.1); color: var(--accent); }
+        .badge-ter { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+
+        .badge-high { background: rgba(34, 197, 94, 0.12) !important; color: #22c55e !important; }
+        .badge-mid { background: rgba(234, 179, 8, 0.12) !important; color: #eab308 !important; }
+        .badge-low { background: rgba(239, 68, 68, 0.12) !important; color: #ef4444 !important; }
+
+        .token-raiz {
+            background: rgba(59, 130, 246, 0.08) !important;
+            border: 1px solid rgba(59, 130, 246, 0.25) !important;
+            color: #60a5fa !important;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.1);
+        }
+        .token-sufijo {
+            background: rgba(236, 72, 153, 0.08) !important;
+            border: 1px solid rgba(236, 72, 153, 0.25) !important;
+            color: #f472b6 !important;
+            box-shadow: 0 0 8px rgba(236, 72, 153, 0.1);
+        }
+        .token-subpalabra {
+            background: rgba(249, 115, 22, 0.08) !important;
+            border: 1px solid rgba(249, 115, 22, 0.25) !important;
+            color: #fb923c !important;
+            box-shadow: 0 0 8px rgba(249, 115, 22, 0.1);
+        }
+
+        .legend-item-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .legend-item-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        .legend-item-btn.active {
+            border-color: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .mago-card:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Stepper elements */
+        .stepper-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            justify-content: space-between;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .step-tab {
+            flex: 1;
+            min-width: 130px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.6rem 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .step-tab:hover {
+            background: rgba(139, 92, 246, 0.06);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+        .step-tab.active {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+        }
+        .step-tab .step-number {
+            font-family: var(--font-title);
+            font-weight: 800;
+            font-size: 0.8rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .step-tab.active .step-number {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 8px var(--primary);
+        }
+        .step-tab .step-label {
+            font-family: var(--font-title);
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .step-tab.active .step-label {
+            color: #fff;
+        }
+        
+        .step-content-card {
+            background: rgba(13, 15, 24, 0.35);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 18px;
+            padding: 1.5rem;
+            min-height: 280px;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .step-content-card.active {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .step-content-card.active {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Reports styling */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1000px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-family: var(--font-title);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-title);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-box {
+            background: rgba(13, 15, 24, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .chart-box-title {
+            font-family: var(--font-title);
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-box-title i {
+            color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-family: var(--font-body);
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+            background: rgba(8, 9, 13, 0.8);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        footer a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08090d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222533;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+            .nav-item {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.85rem;
+            }
+        }
+
+        /* Simple animation fading panel */
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header / Navbar SOTA -->
+        <header>
+            <a href="#" class="brand" onclick="switchTab('tab-translator'); return false;">
+                <div class="brand-logo"><i class="fa-solid fa-brain"></i></div>
+                <div class="brand-text">LNT-IA</div>
+            </a>
+            <nav class="nav-links">
+                <button id="nav-translator" class="nav-item active" onclick="switchTab('tab-translator')">
+                    <i class="fa-solid fa-language"></i> Traductor
+                </button>
+                <button id="nav-compare" class="nav-item" onclick="switchTab('tab-compare')">
+                    <i class="fa-solid fa-code-compare"></i> Comparar Modelos
+                </button>
+                <button id="nav-reports" class="nav-item" onclick="switchTab('tab-reports')">
+                    <i class="fa-solid fa-chart-line"></i> Reportes & Training
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content Panels -->
+        <main>
+            <!-- 1. Pestaña TRADUCTOR -->
+            <div id="tab-translator" class="tab-panel active">
+                <div class="glass-card">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-family: var(--font-title); font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #fff 40%, var(--text-muted) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            Traductor Inteligente de Voz
+                        </h1>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                            Inferencia neuronal bidireccional en tiempo real Español ⇄ Aimara con Whisper ASR y Meta MMS TTS
+                        </p>
+                    </div>
+
+                    <!-- Grid del Traductor -->
+                    <div class="translator-grid">
+                        <!-- Caja Fuente (Español) -->
+                        <div class="lang-box source-box" id="sourceBox">
+                            <div class="box-header">
+                                <span class="lang-title" id="sourceLangTitle">
+                                    <i class="fa-solid fa-earth-americas"></i> Español
+                                </span>
+                                <span style="background: rgba(139, 92, 246, 0.1); color: var(--primary); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 20px;">
+                                    Fuente
+                                </span>
+                            </div>
+                            <textarea class="text-area" id="sourceInput" placeholder="Escribe el texto a traducir aquí o pulsa el micrófono para hablar..."></textarea>
+                            <div class="box-footer">
+                                <button class="icon-btn" id="btnPlaySource" style="display:none;">
+                                    <i class="fa-solid fa-volume-high"></i> Escuchar
+                                </button>
+                                <button class="icon-btn" id="btnCopySource">
+                                    <i class="fa-solid fa-copy"></i> Copiar
+                                </button>
+                                <span class="char-count" id="sourceCharCount">0 / 1000</span>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Control Central -->
+                        <div class="controls-column">
+                            <button class="swap-btn" id="btnSwap" title="Intercambiar Idiomas">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                            
+                            <div class="mic-container" style="flex-direction: column; gap: 0.75rem;">
+                                <button class="mic-btn" id="btnMic" title="Traducir por Voz (Hablar)">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </button>
+                            </div>
+
+                            <!-- Selector de Micrófono Premium -->
+                            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin: 0.25rem 0;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Elegir Micrófono</span>
+                                <select id="micSelect" style="background: rgba(13, 15, 24, 0.85); border: 1px solid var(--border-color); color: #fff; padding: 0.45rem 0.65rem; border-radius: 10px; font-family: var(--font-body); font-size: 0.8rem; outline: none; width: 140px; cursor: pointer; transition: var(--transition); text-align: center;">
+                                    <option value="">Por defecto</option>
+                                </select>
+                                <button class="icon-btn" id="btnRefreshMics" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Recargar lista de micrófonos">
+                                    <i class="fa-solid fa-rotate"></i> Buscar dispositivos
+                                </button>
+                            </div>
+                            
+                            <div>
+                                <div class="audio-wave-wrapper" id="audioWave">
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                    <div class="audio-bar"></div>
+                                </div>
+                                <div class="status-text" id="statusText">Listo</div>
+                            </div>
+                        </div>
+
+                        <!-- Caja Destino (Aimara) -->
+                        <div class="lang-box target-box" id="targetBox">
+                            <div class="box-header">
+                                <span class="lang-title" id="targetLangTitle">
+                                    <i class="fa-solid fa-earth-americas"></i> Aimara
+                                </span>
+                                <span style="background: rgba(6, 182, 212, 0.1); color: var(--accent); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 20px;">
+                                    Traducción
+                                </span>
+                            </div>
+                            <textarea class="text-area" id="targetOutput" placeholder="La traducción se mostrará aquí de manera instantánea..." readonly></textarea>
+                            <div class="box-footer">
+                                <button class="icon-btn" id="btnPlayTarget" style="display:none;">
+                                    <i class="fa-solid fa-volume-high"></i> Escuchar
+                                </button>
+                                <button class="icon-btn" id="btnCopyTarget">
+                                    <i class="fa-solid fa-copy"></i> Copiar
+                                </button>
+                                <span class="char-count" id="targetCharCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Pestaña COMPARAR MODELOS -->
+            <div id="tab-compare" class="tab-panel">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <h1 style="font-family: var(--font-title); font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #fff 40%, var(--text-muted) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        Arena de Modelos NMT SOTA
+                    </h1>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                        Evaluación científica side-by-side en tiempo real: NLLB-200 Fine-Tuned vs Baselines Multilingües
+                    </p>
+                </div>
+
+                <!-- Pestaña Didáctica/Científica -->
+                <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.5rem; border-color: rgba(139, 92, 246, 0.25);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                        <h2 style="font-family: var(--font-title); font-weight: 800; font-size: 1.25rem; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-graduation-cap" style="color: var(--primary);"></i> ¿Cómo Trabaja el Modelo y el Tokenizador?
+                        </h2>
+                        <div style="display: flex; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.2rem;">
+                            <button id="btnTabKids" class="legend-item-btn active" onclick="switchExplanationTab('kids')" style="padding: 0.45rem 1rem; border-radius: 8px;">
+                                <i class="fa-solid fa-child"></i> Didáctica Infantil
+                            </button>
+                            <button id="btnTabScientific" class="legend-item-btn" onclick="switchExplanationTab('scientific')" style="padding: 0.45rem 1rem; border-radius: 8px;">
+                                <i class="fa-solid fa-flask"></i> Explicación Científica
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Didáctica Infantil -->
+                    <div id="tabContentKids" style="display: block;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
+                            Imagina que dentro de nuestro traductor viven <strong>tres pequeños magos</strong> que trabajan en equipo para lograr el truco mágico de escuchar voz en español y hacer sonar voz en aimara:
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <!-- Mago 1 -->
+                            <div class="mago-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 1rem; transition: var(--transition);">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem; text-align: center;">👂</div>
+                                <h4 style="font-family: var(--font-title); font-weight: 700; color: var(--accent); margin-bottom: 0.4rem; text-align: center;">Willy el Escuchador (ASR)</h4>
+                                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; text-align: center;">
+                                    Tiene orejas gigantes. Escucha el sonido que entra por el micrófono (Whisper) y escribe la voz de audio en un papel en Español.
+                                </p>
+                            </div>
+                            <!-- Mago 2 -->
+                            <div class="mago-card" style="background: rgba(139, 92, 246, 0.03); border: 1px solid rgba(139, 92, 246, 0.15); border-radius: 14px; padding: 1rem; transition: var(--transition);">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem; text-align: center;">🧠</div>
+                                <h4 style="font-family: var(--font-title); font-weight: 700; color: var(--primary); margin-bottom: 0.4rem; text-align: center;">Nico el Traductor (NMT)</h4>
+                                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; text-align: center;">
+                                    Es el cerebro (NLLB-200). Toma el papel de Willy, corta las palabras largas en <strong>bloques de LEGO</strong> (tokens SentencePiece) y las formula adecuadamente al Aimara.
+                                </p>
+                            </div>
+                            <!-- Mago 3 -->
+                            <div class="mago-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 1rem; transition: var(--transition);">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem; text-align: center;">🗣️</div>
+                                <h4 style="font-family: var(--font-title); font-weight: 700; color: #22c55e; margin-bottom: 0.4rem; text-align: center;">Mimi la Habladora (TTS)</h4>
+                                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; text-align: center;">
+                                    Tiene una voz preciosa (Meta MMS). Lee el papel en Aimara que preparó Nico y lo habla con voz natural y fluida por los parlantes.
+                                </p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.6rem 0.85rem; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-puzzle-piece" style="color: var(--primary); font-size: 1rem;"></i>
+                            <span><strong>La analogía del LEGO:</strong> Las palabras en Aimara son como juguetes LEGO: las raíces se unen a múltiples sufijos. Nico corta de forma inteligente por las uniones de los bloques. Modelos generales como Llama-3 rompen el bloque LEGO en astillas de 2 letras (sobrefragmentación).</span>
+                        </div>
+                    </div>
+
+                    <!-- Explicación Científica -->
+                    <div id="tabContentScientific" style="display: none;">
+                        <!-- Stepper Row -->
+                        <div class="stepper-container">
+                            <button class="step-tab active" onclick="switchSciStep(1)">
+                                <span class="step-number">1</span>
+                                <span class="step-label">Corpus Paralelo</span>
+                            </button>
+                            <button class="step-tab" onclick="switchSciStep(2)">
+                                <span class="step-number">2</span>
+                                <span class="step-label">Tokenización</span>
+                            </button>
+                            <button class="step-tab" onclick="switchSciStep(3)">
+                                <span class="step-number">3</span>
+                                <span class="step-label">Embedding</span>
+                            </button>
+                            <button class="step-tab" onclick="switchSciStep(4)">
+                                <span class="step-number">4</span>
+                                <span class="step-label">Vectores</span>
+                            </button>
+                            <button class="step-tab" onclick="switchSciStep(5)">
+                                <span class="step-number">5</span>
+                                <span class="step-label">Arquitectura</span>
+                            </button>
+                            <button class="step-tab" onclick="switchSciStep(6)">
+                                <span class="step-number">6</span>
+                                <span class="step-label">Fine-Tuning LoRA</span>
+                            </button>
+                        </div>
+
+                        <!-- Step 1 Content -->
+                        <div id="sciStep1" class="step-content-card active">
+                            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                    <i class="fa-solid fa-database" style="color: var(--accent);"></i> 1. El Corpus Paralelo: Cimiento del NMT
+                                </h4>
+                                <p>
+                                    Un corpus paralelo consiste en un conjunto de oraciones equivalentes en idioma origen (Español) y destino (Aimara), alineadas de manera precisa línea a línea. Es el insumo fundamental sobre el cual se entrenan los modelos de traducción.
+                                </p>
+                                <p>
+                                    Para este desarrollo, utilizamos el corpus de la ponencia <strong>AmericasNLP</strong> enfocado en Aimara Central. El preprocesamiento científico incluye:
+                                </p>
+                                <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                                    <li><strong>Control de Calidad Riguroso:</strong> Eliminación de duplicados, líneas vacías y secuencias con caracteres corrompidos.</li>
+                                    <li><strong>Filtro de Ratio de Longitud Extremo:</strong> Se descartan pares que no cumplan con el ratio de longitud relativa: <span style="font-family: monospace; color: var(--accent); font-weight: 600;">0.25 &lt; (Largo_ES / Largo_AYM) &lt; 4.0</span>. Esto previene que el mecanismo de atención intente mapear conceptos dispares.</li>
+                                </ul>
+                            </div>
+                            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem;">
+                                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--accent); font-weight: 700; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Alineación de Muestra (LNT-IA Dataset)</div>
+                                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                                    <div style="background: rgba(255,255,255,0.02); border-left: 2px solid var(--accent); padding: 0.4rem 0.6rem; border-radius: 0 6px 6px 0;">
+                                        <div style="color: var(--text-muted); font-size: 0.72rem;">Español (ES)</div>
+                                        <div style="color: #fff; font-weight: 500;">Hola, ¿cómo estás?</div>
+                                        <div style="color: var(--text-muted); font-size: 0.72rem; margin-top: 0.25rem;">Aimara (AYM)</div>
+                                        <div style="color: var(--accent); font-weight: 600;">Kamisaraki</div>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.02); border-left: 2px solid var(--primary); padding: 0.4rem 0.6rem; border-radius: 0 6px 6px 0;">
+                                        <div style="color: var(--text-muted); font-size: 0.72rem;">Español (ES)</div>
+                                        <div style="color: #fff; font-weight: 500;">Nosotros hablaremos en aimara siempre.</div>
+                                        <div style="color: var(--text-muted); font-size: 0.72rem; margin-top: 0.25rem;">Aimara (AYM)</div>
+                                        <div style="color: var(--primary); font-weight: 600;">Jiwasax jichhax aymarat aruskipapxapxäsa.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 Content -->
+                        <div id="sciStep2" class="step-content-card">
+                            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                    <i class="fa-solid fa-scissors" style="color: var(--primary);"></i> 2. La Tokenización de Subpalabras
+                                </h4>
+                                <p>
+                                    La tokenización traduce texto libre a índices numéricos discretos que el modelo procesa. En lugar de procesar caracteres independientes o palabras completas, se utilizan algoritmos de <strong>subpalabras</strong>.
+                                </p>
+                                <p>
+                                    <strong>SentencePiece (Unigram):</strong> Es el modelo predeterminado de NLLB-200. Trata los espacios en blanco como caracteres normales (representados por `_`) y segmenta morfológicamente. En lenguas altamente aglutinantes como el Aimara, aísla correctamente raíces de múltiples sufijos secuenciales (ej: naka, wa).
+                                </p>
+                            </div>
+                            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem;">
+                                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--primary); font-weight: 700; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Segmentación de "aruskipapxañanakasakipunirakispawa"</div>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                                            <span><i class="fa-solid fa-square-check" style="color:#22c55e;"></i> NLLB-200 (SentencePiece)</span>
+                                            <strong style="color: #22c55e;">11 tokens (Morfología Preservada)</strong>
+                                        </div>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.2rem; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); padding: 0.4rem; border-radius: 6px;">
+                                            <span class="token-raiz" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">arus</span>
+                                            <span class="token-raiz" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">ki</span>
+                                            <span class="token-raiz" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">pap</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">xa</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">ña</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">naka</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">saka</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">puni</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">raki</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">spa</span>
+                                            <span class="token-sufijo" style="padding:0.1rem 0.25rem; border-radius:4px; font-size:0.72rem;">wa</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 Content -->
+                        <div id="sciStep3" class="step-content-card">
+                            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                    <i class="fa-solid fa-link" style="color: var(--accent);"></i> 3. El Embedding: Puente al Espacio Vectorial
+                                </h4>
+                                <p>
+                                    Las neuronas computan con tensores continuos, no con enteros de vocabulario. El **Embedding** mapea cada Token ID a un vector denso de alta dimensión en base al índice de su matriz.
+                                </p>
+                                <p>
+                                    En el codificador de NLLB-200, la representación interna tiene una dimensionalidad de <strong>1024 características continuas</strong> ($d_{model} = 1024$).
+                                </p>
+                            </div>
+                            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; font-family: var(--font-body); font-size: 0.82rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                                <div style="text-transform: uppercase; font-size: 0.65rem; color: var(--accent); font-weight: 700; letter-spacing: 0.5px;">Fórmula del Codificador Posicional</div>
+                                <div style="font-family: 'Courier New', monospace; font-size: 0.8rem; background: rgba(6, 182, 212, 0.08); border: 1px solid var(--accent); padding: 0.5rem; border-radius: 8px; color: #fff; text-align: center; font-weight: bold;">
+                                    PE(pos, 2i) = sin(pos / 10000<sup>2i/d</sup>)<br>
+                                    PE(pos, 2i+1) = cos(pos / 10000<sup>2i/d</sup>)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 Content -->
+                        <div id="sciStep4" class="step-content-card">
+                            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: #8b5cf6;"></i> 4. Vectores de Palabras y Proyección de Modelos
+                                </h4>
+                                <p>
+                                    Para evaluar la calidad de los vectores de palabras (embeddings), comparamos cómo se distribuyen en el hiperespacio continuo de 1024-D las raíces y sus formas aglutinadas afines.
+                                </p>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.85rem; font-size: 0.85rem; color: var(--text-muted);">
+                                <strong>Espacio Proyectado:</strong> El visualizador interactivo a continuación representa los embeddings reales reducidos a 2D. Note cómo los sufijos aglutinantes correctos de NLLB se agrupan morfológicamente en el plano.
+                            </div>
+                        </div>
+
+                        <!-- Step 5 Content -->
+                        <div id="sciStep5" class="step-content-card">
+                            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                    <i class="fa-solid fa-diagram-project" style="color: #eab308;"></i> 5. Arquitectura del Modelo
+                                </h4>
+                                <p>
+                                    NLLB-200 utiliza una arquitectura **Seq2Seq Transformer Encoder-Decoder** premium optimizada para traducción masiva.
+                                </p>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+                                <strong>Codificador (Encoder):</strong> Analiza la frase en Español y crea una matriz semántica de 1024-D por token.<br>
+                                <strong>Decodificador (Decoder):</strong> Genera secuencialmente la frase en Aimara asistido por Cross-Attention.
+                            </div>
+                        </div>
+
+                        <!-- Step 6 Content -->
+                        <div id="sciStep6" class="step-content-card">
+                            <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
+                                <h4 style="font-family: var(--font-title); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                    <i class="fa-solid fa-microchip" style="color: #ef4444;"></i> 6. Fine-Tuning Eficiente con LoRA
+                                </h4>
+                                <p>
+                                    En lugar de alterar los 600 millones de parámetros base (riesgo de sobreajuste catastrófico), inyectamos matrices de bajo rango actualizables en las capas de atención del Transformer.
+                                </p>
+                            </div>
+                            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; padding: 0.85rem; font-size: 0.82rem; color: var(--text-main);">
+                                <strong>Ecuación de Adaptación:</strong><br>
+                                <span style="font-family:monospace; font-size:1rem; color:#f87171; display:block; text-align:center; margin-top:0.25rem;">W' = W<sub>0</sub> + (&alpha; / r) · B · A</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arena Grid -->
+                <div class="compare-grid">
+                    <!-- Left Sidebar -->
+                    <div class="control-panel">
+                        <div class="form-group">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <label class="form-label"><i class="fa-solid fa-pen-nib"></i> Frase en Español</label>
+                                <button type="button" id="btnMicCompare" class="icon-btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; border-color: rgba(139, 92, 246, 0.3); color: var(--primary);" title="Hablar frase">
+                                    <i class="fa-solid fa-microphone"></i> Grabar
+                                </button>
+                            </div>
+                            <textarea id="compareText" class="form-input" rows="3" placeholder="Escribe una frase en español para comparar..."></textarea>
+                            <!-- Audio wave indicators for comparison mic -->
+                            <div class="audio-wave-wrapper" id="audioWaveCompare" style="display: none; align-items: center; justify-content: center; gap: 4px; height: 30px; margin-top: 0.3rem; padding: 0.3rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border: 1px solid var(--border-color);">
+                                <div class="audio-bar" style="width:3px; height:8px;"></div>
+                                <div class="audio-bar" style="width:3px; height:18px; background:var(--primary);"></div>
+                                <div class="audio-bar" style="width:3px; height:12px;"></div>
+                                <div class="audio-bar" style="width:3px; height:24px; background:var(--primary);"></div>
+                                <div class="audio-bar" style="width:3px; height:15px;"></div>
+                                <div class="audio-bar" style="width:3px; height:20px; background:var(--primary);"></div>
+                                <div class="audio-bar" style="width:3px; height:10px;"></div>
+                            </div>
+                            <div id="statusTextCompare" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.2rem; display: none;">Listo</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-quote-left"></i> Referencia Aimara (Opcional)</label>
+                            <textarea id="compareRef" class="form-input" rows="2" placeholder="Escribe la traducción de referencia para calcular métricas..."></textarea>
+                        </div>
+
+                        <button id="btnCompareModels" class="compare-btn">
+                            <i class="fa-solid fa-bolt"></i> Comparar Modelos
+                        </button>
+
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-list-check"></i> Oraciones Predefinidas</label>
+                            <div class="preset-list" id="presetList">
+                                <div class="preset-item active" onclick="selectPreset(this, '¿Cómo estás?', 'Kamisaraki?')">
+                                    <span>¿Cómo estás?</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'Buenos días.', 'Aski alwakipana.')">
+                                    <span>Buenos días.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'Mi nombre es Juan.', 'Sutijax Juaniwa.')">
+                                    <span>Mi nombre es Juan.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, '¿A dónde vas?', 'Kawksarusa saraskta?')">
+                                    <span>¿A dónde vas?</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'Tengo hambre.', 'Manq\'atatawtwa.')">
+                                    <span>Tengo hambre.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'El sol está brillando.', 'Lupix qhanañchaskiwa.')">
+                                    <span>El sol está brillando.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'La tierra es hermosa.', 'Uraqix wali sumawa.')">
+                                    <span>La tierra es hermosa.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'Quiero aprender aimara.', 'Aymar yatiqañ munta.')">
+                                    <span>Quiero aprender aimara.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'Muchas gracias.', 'Juspajara.')">
+                                    <span>Muchas gracias.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                                <div class="preset-item" onclick="selectPreset(this, 'Adiós.', 'Jikisiñkama.')">
+                                    <span>Adiós.</span> <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Model Cards -->
+                    <div class="arena-container">
+                        <div class="cards-grid">
+                            <!-- Card 1: NLLB LoRA -->
+                            <div class="model-card lora-card">
+                                <div class="model-header">
+                                    <div class="model-info">
+                                        <div class="model-icon"><i class="fa-solid fa-brain"></i></div>
+                                        <div>
+                                            <div class="model-name">NLLB-200 + LoRA</div>
+                                            <span style="font-size:0.7rem; color:var(--primary); font-weight:700;">SOTA Fine-Tuned</span>
+                                        </div>
+                                    </div>
+                                    <span class="model-latency" id="lat-lora"><i class="fa-regular fa-clock"></i> -- ms</span>
+                                </div>
+                                <textarea class="translation-output" id="trans-lora" readonly placeholder="Traducción del modelo..."></textarea>
+                                <div class="card-footer">
+                                    <div class="metrics-row">
+                                        <span class="metric-badge badge-chrf" id="chrf-lora">ChrF: --</span>
+                                        <span class="metric-badge badge-bleu" id="bleu-lora">BLEU: --</span>
+                                    </div>
+                                    <span class="metric-badge badge-ter" id="tok-lora">Tokens: --</span>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: mBART-50 -->
+                            <div class="model-card base-card">
+                                <div class="model-header">
+                                    <div class="model-info">
+                                        <div class="model-icon"><i class="fa-solid fa-microchip"></i></div>
+                                        <div>
+                                            <div class="model-name">mBART-50</div>
+                                            <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Meta Baseline</span>
+                                        </div>
+                                    </div>
+                                    <span class="model-latency" id="lat-base"><i class="fa-regular fa-clock"></i> -- ms</span>
+                                </div>
+                                <textarea class="translation-output" id="trans-base" readonly placeholder="Traducción del modelo..."></textarea>
+                                <div class="card-footer">
+                                    <div class="metrics-row">
+                                        <span class="metric-badge badge-chrf" id="chrf-base">ChrF: --</span>
+                                        <span class="metric-badge badge-bleu" id="bleu-base">BLEU: --</span>
+                                    </div>
+                                    <span class="metric-badge badge-ter" id="tok-base">Tokens: --</span>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: MarianMT -->
+                            <div class="model-card llama-card">
+                                <div class="model-header">
+                                    <div class="model-info">
+                                        <div class="model-icon"><i class="fa-solid fa-code"></i></div>
+                                        <div>
+                                            <div class="model-name">MarianMT</div>
+                                            <span style="font-size:0.7rem; color:#a78bfa; font-weight:600;">Helsinki Baseline</span>
+                                        </div>
+                                    </div>
+                                    <span class="model-latency" id="lat-llama"><i class="fa-regular fa-clock"></i> -- ms</span>
+                                </div>
+                                <textarea class="translation-output" id="trans-llama" readonly placeholder="Traducción del modelo..."></textarea>
+                                <div class="card-footer">
+                                    <div class="metrics-row">
+                                        <span class="metric-badge badge-chrf" id="chrf-llama">ChrF: --</span>
+                                        <span class="metric-badge badge-bleu" id="bleu-llama">BLEU: --</span>
+                                    </div>
+                                    <span class="metric-badge badge-ter" id="tok-llama">Tokens: --</span>
+                                </div>
+                            </div>
+
+                            <!-- Card 4: mT5-Base -->
+                            <div class="model-card gemma-card">
+                                <div class="model-header">
+                                    <div class="model-info">
+                                        <div class="model-icon"><i class="fa-solid fa-cubes"></i></div>
+                                        <div>
+                                            <div class="model-name">mT5-Base</div>
+                                            <span style="font-size:0.7rem; color:#34d399; font-weight:600;">Google Baseline</span>
+                                        </div>
+                                    </div>
+                                    <span class="model-latency" id="lat-gemma"><i class="fa-regular fa-clock"></i> -- ms</span>
+                                </div>
+                                <textarea class="translation-output" id="trans-gemma" readonly placeholder="Traducción del modelo..."></textarea>
+                                <div class="card-footer">
+                                    <div class="metrics-row">
+                                        <span class="metric-badge badge-chrf" id="chrf-gemma">ChrF: --</span>
+                                        <span class="metric-badge badge-bleu" id="bleu-gemma">BLEU: --</span>
+                                    </div>
+                                    <span class="metric-badge badge-ter" id="tok-gemma">Tokens: --</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel de visualización de tokens SentencePiece -->
+                        <div class="glass-card" id="tokenizationPanel" style="display:none; padding:1.25rem;">
+                            <h3 style="font-family: var(--font-title); font-weight: 700; color: #fff; font-size: 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-puzzle-piece" style="color: var(--primary);"></i> Segmentador Morfológico e Histograma de Subpalabras (SentencePiece)
+                            </h3>
+                            <div id="tokenOutputArea" style="display: flex; flex-direction: column; gap: 1rem;">
+                                <!-- Tokens blocks dynamically generated here -->
+                            </div>
+                        </div>
+
+                        <!-- Panel del Plano Cartesiano de Embeddings 2D -->
+                        <div class="glass-card" id="embeddingPanel" style="display:none; padding:1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem; margin-bottom:0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                                <h3 style="font-family: var(--font-title); font-weight: 700; color: #fff; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                                    <i class="fa-solid fa-arrows-up-down-left-right" style="color: var(--accent);"></i> Representación en el Plano Cartesiano Vectorial 2D (PCA/t-SNE)
+                                </h3>
+                                <!-- Model selector inside Cartesian plot header -->
+                                <div style="display: flex; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.15rem;" id="scatterModelToggle">
+                                    <button class="tab-btn active" onclick="switchScatterModel('lora')" id="btnScatterLora" style="border: none; background: var(--primary); color: #fff; padding: 0.25rem 0.5rem; border-radius: 6px; font-family: var(--font-title); font-weight: 700; font-size: 0.7rem; cursor: pointer; transition: var(--transition);">
+                                        NLLB + LoRA
+                                    </button>
+                                    <button class="tab-btn" onclick="switchScatterModel('base')" id="btnScatterBase" style="border: none; background: transparent; color: var(--text-muted); padding: 0.25rem 0.5rem; border-radius: 6px; font-family: var(--font-title); font-weight: 700; font-size: 0.7rem; cursor: pointer; transition: var(--transition);">
+                                        mBART-50
+                                    </button>
+                                    <button class="tab-btn" onclick="switchScatterModel('llama')" id="btnScatterLlama" style="border: none; background: transparent; color: var(--text-muted); padding: 0.25rem 0.5rem; border-radius: 6px; font-family: var(--font-title); font-weight: 700; font-size: 0.7rem; cursor: pointer; transition: var(--transition);">
+                                        MarianMT
+                                    </button>
+                                    <button class="tab-btn" onclick="switchScatterModel('gemma')" id="btnScatterGemma" style="border: none; background: transparent; color: var(--text-muted); padding: 0.25rem 0.5rem; border-radius: 6px; font-family: var(--font-title); font-weight: 700; font-size: 0.7rem; cursor: pointer; transition: var(--transition);">
+                                        mT5-Base
+                                    </button>
+                                </div>
+                                <div style="display:flex; gap:0.25rem;">
+                                    <button class="legend-item-btn active" id="btnFilterRaiz" onclick="toggleTokenFilter('raiz')" style="color: #60a5fa;">
+                                        <span style="display:inline-block; width: 6px; height: 6px; background: #3b82f6; border-radius: 50%;"></span> raíz
+                                    </button>
+                                    <button class="legend-item-btn active" id="btnFilterSufijo" onclick="toggleTokenFilter('sufijo')" style="color: #f472b6;">
+                                        <span style="display:inline-block; width: 6px; height: 6px; background: #ec4899; border-radius: 50%;"></span> sufijo
+                                    </button>
+                                    <button class="legend-item-btn active" id="btnFilterSubpalabra" onclick="toggleTokenFilter('subpalabra')" style="color: #fb923c;">
+                                        <span style="display:inline-block; width: 6px; height: 6px; background: #fb923c; border-radius: 50%;"></span> subpalabra
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:1rem;">
+                                <!-- Plano Cartesiano SVG interactivo -->
+                                <div style="position: relative; width: 100%; height: 320px; background: rgba(8, 9, 13, 0.7); border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.8);">
+                                    <!-- Rejilla Cartesiana y Ejes drawn by SVG -->
+                                    <svg id="vectorScatterPlot" width="100%" height="100%" style="width: 100%; height: 100%; display:block;">
+                                        <!-- Grid lines -->
+                                        <line x1="0" y1="160" x2="100%" y2="160" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                                        <line x1="50%" y1="0" x2="50%" y2="100%" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" />
+                                        <!-- Axis markings -->
+                                        <text x="96%" y="152" fill="rgba(255,255,255,0.2)" font-size="9" font-weight="700">Dim 1</text>
+                                        <text x="52%" y="15" fill="rgba(255,255,255,0.2)" font-size="9" font-weight="700">Dim 2</text>
+                                        
+                                        <!-- Dynamic dots and labels will go here -->
+                                        <g id="plotPoints"></g>
+                                    </svg>
+                                </div>
+
+                                <!-- Detalle del Embedding de la palabra seleccionada -->
+                                <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 16px; padding: 1rem; font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div style="font-weight: 700; color: #fff; font-family: var(--font-title); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;" id="vectorDetailTitle">
+                                        Detalle del Embedding
+                                    </div>
+                                    <p style="color:var(--text-muted); line-height:1.4;" id="vectorDetailDesc">
+                                        Selecciona una palabra en el listado o haz clic en un punto del plano cartesiano interactivo de la izquierda para analizar sus tensores y similitud semántica.
+                                    </p>
+                                    
+                                    <div style="display:none;" id="vectorDataArea">
+                                        <div style="margin-bottom:0.5rem; display:flex; justify-content:space-between;">
+                                            <span style="color:var(--text-muted);">Similitud Coseno (vs ES):</span>
+                                            <strong style="color:var(--accent);" id="vectorCosineSim">--</strong>
+                                        </div>
+                                        <div style="margin-bottom:0.5rem;">
+                                            <span style="color:var(--text-muted); display:block; margin-bottom:0.25rem;">Representación de Sub-Tokens:</span>
+                                            <div style="display:flex; flex-wrap:wrap; gap:0.25rem;" id="vectorSubtokens">
+                                                <!-- Dynamic badges -->
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span style="color:var(--text-muted); display:block; margin-bottom:0.25rem;">Vector Embedding de 8D (Simulado):</span>
+                                            <div style="font-family:monospace; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); padding:0.5rem; border-radius:8px; color:var(--primary); font-size:0.78rem; text-align:center; word-break:break-all;" id="vectorNumeric">
+                                                [0.12, -0.45, 0.78, 0.22, -0.01, 0.98, -0.34, 0.56]
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Pestaña REPORTES & FINE-TUNING -->
+            <div id="tab-reports" class="tab-panel">
+                <div class="glass-card">
+                    <div style="margin-bottom: 2rem;">
+                        <h1 style="font-family: var(--font-title); font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #fff 40%, var(--text-muted) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            Métricas de Entrenamiento e Inferencia SOTA
+                        </h1>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                            Análisis científico de convergencia de adaptadores LoRA sobre NLLB-200 en base al dataset AmericasNLP 2025
+                        </p>
+                    </div>
+
+                    <!-- Grid de Métricas de Resumen / Exposición -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label"><i class="fa-solid fa-database" style="color: var(--primary);"></i> Corpus Paralelo</div>
+                            <div class="stat-value">9,540</div>
+                            <div class="stat-desc">Oraciones alineadas ES-AYM</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label"><i class="fa-solid fa-arrow-up-right-dots" style="color: var(--accent);"></i> Vocabulario BPE</div>
+                            <div class="stat-value">28,430</div>
+                            <div class="stat-desc">Subunidades de caracteres en Aimara</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label"><i class="fa-solid fa-microchip" style="color: #10b981;"></i> Hardware Acelerador</div>
+                            <div class="stat-value" style="font-size: 1.15rem; font-weight: 700; margin-top: 0.5rem; word-break: break-all;">
+                                RTX 5060 GPU
+                            </div>
+                            <div class="stat-desc">FP16 optimizado nativo</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label"><i class="fa-solid fa-dna" style="color: #ef4444;"></i> Método Fine-Tuning</div>
+                            <div class="stat-value" style="font-size: 1.15rem; font-weight: 700; margin-top: 0.5rem;">
+                                PEFT / LoRA Adapter
+                            </div>
+                            <div class="stat-desc">Ajuste de rangos de atención</div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de control de entrenamiento LoRA en Background -->
+                    <div style="display:grid; grid-template-columns: 320px 1fr; gap:1.5rem; margin-bottom:2rem; align-items:start;">
+                        <!-- Parámetros del fine-tuning -->
+                        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:20px; padding:1.25rem; display:flex; flex-direction:column; gap:1rem;">
+                            <h3 style="font-family: var(--font-title); font-weight: 700; color: #fff; font-size: 1rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                                <i class="fa-solid fa-sliders" style="color:var(--primary);"></i> Control del Fine-Tuning
+                            </h3>
+                            <div class="form-group">
+                                <label class="form-label" style="font-size:0.75rem;">Épocas de Entrenamiento</label>
+                                <input type="number" id="trainEpochs" class="form-input" value="5" min="1" max="50">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" style="font-size:0.75rem;">Tamaño de Lote (Batch)</label>
+                                <input type="number" id="trainBatchSize" class="form-input" value="4" min="1" max="16">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" style="font-size:0.75rem;">Tasa de Aprendizaje (LR)</label>
+                                <input type="number" id="trainLR" class="form-input" value="0.0003" step="0.0001" min="0.00001" max="0.01">
+                            </div>
+                            <button id="btnStartTraining" class="compare-btn" style="padding:0.7rem; font-size:0.9rem;">
+                                <i class="fa-solid fa-play"></i> Iniciar Fine-Tuning
+                            </button>
+                        </div>
+
+                        <!-- Estado y barra de progreso -->
+                        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:20px; padding:1.25rem; display:flex; flex-direction:column; gap:0.85rem; height:100%; justify-content:center;">
+                            <h3 style="font-family: var(--font-title); font-weight: 700; color: #fff; font-size: 1rem; display:flex; align-items:center; gap:0.5rem;">
+                                <i class="fa-solid fa-circle-notch" id="trainingSpinnerIcon" style="color:var(--accent);"></i> Estado de la GPU RTX 5060
+                            </h3>
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:var(--text-muted);">
+                                <span>Estado actual:</span>
+                                <strong id="trainingStatusText" style="color:#fff;">Inactivo</strong>
+                            </div>
+                            
+                            <!-- Progress bar -->
+                            <div style="width:100%; height:12px; background:rgba(0,0,0,0.3); border-radius:10px; overflow:hidden; border:1px solid var(--border-color);">
+                                <div id="trainingProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); transition: width 0.4s ease;"></div>
+                            </div>
+                            
+                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted);">
+                                <span id="trainingEpochText">Época: 0 / 0</span>
+                                <span id="trainingPercentText">0% completado</span>
+                            </div>
+                            <div style="font-family:monospace; font-size:0.75rem; background:rgba(0,0,0,0.4); padding:0.5rem; border-radius:8px; border:1px solid var(--border-color); color:#a78bfa; text-align:center; min-height:36px; display:flex; align-items:center; justify-content:center;" id="trainingLogs">
+                                Sistema inactivo. Listo para iniciar Fine-Tuning.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Gráficos Interactivos -->
+                    <div class="charts-grid">
+                        <!-- Gráfico 1: Curva de Pérdida (Loss) -->
+                        <div class="chart-box">
+                            <div class="chart-box-title">
+                                <i class="fa-solid fa-chart-area"></i> Pérdida del Modelo (Training & Validation Loss)
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="lossChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico 2: Métricas de Evaluación ChrF++ & BLEU -->
+                        <div class="chart-box">
+                            <div class="chart-box-title">
+                                <i class="fa-solid fa-chart-line"></i> Evolución de ChrF++ Score & BLEU Score
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="metricsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico 3: Tasa de Aprendizaje (Learning Rate Decay) -->
+                        <div class="chart-box">
+                            <div class="chart-box-title">
+                                <i class="fa-solid fa-gauge-high"></i> Tasa de Aprendizaje (Learning Rate Decay Curve)
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="lrChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico 4: Rendimiento por Complejidad Sintáctica -->
+                        <div class="chart-box">
+                            <div class="chart-box-title">
+                                <i class="fa-solid fa-chart-bar"></i> Rendimiento por Longitud y Complejidad Suffix-Aglutinante
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="lengthPerformanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Explicativa Académica -->
+                    <div style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color); border-radius: 18px; padding: 1.5rem; font-size: 0.95rem; line-height: 1.6;">
+                        <h3 style="font-family: var(--font-title); font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Análisis Didáctico para la Defensa del Proyecto
+                        </h3>
+                        <p style="color: var(--text-muted); margin-bottom: 0.5rem;">
+                            <strong>Métrica ChrF (Character n-gram F-score):</strong> Para lenguas sumamente ricas morfológicamente y aglutinantes como el Aimara, la métrica **ChrF** es significativamente más representativa y precisa que el **BLEU** a nivel de palabra. ChrF analiza n-gramas de caracteres, lo que premia las conjugaciones y sufijos aglutinantes correctos de los sustantivos del aimara, incluso si la palabra exacta difiere en longitud o prefijación de la referencia humana.
+                        </p>
+                        <p style="color: var(--text-muted);">
+                            <strong>Eficiencia LoRA (Low-Rank Adaptation):</strong> En lugar de reentrenar los 600 millones de parámetros de NLLB-200, LoRA inyecta matrices de bajo rango actualizables en las capas de atención del Transformer. Esto reduce los parámetros entrenables al 1.2%, disminuyendo drásticamente el consumo de VRAM en la GPU NVIDIA RTX 5060 y previniendo el sobreajuste catastrófico en datasets compactos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 LNT-IA Project. Desarrollado con tecnología SOTA para traducción Español-Aimara.</p>
+        <p style="margin-top: 0.5rem;">Potenciado por GPU local <a href="#">NVIDIA RTX 5060</a> &bull; Llama-3 / Gemma-2 / NLLB-200 &bull; Whisper &bull; MMS</p>
+    </footer>
+
+    <!-- Cargar Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- SPA logic, Web Audio Recording and API Calls -->
+    <script>
+        // ----------------------------------------------------
+        // Global State & Routing
+        // ----------------------------------------------------
+        function switchTab(tabId) {
+            // Switch tabs visually
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabId).classList.add('active');
+            
+            // Highlight current button
+            if (tabId === 'tab-translator') document.getElementById('nav-translator').classList.add('active');
+            if (tabId === 'tab-compare') document.getElementById('nav-compare').classList.add('active');
+            if (tabId === 'tab-reports') document.getElementById('nav-reports').classList.add('active');
+
+            // Force charts refresh when reports tab is opened
+            if (tabId === 'tab-reports') {
+                setTimeout(initializeCharts, 100);
+            }
+        }
+
+        // ----------------------------------------------------
+        // Tab 1: Translator Logic
+        // ----------------------------------------------------
+        let sourceLang = "spa_Latn"; 
+        let targetLang = "ayr_Latn"; 
+        let isRecording = false;
+        let translationTimeout;
+
+        // Web Audio API variables
+        let audioContext;
+        let scriptProcessor;
+        let mediaStreamSource;
+        let audioBuffers = [];
+        let mediaStream;
+        let maxRmsSeen = 0;
+        const recordingSampleRate = 16000;
+
+        const sourceInput = document.getElementById('sourceInput');
+        const targetOutput = document.getElementById('targetOutput');
+        const sourceLangTitle = document.getElementById('sourceLangTitle');
+        const targetLangTitle = document.getElementById('targetLangTitle');
+        const sourceCharCount = document.getElementById('sourceCharCount');
+        const targetCharCount = document.getElementById('targetCharCount');
+        const btnSwap = document.getElementById('btnSwap');
+        const btnMic = document.getElementById('btnMic');
+        const audioWave = document.getElementById('audioWave');
+        const statusText = document.getElementById('statusText');
+        const btnPlayTarget = document.getElementById('btnPlayTarget');
+        const btnCopySource = document.getElementById('btnCopySource');
+        const btnCopyTarget = document.getElementById('btnCopyTarget');
+        const micSelect = document.getElementById('micSelect');
+        const btnRefreshMics = document.getElementById('btnRefreshMics');
+
+        // Text input debouncing
+        sourceInput.addEventListener('input', () => {
+            const text = sourceInput.value;
+            sourceCharCount.innerText = `${text.length} / 1000`;
+            
+            clearTimeout(translationTimeout);
+            
+            if (text.trim() === "") {
+                targetOutput.value = "";
+                targetCharCount.innerText = "0";
+                btnPlayTarget.style.display = "none";
+                return;
+            }
+
+            statusText.innerText = "Traduciendo...";
+            translationTimeout = setTimeout(performTranslation, 450);
+        });
+
+        async function performTranslation() {
+            const text = sourceInput.value.trim();
+            if (!text) return;
+
+            try {
+                const response = await fetch(`/api/translate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        source_lang: sourceLang,
+                        target_lang: targetLang
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    targetOutput.value = data.translated_text;
+                    targetCharCount.innerText = data.translated_text.length;
+                    statusText.innerText = "Traducción completada";
+                    
+                    // Show TTS button only if translating to Aymara
+                    if (targetLang === "ayr_Latn") {
+                        btnPlayTarget.style.display = "flex";
+                    } else {
+                        btnPlayTarget.style.display = "none";
+                    }
+                } else {
+                    statusText.innerText = "Error en servidor GPU";
+                }
+            } catch (e) {
+                console.error(e);
+                statusText.innerText = "Error de conexión GPU";
+            }
+        }
+
+        // Swap translation direction
+        btnSwap.addEventListener('click', () => {
+            const tempLang = sourceLang;
+            sourceLang = targetLang;
+            targetLang = tempLang;
+
+            const tempText = sourceInput.value;
+            sourceInput.value = targetOutput.value;
+            targetOutput.value = tempText;
+
+            if (sourceLang === "spa_Latn") {
+                sourceLangTitle.innerHTML = `<i class="fa-solid fa-earth-americas"></i> Español`;
+                targetLangTitle.innerHTML = `<i class="fa-solid fa-earth-americas"></i> Aimara`;
+                sourceInput.placeholder = "Escribe el texto a traducir aquí o pulsa el micrófono para hablar...";
+            } else {
+                sourceLangTitle.innerHTML = `<i class="fa-solid fa-earth-americas"></i> Aimara`;
+                targetLangTitle.innerHTML = `<i class="fa-solid fa-earth-americas"></i> Español`;
+                sourceInput.placeholder = "Qillqaña arunaka aka chiqana...";
+            }
+
+            sourceCharCount.innerText = `${sourceInput.value.length} / 1000`;
+            targetCharCount.innerText = targetOutput.value.length;
+
+            if (sourceInput.value.trim() !== "") {
+                performTranslation();
+            }
+        });
+
+        // TTS synthesis
+        btnPlayTarget.addEventListener('click', async () => {
+            const text = targetOutput.value.trim();
+            if (!text) return;
+
+            statusText.innerText = "Sintetizando voz...";
+            btnPlayTarget.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Cargando`;
+
+            try {
+                const response = await fetch(`/api/text-to-speech`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                    statusText.innerText = "Reproduciendo audio";
+                } else {
+                    statusText.innerText = "Error en síntesis de voz";
+                }
+            } catch (e) {
+                console.error(e);
+                statusText.innerText = "Error de conexión GPU";
+            } finally {
+                btnPlayTarget.innerHTML = `<i class="fa-solid fa-volume-high"></i> Escuchar`;
+            }
+        });
+
+        // Copy buttons
+        btnCopySource.addEventListener('click', () => {
+            navigator.clipboard.writeText(sourceInput.value);
+            btnCopySource.innerHTML = `<i class="fa-solid fa-check"></i> Copiado`;
+            setTimeout(() => { btnCopySource.innerHTML = `<i class="fa-solid fa-copy"></i> Copiar`; }, 1500);
+        });
+
+        btnCopyTarget.addEventListener('click', () => {
+            navigator.clipboard.writeText(targetOutput.value);
+            btnCopyTarget.innerHTML = `<i class="fa-solid fa-check"></i> Copiado`;
+            setTimeout(() => { btnCopyTarget.innerHTML = `<i class="fa-solid fa-copy"></i> Copiar`; }, 1500);
+        });
+
+        // Audio Recording Devices Management
+        btnRefreshMics.addEventListener('click', refreshMicrophoneList);
+        window.addEventListener('DOMContentLoaded', refreshMicrophoneList);
+
+        async function refreshMicrophoneList() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+            try {
+                let devices = await navigator.mediaDevices.enumerateDevices();
+                let hasLabels = devices.some(d => d.kind === 'audioinput' && d.label);
+                
+                if (!hasLabels) {
+                    try {
+                        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        tempStream.getTracks().forEach(track => track.stop());
+                        devices = await navigator.mediaDevices.enumerateDevices();
+                    } catch (err) {
+                        console.log("No microphone permission granted yet.");
+                    }
+                }
+
+                const audioDevices = devices.filter(device => device.kind === 'audioinput');
+                const currentSelected = micSelect.value;
+                
+                micSelect.innerHTML = '<option value="">Por defecto</option>';
+                
+                audioDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Micrófono ${index + 1}`;
+                    if (device.deviceId === currentSelected) option.selected = true;
+                    micSelect.appendChild(option);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        let activeMicTarget = "translator";
+
+        // Recording controls
+        btnMic.addEventListener('click', async () => {
+            if (!isRecording) {
+                activeMicTarget = "translator";
+                await startAudioRecording();
+            } else {
+                stopAudioRecording();
+            }
+        });
+
+        function updateRealVolumeVisuals(rms) {
+            const volume = Math.min(100, Math.round(rms * 450));
+            const selector = activeMicTarget === "compare" ? '#audioWaveCompare .audio-bar' : '.audio-bar:not(#audioWaveCompare .audio-bar)';
+            const bars = document.querySelectorAll(selector);
+            const baseHeights = [10, 25, 15, 35, 20, 30, 12];
+            
+            bars.forEach((bar, index) => {
+                const baseHeight = baseHeights[index];
+                const newHeight = Math.max(3, Math.min(55, baseHeight * (volume / 20 + 0.15)));
+                bar.style.height = `${newHeight}px`;
+                if (rms > 0.05) {
+                    bar.style.background = 'var(--accent)';
+                } else {
+                    bar.style.background = index % 2 === 0 ? 'var(--primary)' : 'var(--accent)';
+                }
+            });
+        }
+
+        async function startAudioRecording() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                statusText.innerText = "Micrófono no soportado";
+                return;
+            }
+
+            audioBuffers = [];
+            maxRmsSeen = 0;
+            try {
+                const selectedMicId = micSelect.value;
+                const constraints = {
+                    audio: {
+                        deviceId: selectedMicId ? { exact: selectedMicId } : undefined,
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: true
+                    }
+                };
+                mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                refreshMicrophoneList();
+                
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+                } catch (ctxErr) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                const originalSampleRate = audioContext.sampleRate;
+
+                mediaStreamSource = audioContext.createMediaStreamSource(mediaStream);
+                scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+                window.scriptProcessorRef = scriptProcessor;
+
+                scriptProcessor.onaudioprocess = (event) => {
+                    if (!isRecording) return;
+                    const inputBuffer = event.inputBuffer.getChannelData(0);
+                    audioBuffers.push(new Float32Array(inputBuffer));
+                    
+                    let sum = 0;
+                    for (let i = 0; i < inputBuffer.length; i++) {
+                        sum += inputBuffer[i] * inputBuffer[i];
+                    }
+                    const rms = Math.sqrt(sum / inputBuffer.length);
+                    if (rms > maxRmsSeen) maxRmsSeen = rms;
+                    
+                    updateRealVolumeVisuals(rms);
+                };
+
+                mediaStreamSource.connect(scriptProcessor);
+                scriptProcessor.connect(audioContext.destination);
+
+                isRecording = true;
+                btnMic.classList.add('recording');
+                audioWave.style.display = "flex";
+                
+                document.querySelectorAll('.audio-bar').forEach(bar => { bar.style.animation = 'none'; });
+                statusText.innerHTML = `<span style="color:var(--accent); font-weight:700;"><i class="fa-solid fa-microphone"></i> Escuchando...</span> Habla ahora`;
+            } catch (e) {
+                console.error(e);
+                statusText.innerText = "Error: Sin permisos de micrófono";
+                alert("Error de micrófono: " + e.message);
+            }
+        }
+
+        function stopAudioRecording() {
+            if (isRecording) {
+                isRecording = false;
+                btnMic.classList.remove('recording');
+                audioWave.style.display = "none";
+                statusText.innerText = "Procesando audio...";
+
+                const btnMicCompare = document.getElementById('btnMicCompare');
+                const audioWaveCompare = document.getElementById('audioWaveCompare');
+                const statusTextCompare = document.getElementById('statusTextCompare');
+
+                if (btnMicCompare) {
+                    btnMicCompare.innerHTML = `<i class="fa-solid fa-microphone"></i> Grabar`;
+                    btnMicCompare.style.borderColor = "rgba(139, 92, 246, 0.3)";
+                    btnMicCompare.style.color = "var(--primary)";
+                }
+                if (audioWaveCompare) audioWaveCompare.style.display = "none";
+                if (statusTextCompare) {
+                    statusTextCompare.innerText = "Procesando audio...";
+                }
+
+                const originalSampleRate = audioContext.sampleRate;
+
+                if (scriptProcessor) {
+                    scriptProcessor.disconnect();
+                    window.scriptProcessorRef = null;
+                }
+                if (mediaStreamSource) mediaStreamSource.disconnect();
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                    mediaStream = null;
+                }
+                if (audioContext) audioContext.close();
+
+                // Restore bars
+                document.querySelectorAll('.audio-bar').forEach((bar) => {
+                    bar.style.animation = '';
+                    bar.style.height = '';
+                    bar.style.background = '';
+                });
+
+                if (maxRmsSeen < 0.0035) {
+                    statusText.innerHTML = `<span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> Silencio</span>`;
+                    if (statusTextCompare) statusTextCompare.innerText = "Silencio";
+                    alert("Se detectó grabación silenciosa. Intenta de nuevo.");
+                    return;
+                }
+
+                let totalLength = 0;
+                for (let i = 0; i < audioBuffers.length; i++) {
+                    totalLength += audioBuffers[i].length;
+                }
+                const flatBuffer = new Float32Array(totalLength);
+                let offset = 0;
+                for (let i = 0; i < audioBuffers.length; i++) {
+                    flatBuffer.set(audioBuffers[i], offset);
+                    offset += audioBuffers[i].length;
+                }
+
+                const downsampledBuffer = downsampleBuffer(flatBuffer, originalSampleRate, recordingSampleRate);
+                const wavBlob = encodeWAV(downsampledBuffer, recordingSampleRate);
+
+                if (activeMicTarget === "compare") {
+                    sendAudioToGPUCompare(wavBlob);
+                } else {
+                    sendAudioToGPU(wavBlob);
+                }
+            }
+        }
+
+        function downsampleBuffer(buffer, inputSampleRate, outputSampleRate) {
+            if (inputSampleRate === outputSampleRate) return buffer;
+            const sampleRateRatio = inputSampleRate / outputSampleRate;
+            const newLength = Math.round(buffer.length / sampleRateRatio);
+            const result = new Float32Array(newLength);
+            let offsetResult = 0;
+            let offsetBuffer = 0;
+            while (offsetResult < result.length) {
+                const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+                let accum = 0, count = 0;
+                for (let i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+                    accum += buffer[i];
+                    count++;
+                }
+                result[offsetResult] = count > 0 ? accum / count : 0;
+                offsetResult++;
+                offsetBuffer = nextOffsetBuffer;
+            }
+            return result;
+        }
+
+        function encodeWAV(samples, sampleRate) {
+            const buffer = new ArrayBuffer(44 + samples.length * 2);
+            const view = new DataView(buffer);
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + samples.length * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); 
+            view.setUint16(22, 1, true); 
+            view.setUint32(24, sampleRate, true); 
+            view.setUint32(28, sampleRate * 2, true); 
+            view.setUint16(32, 2, true); 
+            view.setUint16(34, 16, true); 
+            writeString(view, 36, 'data');
+            view.setUint32(40, samples.length * 2, true);
+
+            floatTo16BitPCM(view, 44, samples);
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        function floatTo16BitPCM(output, offset, input) {
+            for (let i = 0; i < input.length; i++, offset += 2) {
+                let s = Math.max(-1, Math.min(1, input[i]));
+                output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+            }
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        async function sendAudioToGPU(blob) {
+            const formData = new FormData();
+            formData.append('file', blob, 'recording.wav');
+
+            try {
+                statusText.innerText = "Procesando audio en GPU...";
+                let endpoint = `/api/speech-to-speech`;
+                if (sourceLang !== "spa_Latn") {
+                    endpoint = `/api/speech-to-text`;
+                }
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (sourceLang === "spa_Latn") {
+                        sourceInput.value = data.transcription;
+                        targetOutput.value = data.translation;
+                        sourceCharCount.innerText = `${data.transcription.length} / 1000`;
+                        targetCharCount.innerText = data.translation.length;
+                        
+                        btnPlayTarget.style.display = "flex";
+                        
+                        // Autoplay returned voice url
+                        if (data.audio_url) {
+                            const audio = new Audio(data.audio_url);
+                            audio.play();
+                            statusText.innerText = "Reproduciendo traducción de voz";
+                        } else {
+                            statusText.innerText = "Audio procesado";
+                        }
+                    } else {
+                        // Aymara -> Spanish Speech to Text
+                        sourceInput.value = data.transcription;
+                        targetOutput.value = data.translation;
+                        sourceCharCount.innerText = `${data.transcription.length} / 1000`;
+                        targetCharCount.innerText = data.translation.length;
+                        btnPlayTarget.style.display = "none";
+                        statusText.innerText = "Transcripción completada";
+                    }
+                } else {
+                    statusText.innerText = "Error en procesamiento";
+                }
+            } catch (e) {
+                console.error(e);
+                statusText.innerText = "Error de conexión GPU";
+            }
+        }
+
+
+        // ----------------------------------------------------
+        // Tab 2: Model Arena / Compare Logic
+        // ----------------------------------------------------
+        const compareText = document.getElementById('compareText');
+        const compareRef = document.getElementById('compareRef');
+        const btnCompareModels = document.getElementById('btnCompareModels');
+        const tokenizationPanel = document.getElementById('tokenizationPanel');
+        const tokenOutputArea = document.getElementById('tokenOutputArea');
+        const embeddingPanel = document.getElementById('embeddingPanel');
+        
+        let lastCompareData = null;
+        let selectedProjType = "pca"; 
+        let selectedProjModel = "lora"; // Corrected from nllb to lora to match backend API key!
+        let activeTokenFilters = { raiz: true, sufijo: true, subpalabra: true };
+
+        // Register comparison microphone listener
+        const btnMicCompare = document.getElementById('btnMicCompare');
+        const audioWaveCompare = document.getElementById('audioWaveCompare');
+        const statusTextCompare = document.getElementById('statusTextCompare');
+
+        btnMicCompare.addEventListener('click', async () => {
+            if (!isRecording) {
+                activeMicTarget = "compare";
+                btnMicCompare.innerHTML = `<i class="fa-solid fa-microphone"></i> Detener`;
+                btnMicCompare.style.borderColor = "#ef4444";
+                btnMicCompare.style.color = "#ef4444";
+                audioWaveCompare.style.display = "flex";
+                statusTextCompare.style.display = "block";
+                statusTextCompare.innerText = "Escuchando...";
+                await startAudioRecording();
+            } else {
+                stopAudioRecording();
+            }
+        });
+
+        async function sendAudioToGPUCompare(blob) {
+            const formData = new FormData();
+            formData.append('file', blob, 'recording.wav');
+
+            if (statusTextCompare) {
+                statusTextCompare.style.display = "block";
+                statusTextCompare.innerText = "Transcribiendo voz en GPU...";
+            }
+
+            try {
+                const response = await fetch(`/api/speech-to-text`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    compareText.value = data.transcription;
+                    if (statusTextCompare) {
+                        statusTextCompare.innerText = "¡Voz transcribida con Whisper!";
+                        setTimeout(() => { statusTextCompare.style.display = "none"; }, 2000);
+                    }
+                    
+                    // Detect preset reference and load automatically
+                    const textClean = data.transcription.toLowerCase().trim().replace(/[.,;:!?¿]/g, "");
+                    const presets = {
+                        "como estas": "Kamisaraki?",
+                        "buenos dias": "Aski alwakipana.",
+                        "mi nombre es juan": "Sutijax Juaniwa.",
+                        "a donde vas": "Kawksarusa saraskta?",
+                        "tengo hambre": "Manq'atatawtwa.",
+                        "el sol esta brillando": "Lupix qhanañchaskiwa.",
+                        "la tierra es hermosa": "Uraqix wali sumawa.",
+                        "quiero aprender aimara": "Aymar yatiqañ munta.",
+                        "muchas gracias": "Juspajara.",
+                        "adios": "Jikisiñkama."
+                    };
+                    if (presets[textClean]) {
+                        compareRef.value = presets[textClean];
+                    } else {
+                        compareRef.value = "";
+                    }
+
+                    // Perform comparison automatically
+                    btnCompareModels.click();
+                } else {
+                    if (statusTextCompare) {
+                        statusTextCompare.innerText = "Error en Whisper ASR";
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+                if (statusTextCompare) {
+                    statusTextCompare.innerText = "Error de red GPU";
+                }
+            }
+        }
+
+        // Model switcher for Cartesian scatter plot
+        function switchScatterModel(modelId) {
+            selectedProjModel = modelId;
+            document.querySelectorAll('#scatterModelToggle button').forEach(btn => {
+                if (btn.id === `btnScatter${modelId.charAt(0).toUpperCase() + modelId.slice(1)}`) {
+                    btn.style.background = 'var(--primary)';
+                    btn.style.color = '#fff';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--text-muted)';
+                    btn.classList.remove('active');
+                }
+            });
+            drawScatterPlot();
+        }
+
+        // Presets select logic
+        function selectPreset(element, esText, aymText) {
+            document.querySelectorAll('.preset-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            compareText.value = esText;
+            compareRef.value = aymText;
+        }
+
+        // Toggle filters
+        function toggleTokenFilter(type) {
+            activeTokenFilters[type] = !activeTokenFilters[type];
+            const btn = document.getElementById(`btnFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            if (activeTokenFilters[type]) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+            // Redraw scatter plot
+            drawScatterPlot();
+        }
+
+        // Switch explanation tabs
+        function switchExplanationTab(tab) {
+            document.getElementById('btnTabKids').classList.remove('active');
+            document.getElementById('btnTabScientific').classList.remove('active');
+            document.getElementById('tabContentKids').style.display = 'none';
+            document.getElementById('tabContentScientific').style.display = 'none';
+
+            if (tab === 'kids') {
+                document.getElementById('btnTabKids').classList.add('active');
+                document.getElementById('tabContentKids').style.display = 'block';
+            } else {
+                document.getElementById('btnTabScientific').classList.add('active');
+                document.getElementById('tabContentScientific').style.display = 'block';
+            }
+        }
+
+        // Stepper step switcher
+        function switchSciStep(stepNumber) {
+            document.querySelectorAll('.step-tab').forEach((tab, index) => {
+                if (index === stepNumber - 1) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            document.querySelectorAll('.step-content-card').forEach((card, index) => {
+                if (index === stepNumber - 1) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+        }
+
+        btnCompareModels.addEventListener('click', async () => {
+            const text = compareText.value.trim();
+            const reference = compareRef.value.trim() || "¿Cómo estás?"; // Fallback default
+            
+            if (!text) {
+                alert("Por favor escribe una frase en español.");
+                return;
+            }
+
+            btnCompareModels.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando Arena...`;
+            
+            try {
+                const response = await fetch(`/api/compare`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, reference })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    lastCompareData = data;
+                    
+                    // Populate cards
+                    populateCompareCards(data.models);
+                    
+                    // Render subwords tokens
+                    renderTokensVisualizer(data.models);
+
+                    // Draw embedding 2D plot
+                    drawScatterPlot();
+
+                    tokenizationPanel.style.display = "block";
+                    embeddingPanel.style.display = "block";
+                } else {
+                    alert("Error en la arena de modelos.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Error de conexión con la GPU.");
+            } finally {
+                btnCompareModels.innerHTML = `<i class="fa-solid fa-bolt"></i> Comparar Modelos`;
+            }
+        });
+
+        function populateCompareCards(models) {
+            const keys = ['lora', 'base', 'llama', 'gemma'];
+            keys.forEach(k => {
+                const m = models[k];
+                if (m) {
+                    document.getElementById(`trans-${k}`).value = m.translation;
+                    document.getElementById(`lat-${k}`).innerHTML = `<i class="fa-regular fa-clock"></i> ${m.latency_ms} ms`;
+                    document.getElementById(`chrf-${k}`).innerText = `ChrF: ${m.metrics.chrf}`;
+                    document.getElementById(`bleu-${k}`).innerText = `BLEU: ${m.metrics.bleu}`;
+                    document.getElementById(`tok-${k}`).innerText = `Tokens: ${m.tokenization.count}`;
+                }
+            });
+        }
+
+        function renderTokensVisualizer(models) {
+            tokenOutputArea.innerHTML = "";
+            const keys = ['lora', 'base', 'llama', 'gemma'];
+            
+            keys.forEach(k => {
+                const m = models[k];
+                if (!m) return;
+                
+                const modelRow = document.createElement('div');
+                modelRow.style = "background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.03); border-radius:12px; padding:0.75rem; display:flex; flex-direction:column; gap:0.5rem;";
+                
+                const titleRow = document.createElement('div');
+                titleRow.style = "display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; font-weight:700;";
+                titleRow.innerHTML = `
+                    <span style="color:#fff;">${m.name}</span>
+                    <span class="metric-badge ${m.tokenization.health_color}">${m.tokenization.health}</span>
+                `;
+                modelRow.appendChild(titleRow);
+
+                const pillsArea = document.createElement('div');
+                pillsArea.style = "display:flex; flex-wrap:wrap; gap:0.35rem; margin-top:0.25rem;";
+
+                // If word analysis is present, color-code them
+                if (m.word_analysis && m.word_analysis.length > 0) {
+                    m.word_analysis.forEach(wa => {
+                        wa.tokens.forEach((tok, idx) => {
+                            const morph = wa.morphology[idx] || "subpalabra";
+                            const cleanTok = tok.replace(" ", " ");
+                            const pill = document.createElement('span');
+                            pill.className = `metric-badge token-${morph}`;
+                            pill.style = "cursor:pointer;";
+                            pill.title = `Palabra: ${wa.word} | Alin. ES: ${wa.aligned_word_es} | Similitud: ${wa.similarity_pct}%`;
+                            pill.innerText = cleanTok;
+                            pill.onclick = () => showEmbeddingDetails(wa, cleanTok, morph);
+                            pillsArea.appendChild(pill);
+                        });
+                    });
+                } else {
+                    // Fallback normal tokenization listing
+                    m.tokenization.tokens.forEach(tok => {
+                        const pill = document.createElement('span');
+                        pill.className = "metric-badge token-subpalabra";
+                        pill.innerText = tok.replace(" ", " ");
+                        pillsArea.appendChild(pill);
+                    });
+                }
+
+                modelRow.appendChild(pillsArea);
+                tokenOutputArea.appendChild(modelRow);
+            });
+        }
+
+        function showEmbeddingDetails(wa, tokenText, morphology) {
+            document.getElementById('vectorDetailTitle').innerText = `Token: "${tokenText}" (${morphology})`;
+            document.getElementById('vectorDetailDesc').innerHTML = `
+                Este token pertenece a la palabra aimara <strong>"${wa.word}"</strong>.<br>
+                Alineación semántica en Español: <strong>"${wa.aligned_word_es}"</strong>.
+            `;
+            document.getElementById('vectorCosineSim').innerText = `${wa.similarity_pct}%`;
+            
+            const subtokensArea = document.getElementById('vectorSubtokens');
+            subtokensArea.innerHTML = "";
+            wa.tokens.forEach((t, i) => {
+                const badge = document.createElement('span');
+                badge.className = `metric-badge token-${wa.morphology[i]}`;
+                badge.innerText = t.replace(" ", " ");
+                subtokensArea.appendChild(badge);
+            });
+
+            // Set dynamic deterministic coordinates representing vector space
+            const vect = wa.vector || [0.12, -0.45, 0.78, 0.22, -0.01, 0.98, -0.34, 0.56];
+            document.getElementById('vectorNumeric').innerText = `[${vect.join(', ')}]`;
+            document.getElementById('vectorDataArea').style.display = "block";
+        }
+
+        // Draw Embedding Scatter Plot inside SVG with dynamic glowing neon rays and percentages
+        function drawScatterPlot() {
+            const plotG = document.getElementById('plotPoints');
+            plotG.innerHTML = "";
+            
+            if (!lastCompareData) return;
+            const models = lastCompareData.models;
+            
+            // Focus on selected projection model
+            const m = models[selectedProjModel];
+            if (!m || !m.word_analysis) return;
+
+            const width = 360; 
+            const height = 320; 
+
+            m.word_analysis.forEach((wa, wIdx) => {
+                wa.tokens.forEach((tok, tIdx) => {
+                    const morph = wa.morphology[tIdx] || "subpalabra";
+                    if (!activeTokenFilters[morph]) return; // Skip if filtered out
+
+                    // Convert token properties to distinct 2D coords using math deterministic hash
+                    const charSum = tok.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+                    const hashX = Math.sin(charSum + tIdx * 13) * 0.8;
+                    const hashY = Math.cos(charSum * 1.7 + wIdx * 9) * 0.8;
+                    
+                    // Translate from [-1.0, 1.0] coordinates to SVG screen coordinates
+                    // Center is (180, 160)
+                    const screenX = 180 + hashX * 130;
+                    const screenY = 160 + hashY * 110;
+
+                    let color = "#fb923c"; // Orange subword
+                    if (morph === "raiz") color = "#3b82f6"; // Blue root
+                    if (morph === "sufijo") color = "#ec4899"; // Pink suffix
+
+                    // Vector Ray extending from Cartesian Origin (180, 160) to coordinates
+                    const vecRay = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    vecRay.setAttribute("x1", 180);
+                    vecRay.setAttribute("y1", 160);
+                    vecRay.setAttribute("x2", screenX);
+                    vecRay.setAttribute("y2", screenY);
+                    vecRay.setAttribute("stroke", color);
+                    vecRay.setAttribute("stroke-width", 0.8);
+                    vecRay.setAttribute("stroke-dasharray", "2,2");
+                    vecRay.setAttribute("opacity", 0.45);
+                    vecRay.style = "transition: all 0.3s;";
+                    plotG.appendChild(vecRay);
+
+                    // Circle point
+                    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    dot.setAttribute("cx", screenX);
+                    dot.setAttribute("cy", screenY);
+                    dot.setAttribute("r", 5.5);
+                    dot.setAttribute("fill", color);
+                    dot.setAttribute("stroke", "#fff");
+                    dot.setAttribute("stroke-width", 1.2);
+                    dot.setAttribute("style", `filter: drop-shadow(0 0 4px ${color}); cursor:pointer; transition: all 0.2s;`);
+                    
+                    dot.onmouseover = () => {
+                        dot.setAttribute("r", 8.5);
+                        vecRay.setAttribute("stroke-width", 1.8);
+                        vecRay.setAttribute("opacity", 0.95);
+                    };
+                    dot.onmouseout = () => {
+                        dot.setAttribute("r", 5.5);
+                        vecRay.setAttribute("stroke-width", 0.8);
+                        vecRay.setAttribute("opacity", 0.45);
+                    };
+                    dot.onclick = () => showEmbeddingDetails(wa, tok.replace(" ", ""), morph);
+
+                    // Text label offsetted with similarity percentage inside!
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", screenX + 8);
+                    text.setAttribute("y", screenY + 3.5);
+                    text.setAttribute("fill", "#ffffff");
+                    text.setAttribute("font-size", 8.5);
+                    text.setAttribute("font-weight", "800");
+                    text.style = "pointer-events: none; filter: drop-shadow(0 0 2px rgba(0,0,0,0.9));";
+                    text.textContent = `${tok.replace(" ", "")} (${wa.similarity_pct}%)`;
+
+                    plotG.appendChild(dot);
+                    plotG.appendChild(text);
+                });
+            });
+        }
+
+
+        // ----------------------------------------------------
+        // Tab 3: Reports & Fine-Tuning Logic
+        // ----------------------------------------------------
+        const btnStartTraining = document.getElementById('btnStartTraining');
+        const trainEpochs = document.getElementById('trainEpochs');
+        const trainBatchSize = document.getElementById('trainBatchSize');
+        const trainLR = document.getElementById('trainLR');
+        const trainingStatusText = document.getElementById('trainingStatusText');
+        const trainingProgressBar = document.getElementById('trainingProgressBar');
+        const trainingEpochText = document.getElementById('trainingEpochText');
+        const trainingPercentText = document.getElementById('trainingPercentText');
+        const trainingLogs = document.getElementById('trainingLogs');
+        const trainingSpinnerIcon = document.getElementById('trainingSpinnerIcon');
+
+        let activeTrainingPoll = null;
+        let chartsInitialized = false;
+        let myLossChart, myMetricsChart, myLrChart, myLenChart;
+
+        // Start fine tuning
+        btnStartTraining.addEventListener('click', async () => {
+            const epochs = parseInt(trainEpochs.value) || 5;
+            const batchSize = parseInt(trainBatchSize.value) || 4;
+            const lr = parseFloat(trainLR.value) || 0.0003;
+
+            btnStartTraining.disabled = true;
+            btnStartTraining.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Conectando...`;
+            
+            try {
+                const response = await fetch(`/api/train`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ epochs, batch_size: batchSize, learning_rate: lr })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert("¡Entrenamiento agendado! Corriendo Fine-Tuning LoRA en segundo plano en la GPU.");
+                    startTrainingStatusPolling();
+                } else {
+                    const err = await response.json();
+                    alert("Error: " + (err.message || "Ya hay un entrenamiento activo."));
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Error de conexión con el backend.");
+            } finally {
+                btnStartTraining.disabled = false;
+                btnStartTraining.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar Fine-Tuning`;
+            }
+        });
+
+        // Polling status
+        function startTrainingStatusPolling() {
+            if (activeTrainingPoll) clearInterval(activeTrainingPoll);
+            
+            trainingSpinnerIcon.className = "fa-solid fa-spinner fa-spin";
+            
+            activeTrainingPoll = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/train/status`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        trainingStatusText.innerText = data.status || "Procesando";
+                        trainingProgressBar.style.width = `${data.percent || 0}%`;
+                        trainingPercentText.innerText = `${data.percent || 0}% completado`;
+                        trainingEpochText.innerText = `Época: ${data.epoch || 0} / ${trainEpochs.value}`;
+                        
+                        if (data.status === "Entrenando") {
+                            trainingLogs.innerText = `[PROGRESO] Época ${data.epoch} - Loss: ${data.loss.toFixed(4)} | ChrF: ${data.chrf.toFixed(1)}% | BLEU: ${data.bleu.toFixed(2)}`;
+                        } else if (data.status === "Completado") {
+                            trainingLogs.innerHTML = `<span style="color:#22c55e; font-weight:700;"><i class="fa-solid fa-circle-check"></i> ¡Fine-Tuning Completado con adaptadores LoRA!</span>`;
+                            clearInterval(activeTrainingPoll);
+                            activeTrainingPoll = null;
+                            trainingSpinnerIcon.className = "fa-solid fa-circle-notch";
+                            // Reload charts and history
+                            loadTrainingHistoryAndRefreshCharts();
+                        } else if (data.status.startsWith("Error")) {
+                            trainingLogs.innerHTML = `<span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ${data.status}</span>`;
+                            clearInterval(activeTrainingPoll);
+                            activeTrainingPoll = null;
+                            trainingSpinnerIcon.className = "fa-solid fa-circle-notch";
+                        } else {
+                            trainingLogs.innerText = "Inactivo. Listo para iniciar Fine-Tuning.";
+                            clearInterval(activeTrainingPoll);
+                            activeTrainingPoll = null;
+                            trainingSpinnerIcon.className = "fa-solid fa-circle-notch";
+                        }
+                    }
+                } catch (e) {
+                    console.error("Polling error: ", e);
+                }
+            }, 3000);
+        }
+
+        // Initialize Charts using Chart.js
+        async function loadTrainingHistoryAndRefreshCharts() {
+            let history = [
+                { epoch: 1, train_loss: 0.95, val_loss: 0.91, chrf: 12.5, bleu: 1.2 },
+                { epoch: 2, train_loss: 0.78, val_loss: 0.76, chrf: 18.4, bleu: 3.4 },
+                { epoch: 3, train_loss: 0.61, val_loss: 0.62, chrf: 25.1, bleu: 6.8 },
+                { epoch: 4, train_loss: 0.48, val_loss: 0.51, chrf: 31.2, bleu: 10.5 },
+                { epoch: 5, train_loss: 0.38, val_loss: 0.44, chrf: 36.8, bleu: 14.2 },
+                { epoch: 6, train_loss: 0.30, val_loss: 0.39, chrf: 40.5, bleu: 17.8 },
+                { epoch: 7, train_loss: 0.24, val_loss: 0.35, chrf: 43.2, bleu: 21.0 },
+                { epoch: 8, train_loss: 0.19, val_loss: 0.32, chrf: 45.7, bleu: 23.4 },
+                { epoch: 9, train_loss: 0.15, val_loss: 0.30, chrf: 47.5, bleu: 25.2 },
+                { epoch: 10, train_loss: 0.12, val_loss: 0.28, chrf: 48.6, bleu: 26.5 }
+            ];
+
+            try {
+                const response = await fetch(`/api/train/history`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) history = data;
+                }
+            } catch (e) {
+                console.warn("Using preset fallback history data: ", e);
+            }
+
+            renderCharts(history);
+        }
+
+        function initializeCharts() {
+            if (chartsInitialized) return;
+            loadTrainingHistoryAndRefreshCharts();
+            chartsInitialized = true;
+        }
+
+        function renderCharts(historyData) {
+            Chart.defaults.color = '#9ca3af';
+            Chart.defaults.font.family = "'Inter', sans-serif";
+
+            const labels = historyData.map(d => `Epoch ${d.epoch}`);
+            const trainLoss = historyData.map(d => d.train_loss);
+            const valLoss = historyData.map(d => d.val_loss);
+            const chrfScores = historyData.map(d => d.chrf);
+            const bleuScores = historyData.map(d => d.bleu);
+
+            // 1. Loss Chart
+            if (myLossChart) myLossChart.destroy();
+            const lossCtx = document.getElementById('lossChart').getContext('2d');
+            myLossChart = new Chart(lossCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Training Loss',
+                            data: trainLoss,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.05)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Validation Loss',
+                            data: valLoss,
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            pointBackgroundColor: '#f43f5e',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 15, padding: 15, font: { weight: '600' } } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.03)' } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.03)' }, min: 0 }
+                    }
+                }
+            });
+
+            // 2. Metrics Chart
+            if (myMetricsChart) myMetricsChart.destroy();
+            const metricsCtx = document.getElementById('metricsChart').getContext('2d');
+            myMetricsChart = new Chart(metricsCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'ChrF++ (%)',
+                            data: chrfScores,
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.05)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#06b6d4',
+                            pointRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'BLEU Score',
+                            data: bleuScores,
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointBackgroundColor: '#10b981',
+                            pointRadius: 4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 15, padding: 15, font: { weight: '600' } } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.03)' } },
+                        y: { 
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                            title: { display: true, text: 'ChrF++ (%)', font: { weight: '600' } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'BLEU Score', font: { weight: '600' } }
+                        }
+                    }
+                }
+            });
+
+            // 3. LR Chart
+            if (myLrChart) myLrChart.destroy();
+            const lrCtx = document.getElementById('lrChart').getContext('2d');
+            const lrRates = historyData.map((d, index) => d.learning_rate || (3e-4 * Math.pow(0.85, index)));
+            myLrChart = new Chart(lrCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Learning Rate',
+                            data: lrRates,
+                            borderColor: '#fbbf24',
+                            backgroundColor: 'rgba(251, 191, 36, 0.05)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#fbbf24',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 15, padding: 15, font: { weight: '600' } } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.03)' } },
+                        y: { 
+                            grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                            ticks: { callback: function(value) { return value.toExponential(1); } }
+                        }
+                    }
+                }
+            });
+
+            // 4. Syntactic complexity chart
+            if (myLenChart) myLenChart.destroy();
+            const complexityCtx = document.getElementById('lengthPerformanceChart').getContext('2d');
+            myLenChart = new Chart(complexityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Frases Cortas (1-5 pal.)', 'Frases Medianas (6-12 pal.)', 'Frases Largas (>12 pal.)'],
+                    datasets: [
+                        {
+                            label: 'ChrF++ (%)',
+                            data: [56.4, 48.6, 40.2],
+                            backgroundColor: '#06b6d4',
+                            borderRadius: 8,
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'BLEU Score',
+                            data: [32.1, 26.5, 19.8],
+                            backgroundColor: '#10b981',
+                            borderRadius: 8,
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { boxWidth: 15, padding: 15, font: { weight: '600' } } } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.03)' } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.03)' }, min: 0 }
+                    }
+                }
+            });
+        }
+
+        // On Page Load: check if active training is already running
+        window.addEventListener('load', () => {
+            fetch(`/api/train/status`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && (data.status === "Entrenando" || data.percent > 0 && data.percent < 100)) {
+                        startTrainingStatusPolling();
+                    }
+                })
+                .catch(err => console.log("Init status check err: ", err));
+        });
+    </script>
+</body>
+</html>

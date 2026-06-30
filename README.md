@@ -107,6 +107,38 @@ sequenceDiagram
 
 ---
 
+## 🔤 Proceso de Tokenización (SentencePiece)
+
+Dado que el **Aimara** es una lengua aglutinante y polisintética (donde una sola palabra puede llevar múltiples sufijos que cambian su significado morfológico completo), la tokenización por palabras completas tradicional fallaría drásticamente (ocasionando el problema del vocabulario abierto o demasiados tokens `<unk>`).
+
+Por esta razón, el modelo NLLB-200 utiliza el tokenizador **SentencePiece (basado en el modelo Unigram)**.
+
+### Características Clave de la Tokenización en el Sistema:
+1. **Segmentación en Subpalabras (Subwords)**:
+   * Divide las palabras complejas en unidades morfológicas más pequeñas (tokens). Por ejemplo, la palabra aimara:
+     $$\text{"aruskipapxañanakasakipunirakispawa"}$$
+     Es descompuesta por el tokenizador en múltiples subunidades (como raíces y sufijos: `arus`, `kip`, `apx`, `aña`, `naka`, etc.) en lugar de ser catalogada como palabra desconocida. Esto preserva la coherencia gramatical de los morfemas.
+2. **Inyección de Tokens de Idioma (Language Prefix Tokens)**:
+   * NLLB-200 es un modelo multilingüe masivo. Para guiar la traducción, el tokenizador inyecta códigos de idioma específicos como prefijos especiales al inicio de las secuencias:
+     * `spa_Latn` para Español (escritura Latina).
+     * `ayr_Latn` para Aimara Central (escritura Latina).
+
+### Diagrama del Flujo de Tokenización e Inferencia:
+
+```mermaid
+graph LR
+    TextoES["Texto en Español <br> 'Buenos días'"] 
+    --> TokenizerES["Tokenizer.src_lang = 'spa_Latn'"]
+    --> InjES["Inyección de Token: <br> [spa_Latn] + subwords"]
+    --> InputIDs["Tensores de Entrada <br> (Input IDs)"]
+    --> NLLB["Modelo NLLB-200 <br> (Generación Auto-regresiva)"]
+    --> OutputIDs["Tensores de Salida <br> (Target IDs)"]
+    --> DecAYM["Decodificador con target_lang: <br> [ayr_Latn]"]
+    --> TextoAYM["Texto en Aimara <br> 'Aski alwasa'"]
+```
+
+---
+
 ## ⚙️ Requisitos del sistema
 
 | Requisito | Mínimo | Recomendado |

@@ -45,6 +45,68 @@ Hemos incorporado un robusto marco de análisis y exposición académica sobre e
 
 ---
 
+## 🏗️ Arquitectura del Sistema
+
+El sistema implementa una arquitectura desacoplada y distribuida de tres capas para separar el consumo de usuario de los procesos pesados de inferencia de IA:
+
+```mermaid
+graph TD
+    subgraph Capa_Cliente ["Capa de Cliente (Interfaces de Usuario)"]
+        A["Laravel Web App (PHP / Blade / JS)"]
+        B["Mobile App (Flutter / Dart)"]
+    end
+
+    subgraph Capa_Servicio ["Capa de Servicio (API / Red)"]
+        C["HTTP REST API (FastAPI)"]
+    end
+
+    subgraph Capa_IA_Backend ["Backend de IA (FastAPI / Python)"]
+        C --> D["Motor de Inferencia y Flujo de Voz"]
+        D --> E["ASR: OpenAI Whisper Large V3 Turbo"]
+        D --> F["NMT: Meta NLLB-200-distilled-600M + Adaptadores LoRA (PEFT)"]
+        D --> G["TTS: Meta MMS TTS Aymara (VITS)"]
+        
+        C --> H["Módulo de Entrenamiento (Fine-Tuning)"]
+        H --> F
+    end
+
+    subgraph Capa_Persistencia ["Capa de Persistencia"]
+        F <--> I["best_lora_adapters (Archivos JSON/Binarios)"]
+        H <--> J["Corpus Paralelo (train.es / train.aym)"]
+    end
+
+    A -- "Peticiones HTTP REST" --> C
+    B -- "Peticiones HTTP REST (Wi-Fi Local)" --> C
+```
+
+### Flujo de Voz a Voz (Speech-to-Speech Cascade)
+
+Cuando un usuario interactúa a través de voz, el sistema procesa el audio de forma secuencial en cascada:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Usuario
+    participant Cliente as Interfaz (Web / Móvil)
+    participant FastAPI as Servidor FastAPI
+    participant Whisper as OpenAI Whisper (ASR)
+    participant NLLB as NLLB-200 + LoRA (NMT)
+    participant MMS as Meta MMS (TTS)
+
+    Usuario->>Cliente: Graba audio en Español
+    Cliente->>FastAPI: POST /api/speech-to-text (archivo WAV)
+    FastAPI->>Whisper: Transcribe audio
+    Whisper-->>FastAPI: Retorna Texto en Español
+    FastAPI->>NLLB: Traduce Texto (Español -> Aimara)
+    NLLB-->>FastAPI: Retorna Texto en Aimara
+    FastAPI->>MMS: Sintetiza Texto en Aimara
+    MMS-->>FastAPI: Retorna Archivo de Audio (WAV)
+    FastAPI-->>Cliente: Retorna transcripción, traducción y audio WAV
+    Cliente->>Usuario: Reproduce audio en Aimara y muestra textos
+```
+
+---
+
 ## ⚙️ Requisitos del sistema
 
 | Requisito | Mínimo | Recomendado |

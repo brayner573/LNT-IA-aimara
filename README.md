@@ -139,6 +139,28 @@ graph LR
 
 ---
 
+## ⚡ Magia Técnica, Optimización de Velocidad y Caché
+
+El sistema incorpora múltiples técnicas avanzadas de optimización y compresión para asegurar respuestas en milisegundos y un consumo mínimo de recursos del hardware:
+
+### 1. Cuantización Adaptativa a 8 bits (INT8)
+* **¿Qué es?**: Reduce el tamaño de los pesos del modelo de punto flotante de 32 bits (FP32) a enteros de 8 bits (INT8) utilizando la biblioteca `bitsandbytes`.
+* **Beneficio**: Permite que el modelo NLLB-200 funcione sin problemas en GPUs de gama media o baja (con menos de 6 GB de VRAM como las GTX 1650/RTX 3050) evitando colapsos por falta de memoria (OOM).
+
+### 2. Eficiencia Paramétrica con LoRA (PEFT)
+* **¿Qué es?**: Congela los 600 millones de parámetros del modelo base de traducción y solo entrena pequeñas matrices de bajo rango (rango = 16) aplicadas a las proyecciones de atención (`q_proj`, `v_proj`).
+* **Beneficio**: El entrenamiento es sumamente rápido y consume muy poca memoria. Los adaptadores resultantes ocupan apenas **~100 MB** en disco, en comparación con los más de 2.4 GB del modelo completo.
+
+### 3. Aceleración por Hardware (Flash Attention y SDPA)
+* **¿Qué es?**: Utiliza algoritmos optimizados de cálculo de atención a nivel de hardware (Scaled Dot Product Attention y Flash Attention 2 si es soportado por la GPU).
+* **Beneficio**: Multiplica por **2x a 3x** la velocidad de transcripción de audio en Whisper y la generación de texto en NLLB-200.
+
+### 4. Mecanismo de Caché Inteligente de Modelos
+* **Caché del HuggingFace Hub**: La descarga de los modelos de IA (~3-4 GB en total) se ejecuta **únicamente la primera vez**. Una vez completada, los pesos se almacenan en el caché local del disco (`~/.cache/huggingface/hub`).
+* **Carga Instantánea**: En los arranques posteriores, el servidor FastAPI carga los modelos desde el disco local en pocos segundos, funcionando **completamente sin conexión a internet** y sin consumir ancho de banda.
+
+---
+
 ## ⚙️ Requisitos del sistema
 
 | Requisito | Mínimo | Recomendado |

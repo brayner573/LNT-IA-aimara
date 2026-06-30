@@ -2309,7 +2309,7 @@
     }
 
     // Variables
-    const fastApiUrl = "http://127.0.0.1:8000/api";
+    const fastApiUrl = "http://127.0.0.1:8005/api";
     let comparisonChartInstance = null;
 
     // Elementos del DOM

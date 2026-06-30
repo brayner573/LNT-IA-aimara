@@ -378,7 +378,7 @@
     const btnCopyTarget = document.getElementById('btnCopyTarget');
 
     // FastAPI Server Config
-    const fastApiUrl = "http://127.0.0.1:8000/api";
+    const fastApiUrl = "http://127.0.0.1:8005/api";
 
     // 1. Manejo del input de texto con debounce para traducción instantánea SOTA
     sourceInput.addEventListener('input', () => {
@@ -812,7 +812,7 @@
                     btnPlayTarget.style.display = "flex";
 
                     if (data.audio_url) {
-                        const audio = new Audio(`http://127.0.0.1:8000${data.audio_url}`);
+                        const audio = new Audio(`http://127.0.0.1:8005${data.audio_url}`);
                         audio.play();
                     }
                 } else {
